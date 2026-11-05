@@ -195,6 +195,9 @@ var HAM_ORDER = ['sledge','broad','shock','maul'];
 
 // ================= world layout =================
 var ARENA = 10.2, CRATE = 1.2;
+// mat trong cot hai ben + nua kich thuoc dau bua / tay cam (lan 6, chan bua xuyen tuong)
+var WALL_ON = true;   // bai do keo-trong-khong-gian (dragProbe...) tat tuong: chung keo 40 u, san chi 14-20 u
+var WALL_IN = ARENA + 0.3, HEAD_HX = 1.0, HEAD_HY = 0.7, HAND_R = 0.5;
 // FEEL pass 04/11/2026 (chi Mai: "bua trong ko co suc nang vi thoi gian lo lung lau").
 // A real sledge takes ~0.2 s from the top of the swing to the crate; the old rod took 0.60 s.
 // T = 2*pi*sqrt(ROD/ROD_G) = 0.78 s (was 2.15 s). See tools/FEEL-3D.md.
@@ -213,7 +216,7 @@ var ROD = 4.0, ROD_G = 260, ROD_DAMP = 2.3;
 // PUMP 0.5 -> 0.8 (lan 5): do lai thi thanh phan GIA TOC chinh la cai lam cu flick giat tuc
 // thi - leanRiseMs 133 -> 117 ms, flipMs 92 -> 83 ms. Khong len 1.0 vi flipMs tut 75 ms, luc
 // do cu doi chieu het hoan toan cai nhip tre ma chi Mai da khen o lan 4.
-var TH_MAX = 2.15, TH_BOUNCE = 0.42, THV_MAX = 17.0, PUMP = 0.8;
+var TH_MAX = 0.85, TH_BOUNCE = 0.42, THV_MAX = 17.0, PUMP = 0.5;    // lan 6: 2.15 / 0.8, xem SWAY_V
 // ---- 05/11 lan 4: keo ngang = LAC QUA LAI, va ve vong tron = QUAY (giong toy1) ----
 // Chi Mai 05/11 06:14: "cac game smash bua cu vay vay phan nang khi toi di chuyen ngang.
 // Cho di chuyen ngang la lac qua lai, toc do move = do lac, va gesture move tron de quay bua".
@@ -223,7 +226,16 @@ var TH_MAX = 2.15, TH_BOUNCE = 0.42, THV_MAX = 17.0, PUMP = 0.8;
 // Tay dung (v = 0) => con lac tu do khong he doi (dropMs 225 ms, periodMs 780 ms giu nguyen).
 // Chi tiet + cai da thu roi bo (lo xo keo th ve "goc dich": no ghim can bua thanh rung 3.4 Hz
 // luc dung tay, tuc la "vay vay" lan nua chi doi cho): tools/FEEL-3D.md muc 11.
-var SWAY_V = 30.0;
+var SWAY_V = 10.5;   // lan 6: 30 -> 10.5, xem ngay duoi
+// ---- Lan 6 (05/11 chieu, giong toy1): "duoi bua cu float len xuong khi keo ngang, ko thay nang" ----
+// Video chi Mai: keo ngang thi can bua nam NGANG nhu co bay, co khung dau bua cao hon tay cam.
+// Goc nga can bang cu 57 do + PUMP vot toi tran khop 123 do. Chi Mai chot: keo ngang toi da
+// 35-45 do, chi ve vong tron moi duoc qua dinh.
+//   SWAY_V 30 -> 10.5  : nga can bang khi keo het toc ~38 do (do bang feelcheck).
+//   PUMP 0.8 -> 0.5    : bot cu giat theo gia toc luc doi chieu.
+//   TH_SOFT/SOFT_K     : qua 38 do thi lo xo + damp keo ve (tuong mem).
+//   TH_MAX 2.15 -> 0.85: tuong cung 49 do - dau bua luon ru duoi tay.
+var TH_SOFT = 0.66, SOFT_K = 1600, SOFT_DAMP = 40;
 /* Do nhay cua cai nga KHONG tuyen tinh. Luc can tuyen tinh thi chi can di nhanh la nga, nen
    bam bua cung an - do duoc: khoang cach ky nang toy1 tut 3.9x -> 2.7x (co y 102 thung, bam bua
    38). Day la dung bai hoc FEEL-3D muc 6: "nang tran toc do giup nguoi bam bua nhieu hon nguoi
@@ -695,6 +707,13 @@ function stepArm(dt){
     var zeta = zFree + (ZETA_DRAG-zFree)*u;
     var dampNow = 2*zeta*Math.sqrt(ROD_G/(ROD*inert));
     tha = (-ROD_G*sn - SWAY_V*vtan - dax*cs + day*sn)/(ROD*inert) - dampNow*thv;
+    // tuong mem (lan 6): qua TH_SOFT thi lo xo + damp keo dau bua ve duoi tay
+    var over = Math.abs(th) - TH_SOFT;
+    if(over > 0){
+      var sg = th > 0 ? 1 : -1;
+      tha -= sg*SOFT_K*over;
+      if(thv*sg > 0) tha -= SOFT_DAMP*thv;
+    }
   }
   thv += tha*dt;
   // cap the angular speed BEFORE integrating the angle: clamping after th += thv*dt lets one
@@ -709,7 +728,26 @@ function stepArm(dt){
   }
   if(th > Math.PI){ th -= Math.PI*2; circOff -= Math.PI*2; if(circOn) spinsCircle++; else spins++; }
   else if(th < -Math.PI){ th += Math.PI*2; circOff += Math.PI*2; if(circOn) spinsCircle--; else spins--; }
+  // tuong (lan 6, 05/11 chieu): video chi Mai - bua chui vao cot trai/phai roi giat ve. Truoc day
+  // chi kep NGON (px) o ARENA+0.6, con tay cam va dau bua thi khong ai chan. Gio tay cam dung o
+  // mat trong cot, dau bua cham cot thi dung lai va doi nguoc (TH_BOUNCE).
+  var wallH = WALL_ON ? WALL_IN - HAND_R : 1e9;
+  if(pvx > wallH){ pvx = wallH; if(pvvx > 0) pvvx = 0; }
+  else if(pvx < -wallH){ pvx = -wallH; if(pvvx < 0) pvvx = 0; }
   sn = Math.sin(th); cs = Math.cos(th);
+  var hk = ham.r, hw = (HEAD_HX*Math.abs(cs) + HEAD_HY*Math.abs(sn))*hk, lim = WALL_IN - hw;
+  var hxw = pvx + ROD*sn;
+  if(WALL_ON && Math.abs(hxw) > lim){
+    var sw = hxw > 0 ? 1 : -1;
+    var a2 = Math.asin(Math.max(-1, Math.min(1, (sw*lim - pvx)/ROD)));
+    var vxh = pvvx + ROD*thv*cs;                 // toc do ngang cua dau bua truoc khi cham
+    th = cs >= 0 ? a2 : (th > 0 ? Math.PI - a2 : -Math.PI - a2);
+    sn = Math.sin(th); cs = Math.cos(th);
+    if(vxh*sw > 0 && Math.abs(cs) > 0.2){
+      thv = (-TH_BOUNCE*vxh - pvvx)/(ROD*cs);   // dau bua doi nguoc, giu 42% toc do
+      if(thv > THV_MAX) thv = THV_MAX; else if(thv < -THV_MAX) thv = -THV_MAX;
+    } else if(vxh*sw > 0) thv = 0;
+  }
   mx = pvx + ROD*sn; my = pvy - ROD*cs;
   mvx = pvvx + ROD*thv*cs; mvy = pvvy + ROD*thv*sn;
   handSp = hsp;
@@ -1073,6 +1111,21 @@ window.__feel = {
     circAcc = sg.acc; circOn = sg.on; circHold = sg.hold; circPhase = sg.ph; circOff = sg.off;
     return res;
   },
+  // Lan 6: ngon dam het tam vao cot trai/phai, doi nhip 0.3/0.16/0.5/0.09 s, 8 s. Bao dau bua /
+  // tay cam lo qua mat trong cot bao nhieu (<= 0.05 = chi cham). Truoc khi sua: bua chui han vao cot.
+  wallTest: function(){
+    var Y = 6, t = 0, tf = 0, side = 1, pats = [0.3, 0.16, 0.5, 0.09], head = -99, hand = -99;
+    placeHand(0, Y); resetGesture();
+    for(var i = 0; i < Math.round(8/FIXED); i++){
+      if(t - tf > pats[Math.floor(t/2) % 4]){ side = -side; tf = t; }
+      px = side*(ARENA + .4); py = Y + Math.sin(t*7.7)*2;
+      stepArm(FIXED); t += FIXED;
+      var hw = (HEAD_HX*Math.abs(Math.cos(th)) + HEAD_HY*Math.abs(Math.sin(th)))*ham.r;
+      head = Math.max(head, Math.abs(mx) + hw - WALL_IN);
+      hand = Math.max(hand, Math.abs(pvx) + HAND_R - WALL_IN);
+    }
+    return {headOver: Math.round(head*1000)/1000, handOver: Math.round(hand*1000)/1000};
+  },
   recStart: function(){ FEEL_REC = {t:0, s:[]}; },
   recStop: function(){ var r = FEEL_REC; FEEL_REC = null; return r ? r.s : []; },
   place: function(x, y){ placeHand(x, y); resetGesture(); },
@@ -1418,6 +1471,11 @@ if(G.tut === 0) startTutorial(); else { buildShelves(Math.min(3, G.kho)); openSh
 hud();
 requestAnimationFrame(loop);
 ev('boot');
+// Lan 6: cac bai do keo-trong-khong-gian chay khong co tuong (xem WALL_ON)
+['dragProbe','colorFlipTest','flipTest','spinTest','hopTest','swingPeriod'].forEach(function(k){
+  var f = window.__feel && window.__feel[k]; if(!f) return;
+  window.__feel[k] = function(){ WALL_ON = false; try { return f.apply(this, arguments); } finally { WALL_ON = true; } };
+});
 })();
 </script>
 </body>
