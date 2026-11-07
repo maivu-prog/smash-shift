@@ -177,7 +177,10 @@ var TS = +(QS.get('ts') || 1);              // time scale for the bot
 // ================= numbers (copied from tools/config.mjs) =================
 var CFG = {
   stamina: 10, windAt: 9, windGrow: 4, windMax: 4, chainCap: 5, shiftSecs: 75,
-  beltRate: 1.25, chainStep: 0.25, crateValue: 1,   // 07/11: 1,15 -> 1,6, san chi co ~24 thung tren man (can ~45 moi day duoc khung)
+  // 07/11 chieu: san hep lai (8,6 -> ~7,5) de thung to len trong khung => CUNG mot nhip nha
+  // thung thi dong len cao nhanh hon han va ca het sau 18 s. Nhip nha phai co theo be ngang
+  // san (nha / be ngang giu nguyen): 1,25 * 7,5/8,6 = 1,09.
+  beltRate: 1.09, chainStep: 0.25, crateValue: 1,
   boomChance: 0.08, goldChance: 0.05, goldMult: 5,
   shiftsPerKho: 3, dockPct: 0.25,
   // 06/11 ha ~25% de ve ~15 phut (luc do bot thang mat 20,5 phut). 07/11 nha theo ME xong thi
@@ -342,18 +345,27 @@ var BELT_V = 4.2;
 // ngang) - mot hinh san co dinh thi may nao do cung co hai dai trong. San DOI HINH theo man,
 // nhung SUC CHUA giu nguyen: so thung lam tran dong = (2*ARENA/CRATE)*(DL/CRATE) = 60, nen do kho
 // tren moi may bang nhau. x cua mang ghi theo PHAN CUA ARENA de co gian cung san.
-var CAP_AD = 43.0;                    // ARENA * DANGER giu khong doi => suc chua khong doi
-var LAY_WIDE = { arena:8.6, danger:5.0, lv:[1.6], frac:true, k:[
+// CAP_AD = ARENA * DANGER (suc chua dong thung, doi theo don vi the gioi).
+// MACH_TOP = khoang tren mat bang chuyen ma khung van phai chua (dinh chute + le).
+// 07/11: do bang test/fillprobe - noi dung 3D chi chiem 8,6-10,7% khung, nua tren 0,5-2,9%.
+// Hai thu phai sua: (a) dai may o tren qua cao (4,6 don vi khong khi) -> ha chute + chan;
+// (b) phong qua rong so voi thung -> dong cao nhat cung chi toi 50% vach do. Xem playtest.md.
+var CAP_AD = 38.0, MACH_TOP = 1.3;   // MACH_TOP >= 1,2 de thung DANG DOI tren bang chuyen con thay duoc
+var LAY_WIDE = { arena:8.6, danger:5.0, lv:[1.4], frac:true, k:[
   [ {x0:-0.558, x1:-0.058, l:0} ],
   [ {x0:-0.942, x1:-0.442, l:0}, {x0:0.081, x1:0.581, l:0} ],
   [ {x0:-0.942, x1:-0.477, l:0}, {x0:0.244, x1:0.744, l:0} ],
   [ {x0:-0.942, x1:-0.523, l:0}, {x0:-0.221, x1:0.198, l:0}, {x0:0.477, x1:0.919, l:0} ]
 ]};
-var LAY_TALL = { arena:4.3, danger:9.4, lv:[1.6, 5.6], k:[
-  [ {x0:-2.8, x1:0.2, l:0} ],
-  [ {x0:-3.9, x1:-0.9, l:0}, {x0:0.6, x1:3.6, l:1} ],
-  [ {x0:-3.9, x1:-1.1, l:0}, {x0:0.9, x1:3.9, l:1} ],
-  [ {x0:-3.9, x1:-1.3, l:0}, {x0:0.8, x1:3.9, l:1}, {x0:-3.6, x1:-1.0, l:1} ]
+// 07/11: ban doc cung giai san nhu ban ngang (truoc day la so cung 4,3 x 9,4). x cua mang
+// doi sang PHAN CUA ARENA de co gian theo. Tang 2 ha tu 5,6 xuong 4,2 tren vach do - 5,6 lam
+// cai hop cao 18 don vi, rong/cao 0,59 trong khi man doc la 0,46, nen fit() de lai dai trong
+// tren duoi (do duoc: noi dung bat dau o 30-44% tinh tu dinh man).
+var LAY_TALL = { arena:4.3, danger:9.4, lv:[1.4, 4.0], frac:true, k:[
+  [ {x0:-0.651, x1:0.047, l:0} ],
+  [ {x0:-0.907, x1:-0.209, l:0}, {x0:0.140, x1:0.837, l:1} ],
+  [ {x0:-0.907, x1:-0.256, l:0}, {x0:0.209, x1:0.907, l:1} ],
+  [ {x0:-0.907, x1:-0.302, l:0}, {x0:0.186, x1:0.907, l:1}, {x0:-0.837, x1:-0.233, l:1} ]
 ]};
 var LAY = LAY_WIDE;
 var LAYOUTS = LAY.k;
@@ -453,13 +465,12 @@ function buildShelves(k){
     // chan sau (mang treo tu tran): khong co chan xuong san vi san la cho dong thung chong len.
     // KHONG co chan cuoi mang - thung phai roi khoi dau phai xuong dong.
     var back = new THREE.Mesh(new THREE.BoxGeometry(len, 0.26, 0.26), stopMat);
-    back.position.set((s.x0+s.x1)/2, s.y+0.55, -1.25); shelfGroup.add(back);
-    [s.x0+0.5, s.x1-0.5].forEach(function(lx){
-      var br = new THREE.Mesh(new THREE.BoxGeometry(0.26, 2.2, 0.26), legMat);
-      br.position.set(lx, s.y+1.1, -1.25); shelfGroup.add(br);
-    });
-    var chute = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 2.4), M(0x5d3a1e));
-    chute.position.set(s.x0+1.0, s.y+2.0, -.6); shelfGroup.add(chute);
+    back.position.set((s.x0+s.x1)/2, s.y+0.45, -1.25); shelfGroup.add(back);
+    // Truoc 07/11 o day co mot cai chute treo cao 2,0 tren bang chuyen + 2 chan. Khung moi
+    // cat ngang no, nhin rat vun. Thay bang mot DAM TRAN chay het chieu dai mang, nam dung mep
+    // tren khung - thung roi tu sau dam xuong bang chuyen, van doc ra "do tu tren xuong".
+    var beam = new THREE.Mesh(new THREE.BoxGeometry(len + 0.6, 0.42, 1.5), legMat);
+    beam.position.set((s.x0+s.x1)/2, s.y + 1.22, -0.5); beam.castShadow = true; shelfGroup.add(beam);
     var lip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.44, 2.6), M(0xff8c3a));   // mep nha thung
     lip.position.set(s.x1+0.1, s.y+0.05, 0); shelfGroup.add(lip);
   });
@@ -636,7 +647,7 @@ function spawnCrate(s, bk, bn){
   else if(k >= 1 && r < 0.33 + S.st.gold + S.st.boom) type = 'barrel';
   else if(k === 0 && G.lv.powder && r < S.st.boom) type = 'barrel';
   bk = bk || 0; bn = bn || 1;
-  var c = makeCrate(type, s.x0 + 1.0, s.y + 1.7); c.vy = -3; c.belt = s.i;
+  var c = makeCrate(type, s.x0 + 1.0, s.y + 0.72); c.vy = -3; c.belt = s.i;
   // ca me chay cung mot toc do => khong smear ra thanh hang don; van ngau nhien giua cac me nen
   // cho dap van trai ra. Thung thu k roi khoi mang som hon => ca me cham san thanh dai ngang.
   c.bv = S.bv[s.i] || (S.bv[s.i] = 4.0 + Math.random()*3.8);
@@ -1221,18 +1232,20 @@ function hud(){
 // Doi ca HINH SAN theo khung may, khong chi doi camera: mot cai hop rong-thap thi camera nao
 // cung de lai hai dai trong o man doc. Goi tu fit(); chi dung lai san khi khung doi huong.
 // Giai be ngang san cho khung choi vua khit man, voi ARENA*DANGER0 = CAP_AD (suc chua co dinh):
-//   rong = 2(A+1), cao = (D + lv + 2.6 + 0.4)/(1-f), D = CAP_AD/A, muon rong/cao = ti le man.
-//   => c*A^2 + (c - 4.6)A - CAP_AD = 0 voi c = 2(1-f)/tile.
-function solveArena(aspect, f){
+//   rong = 2(A+1), cao = (D + lv + MACH_TOP + 0.4)/(1-f), D = CAP_AD/A, muon rong/cao = ti le man.
+//   => c*A^2 + (c - H)A - CAP_AD = 0 voi c = 2(1-f)/tile, H = lv + MACH_TOP + 0.4.
+function solveArena(aspect, f, lvTop){
   var c = 2*(1 - f)/Math.max(0.2, aspect);
-  var b = c - 4.6, A = (-b + Math.sqrt(b*b + 4*c*CAP_AD))/(2*c);
-  A = Math.max(7.0, Math.min(13.0, A));
-  var D = Math.max(3.4, Math.min(6.5, CAP_AD/A));
+  var H = lvTop + MACH_TOP + 0.4;
+  var b = c - H, A = (-b + Math.sqrt(b*b + 4*c*CAP_AD))/(2*c);
+  A = Math.max(3.0, Math.min(13.0, A));
+  var D = Math.max(3.4, Math.min(11.0, CAP_AD/A));
   return { arena: CAP_AD/D, danger: D };
 }
 function setLayout(wide){
   var L = wide ? LAY_WIDE : LAY_TALL;
-  if(wide){ var r = solveArena(camera.aspect, hudFrac()); L.arena = r.arena; L.danger = r.danger; }
+  var r = solveArena(camera.aspect, hudFrac(), L.lv[L.lv.length-1]);
+  L.arena = r.arena; L.danger = r.danger;
   if(L === LAY && Math.abs(ARENA - L.arena) < 0.02 && Math.abs(DANGER0 - L.danger) < 0.02) return false;
   LAY = L; LAYOUTS = L.k;
   var head = DL - DANGER0;              // giu phan 'headroom' da mua
@@ -1263,7 +1276,7 @@ function hudFrac(){
 }
 function playBox(){
   // cao nhat phai thay: mep tren cua chute o mang cao nhat; thap nhat: mat san.
-  var lo = -0.4, hi = shelfTop() + 2.6, f = hudFrac();
+  var lo = -0.4, hi = shelfTop() + MACH_TOP, f = hudFrac();
   return { x: ARENA + 1.0, lo: lo, hi: hi + (hi - lo) * f / (1 - f) };
 }
 function fit(){
@@ -1592,7 +1605,7 @@ window.__frame = function(){
   for(var i=0;i<SHELVES.length;i++) mk['shelf'+i] = S((SHELVES[i].x0+SHELVES[i].x1)*0.5, SHELVES[i].y);
   // Moc DINH vung choi: mep tren cua chute, tuc cho thung xuat hien. Thieu no thi framecheck do
   // chieu cao vung choi chi toi mat bang chuyen va bao thieu - loi cua THUOC, khong phai cua game.
-  mk.chuteTop = S(0, shelfTop() + 2.4);
+  mk.chuteTop = S(0, shelfTop() + MACH_TOP - 0.15);
   mk.dangerL = S(-ARENA, DL); mk.dangerR = S(ARENA, DL);
   // khai dai HUD de framecheck khong tinh no la "nen trong" (xem tools/framecheck.js 06/11)
   var hb = document.getElementById('hud');
@@ -1602,8 +1615,9 @@ window.addEventListener('resize', fit);
 window.addEventListener('orientationchange', function(){ fit(); setTimeout(fit,150); setTimeout(fit,500); });
 if(window.visualViewport){ window.visualViewport.addEventListener('resize', fit); }
 setTimeout(fit, 300); setTimeout(fit, 1200);
+var HIDE_ACT = false, NO_SHAKE = false;
 function draw(){
-  var shk = S.shake;
+  var shk = (HIDE_ACT || NO_SHAKE) ? 0 : S.shake;
   camera.position.set(camBase.x + (Math.random()-.5)*shk*.9, camBase.y + (Math.random()-.5)*shk*.9, camBase.z);
   camera.lookAt(camLook);
   for(var i=0;i<crates.length;i++){ var c = crates[i];
@@ -1620,6 +1634,19 @@ function draw(){
     var sc = worldToScreen(o.x, o.y); o.el.style.left = sc.x+'px'; o.el.style.top = sc.y+'px';
     o.el.style.transform = 'translate(-50%,-50%) scale(' + (.7 + Math.min(1, o.life/o.max)*.5) + ')';
     o.el.style.opacity = Math.min(1, o.life/o.max*1.8); }
+  // Cua do 'fillprobe' (07/11): tat moi thu DONG (thung, bua, manh vo) de chup mot tam
+  // 'phong trong' lam nen so sanh. Chi test goi, choi that khong bao gio bat.
+  if(HIDE_ACT){
+    for(var hi=0;hi<crates.length;hi++) crates[hi].mesh.visible = false;
+    for(var hi=0;hi<debris.length;hi++) debris[hi].mesh.visible = false;
+    for(var hi=0;hi<sparks.length;hi++) sparks[hi].mesh.visible = false;
+    mallet.visible = false; hand.visible = false;
+  } else {
+    for(var hi=0;hi<crates.length;hi++) crates[hi].mesh.visible = true;
+    for(var hi=0;hi<debris.length;hi++) debris[hi].mesh.visible = true;
+    for(var hi=0;hi<sparks.length;hi++) sparks[hi].mesh.visible = true;
+    mallet.visible = true; hand.visible = true;
+  }
   renderer.render(scene, camera);
 }
 // ---- Lan 5 muc C (05/11 08:18, chi Mai: "chop chop mau") -----------------------------------
@@ -1778,6 +1805,8 @@ window.__game = {
     screen:['scrEnd','scrShop','scrWin'].filter(function(s){ return $(s).classList.contains('on'); })[0]||''}; },
   botShop:botShop, buyUp:buyUp, openShop:openShop,
   feed:function(){ return FEED; }, swings:function(){ return SWINGS; },
+  hideAct:function(on){ HIDE_ACT = !!on; },
+  noShake:function(on){ NO_SHAKE = !!on; },
   crateXs:function(){ return crates.filter(function(c){ return !c.dead; }).map(function(c){ return [Math.round(c.x*100)/100, Math.round(c.y*100)/100, Math.round((c.vx||0)*100)/100]; }); }
 };
 

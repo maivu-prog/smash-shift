@@ -1,5 +1,5 @@
 # smash-shift
 
-SMASH SHIFT - mallet warehouse smashing with a midcore shift/upgrade loop
+Smash Shift - mallet warehouse: sweep the pile before it hits the red line
 
 Play: https://maivu-prog.github.io/smash-shift/
