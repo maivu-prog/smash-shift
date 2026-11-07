@@ -1075,8 +1075,16 @@ function step(dt){
   // "so lan vung truot" - nguoi choi gioi giu duoc dong duoi vach do thi ca khong bao gio
   // tu het, bot do duoc 3,5 phut/ca. Ba cach het ca: het gio - dong tran - het luot truot.
   if(S.mode === 'shift'){
+    // `!S.swinging` o day la de khong cat ngang mot cu vung dang do. Nhung quet qua lai lien tuc
+    // thi bua LUC NAO CUNG dang vung => ca khong bao giu het gio: do duoc 07/11 bang bot kieu
+    // 'mash' - ca dai 282 s thay vi 75, mot ca an $70.904, va dong ho tren HUD dung o 0:00 hang
+    // phut. Nen cho no an 2 giay gia han, het 2 giay thi cat du dang vung.
     var over = S.stam <= 0, done = S.t >= CFG.shiftSecs;
-    if((over || done) && !S.swinging){ S.endT += dt; if(S.endT > (done && !over ? 0.5 : 1.3)){ S.timeUp = done && !over; endShift(); } }
+    if(over || done){
+      S.endT += dt;
+      var needT = done && !over ? 0.5 : 1.3;
+      if(S.endT > needT && (!S.swinging || S.endT > 2.0)){ S.timeUp = done && !over; endShift(); }
+    }
     else S.endT = 0;
   }
   if(S.mode === 'shift'){
@@ -1696,8 +1704,22 @@ function pileScan(){
   best.all = all; best.top_all = topAll;
   return best;
 }
+// Kieu 'mash' = BAM BUA: khong nhin dong o dau, cu quet qua lai het be ngang san o mot do cao
+// ngau nhien, doi huong moi 0,25-0,7 s. Day la cai moc de do KHOANG CACH GIOI/BUA - game nao
+// bam bua cung an gan bang choi gioi thi khong con la game. Khong duoc nham mat lam: cua nay
+// la cai da bat duoc loi "khong bam gi van an 150 diem" cua toy5.
+function mashStep(dt){
+  if(B.phase !== 'mash'){ B.phase = 'mash'; B.t = 0; B.mx = -ARENA + 2; B.dir = 1; B.my = CRATE*1.2; }
+  B.t -= dt;
+  if(B.t <= 0){ B.t = 0.25 + Math.random()*0.45; B.dir = -B.dir; B.my = CRATE*(0.6 + Math.random()*2.4); }
+  B.mx += B.dir * 26 * dt;
+  if(B.mx < -ARENA + 1) { B.mx = -ARENA + 1; B.dir = 1; }
+  if(B.mx >  ARENA - 1) { B.mx =  ARENA - 1; B.dir = -1; }
+  aim(B.mx, B.my + ROD);
+}
 function botStep(dt){
   if(S.mode !== 'shift' && S.mode !== 'tut') return;
+  if(BOT === 'mash') return mashStep(dt);
   B.t += dt;
   if(B.phase === 'wait'){
     var pk = botPark(); aim(pk[0], pk[1]);
