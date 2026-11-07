@@ -177,13 +177,14 @@ var TS = +(QS.get('ts') || 1);              // time scale for the bot
 // ================= numbers (copied from tools/config.mjs) =================
 var CFG = {
   stamina: 10, windAt: 9, windGrow: 4, windMax: 4, chainCap: 5, shiftSecs: 75,
-  beltRate: 1.15, chainStep: 0.25, crateValue: 1,
+  beltRate: 1.25, chainStep: 0.25, crateValue: 1,   // 07/11: 1,15 -> 1,6, san chi co ~24 thung tren man (can ~45 moi day duoc khung)
   boomChance: 0.08, goldChance: 0.05, goldMult: 5,
   shiftsPerKho: 3, dockPct: 0.25,
-  // 06/11: ha ~25%. Sau khi dong thung CHAY (goc nghi) thi ca dai 26-29 s thay vi 12 s, nhung
-  // bot phai danh 31 ca / 20,5 phut moi thang - tuc 31 lan man xuong chen vao giua. Ha chi tieu
-  // de ve lai ~15 phut va ~22 ca, khong dong vao thu nhap moi ca.
-  khos: [ {quota:320}, {quota:850}, {quota:2400}, {quota:5600} ],
+  // 06/11 ha ~25% de ve ~15 phut (luc do bot thang mat 20,5 phut). 07/11 nha theo ME xong thi
+  // thu nhap moi ca tang han (8,7 thung/cu, 13 ca thay vi 29) => thang chi con 11,6 phut, tuc
+  // DUOI moc 15. Tra chi tieu ve so goc 400/1150/3300/7500 chu khong hieu chinh them, vi so goc
+  // la so sim kinh te tinh ra; cai sai hoi do la nhip nha thung, khong phai chi tieu.
+  khos: [ {quota:600}, {quota:2300}, {quota:7200}, {quota:19000} ],
   upgrades: {
     stamina:  { base: 25,  grow: 1.55, per: 2,    max: 8 },
     wind:     { base: 60,  grow: 1.8,  per: 1,    max: 5 },
@@ -219,7 +220,7 @@ var ARENA = 8.6, CRATE = 1.2;   // doi theo khung may - xem setLayout()
 // ---- Ban gop 05/11/2026: san choi la DONG THUNG tren san (feel Mallet), khong con hang tren
 // bang chuyen. DANGER0 = vach do goc; nang cap 'headroom' day no len. DL = vach do cua ca nay.
 var DANGER0 = 5.0, DL = DANGER0;
-var SLIDE = 30.0;                     // goc nghi: thung tren dinh cot truot ve ben thap
+var SLIDE = 16.0;                     // goc nghi: thung tren dinh cot truot ve ben thap
 var COMBO_T = 1.3, COMBO_CAP = 20;   // cua so combo bac qua cac cu vung (Mallet Mash)
 // mat trong cot hai ben + nua kich thuoc dau bua / tay cam (lan 6, chan bua xuyen tuong)
 var WALL_ON = true;   // bai do keo-trong-khong-gian (dragProbe...) tat tuong: chung keo 40 u, san chi 14-20 u
@@ -497,7 +498,7 @@ function makeCrate(type, x, y){
   if(T.gold){ var st = new THREE.Mesh(new THREE.OctahedronGeometry(0.22), M(0xffffff)); st.position.set(0,0,CRATE*0.52); g.add(st); }
   scene.add(g);
   var c = {mesh:g, body:body, type:type, T:T, x:x, y:y, py:y, vx:0, vy:0, hp:T.hp, flash:0, spin:0, rot:0,
-    dead:false, belt:-1, hopT:1+Math.random()*2};
+    dead:false, belt:-1, born:S.t, hopT:1+Math.random()*2};
   g.position.set(x, y, 0); crates.push(c); return c;
 }
 var DMAT = {};
@@ -555,7 +556,8 @@ function tip(txt, soft){ if(!txt){ elTip.classList.add('hide'); return; }
 function fmt(n){ n = Math.floor(n); return '$' + (n >= 10000 ? (n/1000).toFixed(n >= 100000 ? 0 : 1)+'k' : n.toLocaleString('en-US')); }
 
 // ================= run state =================
-var S = {mode:'idle', st:stats(), stam:0, winds:0, windAt:9, earned:0, best:0, t:0, spawnT:[], swinging:false,
+var S = {mode:'idle', st:stats(), stam:0, winds:0, windAt:9, earned:0, best:0, t:0, spawnT:[],
+  burst:[], bn:[], bk:[], bv:[], swinging:false,
   calmT:0, sw:null, endT:0, shake:0, tut:0, tutStep:0, combo:0, comboT:0, overflow:0, over:0, tutN:0};
 var pvx = -6, pvy = 9, pvvx = 0, pvvy = 0, th = 0, thv = 0, mx = -6, my = 5, mvx = 0, mvy = 0, px = -6, py = 9;
 var ham = HAMMERS.sledge;
@@ -583,6 +585,8 @@ function startShift(){
   buildShelves(Math.min(3, G.kho)); clearWorld();
   S.mode = 'shift'; S.stam = S.st.stamina; S.winds = 0; S.windAt = S.st.windAt; S.earned = 0; S.best = 0; S.t = 0;
   S.spawnT = SHELVES.map(function(){ return 0.2; }); S.swinging = false; S.sw = null; S.endT = 0;
+  S.burst = SHELVES.map(function(){ return 0; }); S.bn = SHELVES.map(function(){ return 0; });
+  S.bk = SHELVES.map(function(){ return 0; }); S.bv = SHELVES.map(function(){ return 0; });
   S.combo = 0; S.comboT = 0; S.overflow = 0; S.over = 0; S.timeUp = 0;
   starterPile(Math.max(-ARENA+4.2, Math.min(ARENA-4.2, SHELVES[0].x1 + 1.6)));
   placeHand(SHELVES[0].x1 + 1.6, CRATE*2.4 + ROD);
@@ -610,8 +614,20 @@ window.addEventListener('mousemove', onPt);
 cv.addEventListener('touchstart', function(e){ e.preventDefault(); ac(); onPt(e); }, {passive:false});
 cv.addEventListener('touchmove', function(e){ e.preventDefault(); onPt(e); }, {passive:false});
 
+// Cua do nhip nha thung (06-07/11): chi Mai 06/11 17:54 - "thung roi 1 chieu tu 1 cho co dinh
+// cu deu deu, ko co cam giac smash 1 loat". Hai so bat duoc chuyen do: khoang cach giua 2 lan nha
+// (nho giot = cach deu ~1 s) va so thung nha trong cung 0,5 s (me = nhieu). Doc bang test/feedprobe.mjs.
+var FEED = [], SWINGS = [];
 // ================= gameplay =================
-function spawnCrate(s){
+// Nha theo ME, khong nho giot (sua 07/11 theo loi chi Mai 06/11 17:54: "thung roi 1 chieu tu
+// 1 cho co dinh cu deu deu, ko co cam giac smash 1 loat"). Do duoc truoc khi sua: kho 1 nha dung
+// MOT toa do (xSpan 0), KHONG BAO GIO hon 1 thung trong 0,5 s, cach deu 0,72 s.
+// Cach sua: moi lan nha la mot ME bn thung, lech nhau BURST_DT giay khi vao mang, va thung thu k
+// ROI KHOI MANG som hon k*BURST_X - nen ca me cham san thanh MOT DAI ngang trong ~0,4 s, mot cu
+// vung ngang an tron me. So thung moi giay GIU NGUYEN (chu ky me = per*bn) => do kho khong doi.
+var BURST_DT = 0.22, BURST_X = 0.62;
+function burstN(){ return S.t > 45 ? 5 : (S.t > 20 ? 4 : 3); }
+function spawnCrate(s, bk, bn){
   var r = Math.random(), type = 'wood', k = G.kho;
   if(S.mode === 'tut') type = 'wood';
   else if(k >= 3 && r < 0.18) type = 'ice';
@@ -619,18 +635,30 @@ function spawnCrate(s){
   else if(k >= 2 && r < 0.33 + S.st.gold) type = 'gold';
   else if(k >= 1 && r < 0.33 + S.st.gold + S.st.boom) type = 'barrel';
   else if(k === 0 && G.lv.powder && r < S.st.boom) type = 'barrel';
+  bk = bk || 0; bn = bn || 1;
   var c = makeCrate(type, s.x0 + 1.0, s.y + 1.7); c.vy = -3; c.belt = s.i;
-  // moi thung chay nhanh cham khac nhau => roi khoi mep mang o toc do khac nhau => cho dap
-  // dat trai ra ~4 don vi. Dong thanh RONG VA THAP (feel Mallet) chu khong phai thap hep.
-  c.bv = 2.4 + Math.random()*5.4;
+  // ca me chay cung mot toc do => khong smear ra thanh hang don; van ngau nhien giua cac me nen
+  // cho dap van trai ra. Thung thu k roi khoi mang som hon => ca me cham san thanh dai ngang.
+  c.bv = S.bv[s.i] || (S.bv[s.i] = 4.0 + Math.random()*3.8);
+  c.dropX = s.x1 - bk*BURST_X;
+  FEED.push({t:S.t, x:c.x, dx:c.dropX, bv:c.bv, i:s.i}); if(FEED.length > 900) FEED.shift();
+  return c;
 }
 // do cao dong thung: chi tinh thung CO CHO DO (san hoac thung khac), khong tinh thung dang bay
 // hay thung dang nam tren mang nha. Giong Mallet Mash - tranh thua vi mot thung dang roi.
 function pileTop(){
   var high = 0, i, j, c, o;
+  // Thung NAM TREN MANG NHA khong phai dong thung. Luat "held" ben duoi chi hoi "co thung nao
+  // ngay duoi khong" - ma mot me thung xep hang tren mang thi thung sau dung ngay tren thung
+  // truoc, nen no bi tinh la dong cao 8,8 trong khi vach do chi 4,8 => het ca sau 6 giay.
+  // Loi co san tu buoc 2, cai gate nha nho giot che mat no (khong bao gio co 2 thung chong
+  // nhau o cho nha). Cat thang: thung cao ngang tam mang thi khong tinh vao dong.
+  var sy = 1e9;
+  for(i=0;i<SHELVES.length;i++) if(SHELVES[i].y < sy) sy = SHELVES[i].y;
+  var lid = sy - CRATE*0.6;
   for(i=0;i<crates.length;i++){
     c = crates[i];
-    if(c.dead || c.y + CRATE*.5 <= high || Math.abs(c.vy) > 9) continue;
+    if(c.dead || c.y + CRATE*.5 <= high || Math.abs(c.vy) > 9 || c.y > lid) continue;
     var held = c.y < CRATE*0.9;
     for(j=0;j<crates.length && !held;j++){
       o = crates[j]; if(o === c || o.dead) continue;
@@ -664,11 +692,12 @@ function swingEnd(){
       pop(mx, my+2.2, 'SECOND WIND +1', 'big', 34); chime(4); hud();
     }
   }
+  SWINGS.push({t:S.t, n:w.n, fresh:w.fresh||0}); if(SWINGS.length > 600) SWINGS.shift();
   ev('swingEnd', {n:w.n, pay:w.pay});
 }
 function payFor(c){
   var w = S.sw; if(!w){ w = S.sw = {n:0, pay:0}; }
-  w.n++; S.tutN++;
+  w.n++; S.tutN++; if(S.t - (c.born||0) < 2.5) w.fresh = (w.fresh||0)+1;
   // combo cua Mallet Mash: dem bac qua cac cu vung, chi tat sau COMBO_T giay khong pha gi.
   // Nang cap 'chain' (Combo Bonus) lam moi bac combo dang gia hon; CFG.chainCap van la tran.
   var k = S.combo = Math.min(COMBO_CAP, S.comboT > 0 ? S.combo+1 : 1);
@@ -891,14 +920,19 @@ function step(dt){
     for(var si=0; si<SHELVES.length; si++){
       var s = SHELVES[si];
       S.spawnT[si] -= dt;
-      if(S.spawnT[si] <= 0){
-        // nhip nha dan nhanh len theo thoi gian ca (Mallet Mash): ap luc tang => ca nao cung
-        // ket thuc o vach do trong khoang 60-110 s, khong keo dai vo han.
-        S.spawnT[si] = Math.max(0.34, SHELVES.length/S.st.rate - S.t*0.013);
-        var clear = true;
-        for(var q=0;q<crates.length;q++){ var cq = crates[q]; if(Math.abs(cq.x-(s.x0+1.0)) < 1.4 && cq.y > s.y-.6 && cq.y < s.y+2.6){ clear = false; break; } }
-        if(clear) spawnCrate(s);
-      }
+      if(S.spawnT[si] > 0) continue;
+      // nhip nha dan nhanh len theo thoi gian ca (Mallet Mash): ap luc tang => ca nao cung
+      // ket thuc o vach do trong khoang 60-110 s, khong keo dai vo han.
+      var per = Math.max(0.34, SHELVES.length/S.st.rate - S.t*0.013);
+      if(S.burst[si] <= 0){ S.bn[si] = burstN(); S.burst[si] = S.bn[si]; S.bk[si] = 0; S.bv[si] = 0; }
+      var clear = true;
+      for(var q=0;q<crates.length;q++){ var cq = crates[q]; if(Math.abs(cq.x-(s.x0+1.0)) < 0.9 && cq.y > s.y+1.0 && cq.y < s.y+2.6){ clear = false; break; } }
+      if(!clear){ S.spawnT[si] = 0.1; continue; }   // cho cho trong, KHONG mat luot nha
+      spawnCrate(s, S.bk[si], S.bn[si]);
+      S.bk[si]++; S.burst[si]--;
+      // trong me thi sat nhau; het me thi nghi bu lai cho dung so thung/giay cu
+      S.spawnT[si] = S.burst[si] > 0 ? BURST_DT
+        : Math.max(0.2, per*S.bn[si] - BURST_DT*(S.bn[si]-1));
     }
   }
 
@@ -914,9 +948,16 @@ function step(dt){
     var landed = -1;
     for(var b=0;b<SHELVES.length;b++){
       var sh = SHELVES[b];
-      if(c.x > sh.x0 - .2 && c.x < sh.x1 + .2 && c.py - CRATE*.5 >= sh.y - .05 && c.y - CRATE*.5 < sh.y){
+      var shEnd = (c.belt === b && c.dropX !== undefined) ? Math.min(sh.x1, c.dropX) : sh.x1;
+      if(c.x > sh.x0 - .2 && c.x < shEnd + .2 && c.py - CRATE*.5 >= sh.y - .05 && c.y - CRATE*.5 < sh.y){
         c.y = sh.y + CRATE*.5; if(c.vy < -6 && TYPES[c.type].hp > 1) c.vy *= -.2; else c.vy = 0; landed = b; break; }
     }
+    // Roi khoi mang thi THA XUONG, khong phai NEM NGANG. Thung rieng mang voi vx = bv (4-7,8 u/s)
+    // va tren khong gan nhu khong hao (0,995^60) nen no bay ngang 3-5 don vi roi truot tiep tren
+    // san => 24 thung trai MOT LOP het be ngang 17, dung lai cai "khong thanh dong" chi che.
+    // Dap vx luc roi khoi mang: thung chong len ngay duoi cho nha.
+    if(landed < 0 && c.wasOn) c.vx *= 0.22;
+    c.wasOn = landed >= 0;
     if(landed >= 0){
       c.belt = landed; var bv = (c.bv || BELT_V)*(c.T.slip ? 1.4 : 1);
       if(S.mode !== 'tut' || S.tut >= 1) c.vx += (bv - c.vx)*Math.min(1, dt*5);
@@ -976,7 +1017,10 @@ function step(dt){
     if(c.y + CRATE*.5 < hmap[b0] - 0.1) continue;                               // chi thung tren dinh moi truot
     var hl = b0 > 0 ? hmap[b0-1] : 1e9, hr = b0 < NB-1 ? hmap[b0+1] : 1e9;      // ra toi tuong = khong truot
     var lo = Math.min(hl, hr);
-    if(hmap[b0] - lo < CRATE*1.8) continue;   // 1 bac thi giu (dong con go), 2 bac moi truot
+    // 07/11: 1,8 (2 bac) san dong thanh MOT LOP trai het san - dung cai "khong thanh dong" chi che.
+    // Noi len 3,4 (4 bac) + ha SLIDE: dong dung duoc chop cao ngay duoi cho nha, van co suon doc
+    // chu khong phai cot thang dung (cot thang dung la loi buoc 2 da sua).
+    if(hmap[b0] - lo < CRATE*2.8) continue;
     c.vx += (hl < hr ? -1 : 1) * SLIDE * dt;
   }
 
@@ -1053,7 +1097,7 @@ function step(dt){
 function startTutorial(){
   hideScreens(); DL = DANGER0; buildShelves(0); clearWorld(); setHammer('sledge');
   S.mode = 'tut'; S.tut = 0; S.st = stats(); S.stam = 99; S.swinging = false; S.t = 0;
-  S.spawnT = [99]; S.combo = 0; S.comboT = 0; S.overflow = 0; S.tutN = 0; S.over = 0;
+  S.spawnT = [99]; S.burst=[0]; S.bn=[0]; S.bk=[0]; S.bv=[0]; S.combo = 0; S.comboT = 0; S.overflow = 0; S.tutN = 0; S.over = 0;
   for(var i=0;i<6;i++) for(var r=0;r<2;r++) makeCrate('wood', -3.2 + i*CRATE*1.04, CRATE*.5 + r*CRATE);
   placeHand(-5.4, CRATE*2.4 + ROD);
   tip('DRAG FAST through the pile');
@@ -1068,7 +1112,7 @@ function tutStep(dt){
     if(left <= 2){
       elPtr.style.display = 'none';
       if(S.swinging) swingEnd();
-      S.tut = 1; S.stam = 3; S.spawnT = [0.3]; S.windAt = 99; S.best = 0; S.tutN = 0; S.t = 0;
+      S.tut = 1; S.stam = 3; S.spawnT = [0.3]; S.burst=[0]; S.bn=[0]; S.bk=[0]; S.bv=[0]; S.windAt = 99; S.best = 0; S.tutN = 0; S.t = 0;
       for(var i=0;i<crates.length;i++) crates[i].dead = true;
       tip('Chutes feed the pile now. Keep it UNDER THE RED LINE.', true);
       hud();
@@ -1710,7 +1754,9 @@ window.__game = {
     shifts:G.shifts, won:G.won, playMin:G.playMs/60000, crates:crates.length, swinging:S.swinging,
     pile:Math.round(pileTop()*10)/10 + '/' + Math.round(DL*10)/10, combo:S.combo, over:S.overflow > 0,
     screen:['scrEnd','scrShop','scrWin'].filter(function(s){ return $(s).classList.contains('on'); })[0]||''}; },
-  botShop:botShop, buyUp:buyUp, openShop:openShop
+  botShop:botShop, buyUp:buyUp, openShop:openShop,
+  feed:function(){ return FEED; }, swings:function(){ return SWINGS; },
+  crateXs:function(){ return crates.filter(function(c){ return !c.dead; }).map(function(c){ return [Math.round(c.x*100)/100, Math.round(c.y*100)/100, Math.round((c.vx||0)*100)/100]; }); }
 };
 
 // ================= boot =================
