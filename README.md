@@ -1,5 +1,5 @@
 # smash-shift
 
-SMASH SHIFT - swing a sledgehammer through a pile of crates before it tops the red line. Workshop upgrades, 4 warehouses.
+SMASH SHIFT - drag to swing the mallet, keep the pile under the red line
 
 Play: https://maivu-prog.github.io/smash-shift/

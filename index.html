@@ -1157,9 +1157,16 @@ function tutStep(dt){
       if(pileTop() > DL - CRATE) tip('Too high! SMASH IT DOWN');
       else tip('A miss costs you one — ' + S.tutN + '/12 crates', true);
     }
-    if((S.tutN >= 12 || S.stam <= 0 || S.t > 26) && !S.swinging){
+    // `!S.swinging` o day tung la DIEU KIEN CUA, giong cho het ca truoc khi sua 07/11. Hau qua
+    // y het: quet qua lai lien tuc thi bua LUC NAO CUNG dang vung => Van Tap KHONG BAO GIO xong.
+    // Do duoc 08/11 bang bot kieu 'mash': 24 phut game van dung o bai 2, 0 ca, khong ra noi xuong.
+    // Cho het ca da duoc gia han 2 giay hom 07/11, cho nay la cho duy nhat con sot.
+    if(S.tutN >= 12 || S.stam <= 0 || S.t > 26){
       S.endT += dt;
-      if(S.endT > 1.2){ S.endT = 0; S.tut = 2; S.mode = 'idle'; G.bank = Math.max(G.bank, 30); save(); openShop(); }
+      if(S.endT > 1.2 && (!S.swinging || S.endT > 2.2)){
+        if(S.swinging) swingEnd();       // cu vung dang do van duoc tinh tien, khong cat trang
+        S.endT = 0; S.tut = 2; S.mode = 'idle'; G.bank = Math.max(G.bank, 30); save(); openShop();
+      }
     } else S.endT = 0;
   }
 }
