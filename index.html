@@ -1721,7 +1721,12 @@ function loop(now){
 var LOG = []; window.__log = LOG;
 function ev(type, x){ var o = {t:G.playMs/1000, type:type}; if(x) for(var k in x) o[k] = x[k]; LOG.push(o); if(LOG.length > 6000) LOG.shift(); }
 var B = {phase:'wait', t:0, path:null, k:0};
-var BOTCFG = {greedy:{wait:.35, err:.9}, normal:{wait:.65, err:.45}, optimal:{wait:.85, err:.15}}[BOT] || {wait:.65, err:.45};
+// 'flow' (08/11) = NGAM MA KHONG CHO: nham dong day nhat nhu optimal (err .15) nhung quet lien
+// tuc, khong co pha ngoi doi dong cao len. Dung de tra loi cau `[smash-mash]`: 3 kieu cu
+// (greedy/normal/optimal) deu CO PHA CHO, nen cai thua bam bua co the la cai CHO, khong phai
+// cai ngam. Chi chay khi co ?bot=flow, khong doi gi cua nguoi choi that.
+var BOTCFG = {greedy:{wait:.35, err:.9}, normal:{wait:.65, err:.45}, optimal:{wait:.85, err:.15},
+              flow:{wait:.85, err:.15, nowait:1}}[BOT] || {wait:.65, err:.45};
 function botPark(){ return [-ARENA + 2.2, DL + 1.0]; }
 // Dong thung tren san, TACH THANH TUNG DONG (khe rong hon 2.2 don vi la dong khac).
 // Can tach vi tu kho 2 co 2-3 mang nha => 2-3 dong o cho khac nhau: quet ngang ca san o do
@@ -1768,9 +1773,9 @@ function botStep(dt){
     var pk = botPark(); aim(pk[0], pk[1]);
     // doi cho dong cao len roi moi quet: cao hon = me to hon = combo dai hon, nhung sat vach do.
     // BOTCFG.wait = chiu doi bao nhieu (greedy .35 quet som, optimal .85 doi gan tran).
-    var p0 = pileScan(), wantN = Math.round(5 + 9*BOTCFG.wait);
+    var p0 = pileScan(), wantN = BOTCFG.nowait ? 1 : Math.round(5 + 9*BOTCFG.wait);
     var ready = p0.n >= wantN || p0.top_all > DL - CRATE*1.6;
-    if((ready && B.t > 0.7 && Math.hypot(mvx, mvy) < 4) || B.t > 7){
+    if((ready && (BOTCFG.nowait || (B.t > 0.7 && Math.hypot(mvx, mvy) < 4))) || B.t > 7){
       B.path = botPath(); B.k = 0; if(B.path) B.phase = 'sweep'; else B.t = 0;
     }
   } else {
