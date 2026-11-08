@@ -1,5 +1,5 @@
 # smash-shift
 
-SMASH SHIFT - drag to swing the mallet, keep the pile under the red line
+Smash Shift - sledge the crate pile: seven crate kinds, kegs that blow up, frost boxes that freeze the pile, 4 warehouses
 
 Play: https://maivu-prog.github.io/smash-shift/
