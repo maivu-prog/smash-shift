@@ -221,7 +221,7 @@ var HAMMERS = {
   sledge:{name:'Sledge', price:0,    r:1.0,  need:1.0,  val:1,   step:1,   col:0x37435c, ds:'All-rounder.'},
   broad: {name:'Broad',  price:150,  r:1.45, need:1.12, val:1,   step:1,   col:0x2f7d5b, ds:'Huge head. Needs a faster swing.'},
   shock: {name:'Shock',  price:600,  r:1.0,  need:1.0,  val:1,   step:1,   col:0x2d6fd6, shock:1.7, ds:'Each smash zaps the crate next to it.'},
-  maul:  {name:'Maul',   price:1500, r:0.9,  need:1.0,  val:1.6, step:0.6, col:0x7a2e1e, iron:1, ds:'Iron in one hit. +60% cash, smaller combo bonus.'}
+  maul:  {name:'Maul',   price:1500, r:0.9,  need:1.0,  val:1.6, step:0.6, col:0x7a2e1e, iron:1, ds:'Takes two layers off stone, coal and diamond. +60% cash, smaller combo bonus.'}
 };
 var HAM_ORDER = ['sledge','broad','shock','maul'];
 
@@ -490,9 +490,18 @@ var FLOOR_W0 = ARENA*2+3, LINE_W0 = ARENA*2+1.2;
 var shelfGroup = new THREE.Group(); scene.add(shelfGroup);
 var SHELVES = [], chevrons = [];
 var beltMat = M(0x3a3f4a), chevMat = M(0xffd84d), stopMat = M(0xe0452c), legMat = M(0x6b4a2c);
+var lipMat = M(0xff8c3a);   // mep nha thung - dung CHUNG, truoc day moi lan dung mang lai M() mot cai moi
 function buildShelves(k){
   setTimeout(fit, 0);
-  while(shelfGroup.children.length) shelfGroup.remove(shelfGroup.children[0]);
+  // RO BO NHO (bat duoc 08/11 bang test/leakprobe.mjs): ham nay dung mang MOI moi lan goi
+  // (dau ca, va moi lan doi khung may), nhung chi `remove` con cu khoi group - khong tra lai
+  // geometry cho WebGL. Choi 40 phut lien thi geometry 54 -> 727 va cu len mai. Geometry o day
+  // deu la do rieng cua lan goi nay nen dispose het duoc; material thi DUNG CHUNG, khong dispose.
+  while(shelfGroup.children.length){
+    var old = shelfGroup.children[0];
+    shelfGroup.remove(old);
+    if(old.geometry) old.geometry.dispose();
+  }
   var fr = LAY.frac ? ARENA : 1;
   SHELVES = LAYOUTS[k].map(function(s, i){ return {i:i, y:DL + LAY.lv[s.l||0], x0:s.x0*fr, x1:s.x1*fr}; });
   dangerLine.position.y = DL; dangerLine.scale.set(1, 1, 1);
@@ -517,7 +526,7 @@ function buildShelves(k){
     // tren khung - thung roi tu sau dam xuong bang chuyen, van doc ra "do tu tren xuong".
     var beam = new THREE.Mesh(new THREE.BoxGeometry(len + 0.6, 0.42, 1.5), legMat);
     beam.position.set((s.x0+s.x1)/2, s.y + 1.22, -0.5); beam.castShadow = true; shelfGroup.add(beam);
-    var lip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.44, 2.6), M(0xff8c3a));   // mep nha thung
+    var lip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.44, 2.6), lipMat);   // mep nha thung
     lip.position.set(s.x1+0.1, s.y+0.05, 0); shelfGroup.add(lip);
   });
   sizePillars();
@@ -549,6 +558,9 @@ var gemGeo = new THREE.OctahedronGeometry(0.30), chipGeo = new THREE.OctahedronG
 var spikeGeo = new THREE.ConeGeometry(0.17, 0.5, 5), lumpGeo = new THREE.DodecahedronGeometry(0.17);
 var gemMat = new THREE.MeshBasicMaterial({color:0xf0e6ff}), iceMat = new THREE.MeshBasicMaterial({color:0xdff3ff});
 var emberMat = new THREE.MeshBasicMaterial({color:0xff8a3c});
+// Chip tren nap thung VANG: dung CHUNG mot material. Truoc day moi thung vang goi M(0xffffff)
+// => mot material moi cho tung thung, khong bao gio dispose (ca van ra hang tram thung vang).
+var chipWhiteMat = M(0xffffff);
 // VET NUT: thanh mong trang dap len mat truoc thung, moi cu dap an vao thi them 2 vet
 var crackGeo = new THREE.BoxGeometry(CRATE*0.80, 0.085, 0.085);
 var crackMat = new THREE.MeshBasicMaterial({color:0xfff3df});
@@ -567,7 +579,7 @@ function makeCrate(type, x, y){
   var body = new THREE.Mesh(crateGeo, T.mat); body.castShadow = true; g.add(body);
   var lid = new THREE.Mesh(plankGeo, T.matTop); lid.position.y = CRATE*0.42; g.add(lid);
   if(T.boom){ var f = new THREE.Mesh(fuseGeo, fuseMat); f.position.y = CRATE*0.62; g.add(f); }
-  if(T.gold){ var st = new THREE.Mesh(chipGeo, M(0xffffff)); st.position.set(0,0,CRATE*0.52); g.add(st); }
+  if(T.gold){ var st = new THREE.Mesh(chipGeo, chipWhiteMat); st.position.set(0,0,CRATE*0.52); g.add(st); }
   if(T.freeze){ var ic = new THREE.Mesh(spikeGeo, iceMat); ic.position.y = CRATE*0.66; g.add(ic);
     var ic2 = new THREE.Mesh(chipGeo, iceMat); ic2.position.set(CRATE*0.22, CRATE*0.50, CRATE*0.30); ic2.scale.setScalar(.7); g.add(ic2); }
   if(T.gem){ var gm = new THREE.Mesh(gemGeo, gemMat); gm.position.y = CRATE*0.66; g.add(gm);
@@ -599,6 +611,13 @@ function freezeCrate(c, t){
   if(!c.frz) burst(c.x, c.y, 0xdff3ff, 5, 5);
   c.frz = Math.max(c.frz || 0, t); c.vx = 0; c.vy = 0; c.spin = 0;
 }
+// Ao manh vo (`DEB`) tai dung lai manh de khong phai tao mesh moi moi cu dap. Nhung no
+// khong co tran: mot chuoi keg no lon ban ra rat nhieu manh, ao phinh theo cu to nhat tung
+// thay va KHONG BAO GIO nho lai => so con trong scene cu nhich len suot buoi choi dai.
+// Tran 640: qua tran thi bo luon mesh ra khoi scene (geometry/material dung chung, khong co
+// gi phai dispose), con thieu thi `burst()` tu tao lai.
+var DEB_CAP = 640;
+function recycle(d){ d.mesh.visible = false; if(DEB.length < DEB_CAP) DEB.push(d); else scene.remove(d.mesh); }
 var DMAT = {};
 function dmat(c){ return DMAT[c] || (DMAT[c] = M(c)); }
 function burst(x, y, color, n, power){
@@ -661,11 +680,15 @@ var S = {mode:'idle', st:stats(), stam:0, winds:0, windAt:9, earned:0, best:0, t
 var pvx = -6, pvy = 9, pvvx = 0, pvvy = 0, th = 0, thv = 0, mx = -6, my = 5, mvx = 0, mvy = 0, px = -6, py = 9;
 var ham = HAMMERS.sledge;
 
+// Chu bay (tien +$, ten loai thung) song ngoai canvas nen man END/WIN de len tren khong che
+// duoc no: chup anh 08/11 toi thay "STONE · 2 HITS" nam de len dong "Promoted to Warehouse 3".
+// Het ca thi don sach, vi may chu do la cua CA VUA XONG.
+function clearPops(){ while(pops.length) pops.pop().el.remove(); }
 function clearWorld(){
   for(var i=0;i<crates.length;i++) scene.remove(crates[i].mesh);
   crates.length = 0;
-  while(debris.length){ var d = debris.pop(); d.mesh.visible = false; DEB.push(d); }
-  while(pops.length) pops.pop().el.remove();
+  while(debris.length) recycle(debris.pop());
+  clearPops();
 }
 function placeHand(x, y){ px = pvx = x; py = pvy = y; pvvx = pvvy = 0; th = thv = 0; mx = x; my = y-ROD; mvx = mvy = 0; }
 function setHammer(k){ ham = HAMMERS[k]; G.ham = k; headMat.color.setHex(ham.col); [head, band, capM].forEach(function(m){ m.scale.setScalar(ham.r); }); capM.position.y = .65*ham.r; }
@@ -898,9 +921,9 @@ function endShift(){
     if(G.kho >= 4){ G.won = 1; save(); return showWin(); }
     kick = 'QUOTA MET!'; title = 'Promoted to Warehouse ' + (G.kho+1);
     note = '<div class="note good">New layout: <b>' + KHO_NAMES[G.kho] + '</b>. ' + KHO_TEACH[G.kho] +
-      (G.kho === 1 ? ' Red barrels explode and count toward your swing.' : '') +
-      (G.kho === 2 ? ' Iron crates need two hits (or the Maul). Gold crates pay ×5.' : '') +
-      (G.kho === 3 ? ' Ice crates slide in fast and pack the row tight.' : '') + '</div>';
+      (G.kho === 1 ? ' Coal crates need two hits, red kegs blow up, and gold crates pay ×5.' : '') +
+      (G.kho === 2 ? ' Blue frost crates freeze everything near them — a frozen crate stops dead and cracks in one hit.' : '') +
+      (G.kho === 3 ? ' Purple diamond crates take three hits and pay the most in the yard.' : '') + '</div>';
     chime(10);
   } else if(k < 4 && G.shiftN >= CFG.shiftsPerKho){
     var cut = Math.floor(G.bank*CFG.dockPct); G.bank -= cut; G.shiftN = 0;
@@ -922,6 +945,7 @@ function endShift(){
     if(Math.abs(crates[ci].vy) > 2){ nAir++; continue; }
     nRest++; if(crates[ci].y > DL) nHigh++;
   }
+  clearPops();
   show('scrEnd'); ev('shiftEnd', {earned:S.earned, best:S.best, kho:G.kho, why:kick === 'PILE OVERFLOW' ? 'pile' : (kick === 'SHIFT DONE' ? 'time' : 'swings'), secs:Math.round(S.t),
     nRest:nRest, nHigh:nHigh, nAir:nAir});
 }
@@ -1223,7 +1247,7 @@ function step(dt){
   for(i=debris.length-1;i>=0;i--){ var d = debris[i];
     d.vy -= 30*dt; d.x += d.vx*dt; d.y += d.vy*dt; d.z += d.vz*dt;
     if(d.y < .15){ d.y = .15; d.vy *= -.42; d.vx *= .7; d.vz *= .7; }
-    d.life -= dt; if(d.life <= 0){ d.mesh.visible = false; DEB.push(d); debris.splice(i, 1); continue; }
+    d.life -= dt; if(d.life <= 0){ recycle(d); debris.splice(i, 1); continue; }
     d.mesh.position.set(d.x, d.y, d.z); d.mesh.rotation.x += d.rx*dt; d.mesh.rotation.y += d.ry*dt;
     d.mesh.scale.setScalar(.3 + Math.min(1, d.life/d.max*2)*.75);
   }
@@ -1373,6 +1397,7 @@ function buyUp(k){
 function showWin(){
   $('wBest').textContent = G.best + ' crates'; $('wShifts').textContent = G.shifts;
   $('wCrates').textContent = G.crates.toLocaleString('en-US'); $('wTime').textContent = (G.playMs/60000).toFixed(1) + ' min';
+  clearPops();
   show('scrWin'); ev('win', {min:G.playMs/60000});
 }
 $('eGo').onclick = function(){ openShop(); };
@@ -1809,7 +1834,10 @@ function draw(){
   for(var p=pops.length-1;p>=0;p--){ var o = pops[p];
     o.life -= drawDt; o.y += o.vy*drawDt; o.vy -= 2.4*drawDt;
     if(o.life <= 0){ o.el.remove(); pops.splice(p, 1); continue; }
-    var sc = worldToScreen(o.x, o.y); o.el.style.left = sc.x+'px'; o.el.style.top = sc.y+'px';
+    // Giu chu bay DUOI dai HUD: nhan ten loai (chu to) tung bay len de len o MISSES LEFT.
+    // 96px la chieu cao dai HUD tren cung cong mot chut thua.
+    var sc = worldToScreen(o.x, o.y);
+    o.el.style.left = sc.x+'px'; o.el.style.top = Math.max(96, sc.y)+'px';
     o.el.style.transform = 'translate(-50%,-50%) scale(' + (.7 + Math.min(1, o.life/o.max)*.5) + ')';
     o.el.style.opacity = Math.min(1, o.life/o.max*1.8); }
   // Cua do 'fillprobe' (07/11): tat moi thu DONG (thung, bua, manh vo) de chup mot tam
@@ -1992,7 +2020,15 @@ window.__game = {
   feed:function(){ return FEED; }, swings:function(){ return SWINGS; },
   hideAct:function(on){ HIDE_ACT = !!on; },
   noShake:function(on){ NO_SHAKE = !!on; },
-  crateXs:function(){ return crates.filter(function(c){ return !c.dead; }).map(function(c){ return [Math.round(c.x*100)/100, Math.round(c.y*100)/100, Math.round((c.vx||0)*100)/100]; }); }
+  crateXs:function(){ return crates.filter(function(c){ return !c.dead; }).map(function(c){ return [Math.round(c.x*100)/100, Math.round(c.y*100)/100, Math.round((c.vx||0)*100)/100]; }); },
+  // Cho `test/leakprobe.mjs` dem duoc do WebGL va do dai cac mang sau mot buoi choi dai:
+  // choi lau thi so nay phai DUNG, khong duoc tang mai.
+  mem:function(){ var n = 0; scene.traverse(function(){ n++; });
+    return {geom:renderer.info.memory.geometries, tex:renderer.info.memory.textures,
+      prog:renderer.info.programs ? renderer.info.programs.length : -1,
+      tri:renderer.info.render.triangles, calls:renderer.info.render.calls, nodes:n,
+      crates:crates.length, sparks:sparks.length, pops:pops.length, deb:DEB.length,
+      dmat:Object.keys(DMAT).length}; }
 };
 
 // ================= boot =================
