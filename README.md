@@ -1,5 +1,5 @@
 # smash-shift
 
-Smash Shift - swing a sledgehammer across the warehouse floor and clear crates before the pile hits the red line
+Smash Shift: smash ore in the mine pit
 
 Play: https://maivu-prog.github.io/smash-shift/
