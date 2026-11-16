@@ -40,26 +40,28 @@
     padding:calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) 0 calc(10px + env(safe-area-inset-left))}
   html.rot #hud{padding:8px 10px 0 calc(10px + env(safe-area-inset-top))}
   .plate{border-radius:14px;padding:6px 14px;display:flex;align-items:center;gap:9px}
+  /* 16/11 khung A: HUD trong ca = 1 dai mong (icon + so, bo nhan chu) de khong che mang tha quang */
+  #hud .plate{padding:2px 12px;min-height:36px;border-radius:18px}
+  #hud #quota .row,#hud #cTl{display:none}
   .lbl,.t{font-size:12px;letter-spacing:.13em;color:var(--brass);font-weight:800;line-height:1.1;white-space:nowrap}
   #money,#money2{line-height:1}
-  #money small,#money2 small{display:block;font-size:12px;letter-spacing:.13em;color:var(--brass);font-weight:800}
-  #ruby{font-size:28px;font-weight:800;color:#ff8a98;text-shadow:0 2px 0 #5a0d18}
+  #ruby{font-size:20px;font-weight:800;color:#ff8a98;text-shadow:0 2px 0 #5a0d18}
   .rb{color:#ff8a98}
-  #cash{font-size:28px;font-weight:800;color:var(--gold);text-shadow:0 2px 0 #5a3208}
+  #cash{font-size:20px;font-weight:800;color:var(--gold);text-shadow:0 2px 0 #5a3208}
   #quota{flex:1 1 auto;min-width:0;flex-direction:column;align-items:stretch;justify-content:center;gap:2px}
   #quota .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
   #quota .v{font-size:20px;font-weight:800;color:var(--ink);white-space:nowrap}
   /* ray xe goong: hai thanh ray + ta ve, xe quang chay theo tien do */
-  #qbar{position:relative;height:16px;margin:2px 12px 0;border-radius:3px;
+  #qbar{position:relative;height:16px;margin:0 12px;border-radius:3px;
     background:repeating-linear-gradient(90deg,#4d3626 0 4px,transparent 4px 13px),#140e0a;
     box-shadow:inset 0 2px 0 #8d949c,inset 0 -2px 0 #8d949c}
   #qbar b{position:absolute;left:0;top:3px;bottom:3px;width:0;border-radius:2px;
     background:linear-gradient(90deg,#b56a2a,#ffd257);box-shadow:0 0 8px rgba(255,200,80,.45);transition:width .3s}
   #qCart{position:absolute;left:0;bottom:1px;width:30px;height:22px;transform:translateX(-50%);transition:left .3s}
   #qCart svg{width:100%;height:100%;display:block}
-  #clock .v{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1}
-  #clock .cw{display:flex;flex-direction:column;gap:2px;min-width:70px}
-  #cbar{height:7px;border-radius:4px;background:#140e0a;overflow:hidden;box-shadow:0 0 0 1px #4a3524}
+  #clock .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1}
+  #clock .cw{display:flex;flex-direction:column;gap:2px;min-width:44px}
+  #cbar{height:4px;border-radius:4px;background:#140e0a;overflow:hidden;box-shadow:0 0 0 1px #4a3524}
   #cbar b{display:block;height:100%;width:100%;background:linear-gradient(90deg,#f0951f,#ffd257)}
   #cbar.low b{background:linear-gradient(90deg,#e0452c,#ff8c5a)}
   #swing{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%) scale(.6);text-align:center;opacity:0;
@@ -67,12 +69,13 @@
   #swing.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
   #swing .n{font-size:84px;font-weight:800;color:#fff4dc;line-height:.9;text-shadow:0 5px 0 #8a4a12,0 0 22px rgba(255,170,60,.55),0 10px 18px rgba(0,0,0,.6)}
   #swing .s{font-size:22px;font-weight:800;color:var(--gold);letter-spacing:.1em;text-shadow:0 3px 0 #5a2208}
-  #tip{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);
-    max-width:calc(100% - 28px);width:max-content;text-align:center;font-size:20px;font-weight:800;color:#3b1d06;
-    background:linear-gradient(180deg,#ffd257,#f0951f);padding:8px 20px;border-radius:14px;
+  #tip{position:absolute;left:50%;top:calc(54px + env(safe-area-inset-top));transform:translateX(-50%);
+    max-width:calc(100% - 28px);width:max-content;text-align:center;font-size:16px;font-weight:800;color:#3b1d06;
+    background:linear-gradient(180deg,#ffd257,#f0951f);padding:6px 14px;border-radius:14px;
     border:2px solid #ffe7a0;box-shadow:0 4px 0 var(--deep),0 8px 18px rgba(0,0,0,.5);transition:opacity .25s}
   #tip.soft{background:linear-gradient(180deg,var(--wood1),var(--wood2));color:var(--ink);border-color:var(--brassD);box-shadow:0 4px 0 #0e0906,0 8px 18px rgba(0,0,0,.5)}
   #tip.hide{opacity:0}
+  html.yard #tip{top:auto;bottom:calc(14px + env(safe-area-inset-bottom))}
   #pointer{position:absolute;font-size:56px;color:#ffe7a0;text-shadow:0 3px 8px rgba(0,0,0,.7);
     transform:translate(-50%,-50%);display:none}
   #flash{position:absolute;inset:0;pointer-events:none;opacity:0;
@@ -89,24 +92,21 @@
   #helperUi{position:absolute;transform:translate(-50%,-100%);pointer-events:none}
   #helperUi i{display:block;width:26px;height:26px;border-radius:50%;background:conic-gradient(#ffc53a var(--p,0%),rgba(20,14,10,.7) 0);
     box-shadow:0 0 0 2px #2f6fd0,0 2px 6px rgba(0,0,0,.4)}
-  #adBoss{position:absolute;right:calc(14px + env(safe-area-inset-right, 0px));top:calc(92px + env(safe-area-inset-top, 0px));pointer-events:auto;min-height:38px;font-size:15px;padding:0 12px}
+  /* 16/11 khung A: nut QC trong ca o goc phai duoi (ngon cai phai) */
+  #adBoss{position:absolute;right:calc(16px + env(safe-area-inset-right, 0px));bottom:calc(16px + env(safe-area-inset-bottom, 0px));pointer-events:auto;min-height:52px;font-size:17px;padding:0 16px;border-radius:16px}
   .buy.ad{background:linear-gradient(#5fbf5f,#2f8a3a);border-color:#c9f5b0;color:#fff;text-shadow:0 1px 0 #0d3a12}
   .adrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px} .adrow .buy{flex:1 1 200px}
-  .yside{position:absolute;left:18px;border:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
-  .yside small{display:block;font-size:11px;letter-spacing:.14em;color:#d9b47a;font-weight:700} .yside b{font-size:17px;line-height:1.1;white-space:nowrap}
   .yside.ready{box-shadow:0 0 0 3px #5fbf5f,0 0 16px rgba(95,191,95,.6)}
-  #yDaily{top:calc(58px + env(safe-area-inset-top, 0px))} #yChest{top:calc(116px + env(safe-area-inset-top, 0px))}
-  html.short #yDaily{top:calc(44px + env(safe-area-inset-top, 0px))} html.short #yChest{top:calc(92px + env(safe-area-inset-top, 0px))}
   .dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:6px 0 10px}
   .dgrid div{border-radius:10px;background:rgba(255,255,255,.06);border:2px solid #4a3828;padding:6px 2px;text-align:center;font-size:12px;font-weight:800}
   .dgrid div b{display:block;font-size:15px} .dgrid .on{border-color:#5fbf5f;background:rgba(95,191,95,.18)} .dgrid .got{opacity:.45}
-  #bossBar{position:absolute;left:50%;top:calc(96px + env(safe-area-inset-top, 0px));transform:translateX(-50%);width:min(460px,64vw);display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none}
-  #bossBar .bn{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800;letter-spacing:.18em;color:#fff;text-shadow:0 2px 0 #3a0a14,0 0 12px rgba(224,48,60,.7)}
-  #bossBar .ic{width:22px;height:22px}
-  #bossBar i{display:block;width:100%;height:18px;border-radius:9px;background:#1a0a10;box-shadow:0 0 0 2px #ffd257,0 0 0 5px #3a1410,0 6px 18px rgba(200,40,60,.55);overflow:hidden}
+  #bossBar{position:absolute;left:50%;top:calc(50px + env(safe-area-inset-top, 0px));transform:translateX(-50%);width:min(360px,46vw);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none}
+  #bossBar .bn{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;letter-spacing:.18em;color:#fff;text-shadow:0 2px 0 #3a0a14,0 0 12px rgba(224,48,60,.7)}
+  #bossBar .ic{width:20px;height:20px}
+  #bossBar i{display:block;width:100%;height:12px;border-radius:6px;background:#1a0a10;box-shadow:0 0 0 2px #ffd257,0 0 0 5px #3a1410,0 6px 18px rgba(200,40,60,.55);overflow:hidden}
   #bossBar i b{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7a1fd0,#e0303c 70%,#ff7a3c);transition:width .12s}
   #bossBar.hit{animation:bdShake .18s linear}
-  html.short #bossBar{top:calc(66px + env(safe-area-inset-top, 0px))} html.short #bossBar .bn{font-size:14px} html.short #bossBar i{height:13px}
+  #ui:has(#bossBar:not([hidden])) #tip{top:calc(104px + env(safe-area-inset-top, 0px))}
   #bdBar.hit{animation:bdShake .18s linear} @keyframes bdShake{0%,100%{margin-left:0}25%{margin-left:-6px}75%{margin-left:6px}}
   #bdBar b{display:block;height:100%;width:100%;background:linear-gradient(90deg,#e0452c,#ff8c5a);transition:width .12s}
   /* ---- screens ---- */
@@ -117,27 +117,31 @@
   .screen.yard{background:none;padding:0;display:none}
   .screen.yard.on{display:block}
   html.yard #hud{display:none}
-  .ytitle{position:absolute;left:18px;top:calc(12px + env(safe-area-inset-top, 0px));font-size:32px;font-weight:800;color:var(--gold);letter-spacing:.04em;
-    text-shadow:0 3px 0 #2a1a10,0 0 14px rgba(0,0,0,.7);line-height:1}
-  .ytitle small{display:block;font-size:13px;color:#f0d8a8;letter-spacing:.14em;margin-top:4px}
-  .yrub{position:absolute;right:18px;top:calc(12px + env(safe-area-inset-top, 0px))}
-  .yrub small{display:block;font-size:11px;letter-spacing:.14em;color:#d9b47a;font-weight:700}
-  .yrub b{font-size:26px;line-height:1}
-  .ytk{position:absolute;right:18px;top:calc(84px + env(safe-area-inset-top, 0px));border:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
-  .ytk small{display:block;font-size:11px;letter-spacing:.14em;color:#d9b47a;font-weight:700} .ytk b{font-size:26px;line-height:1}
-  .ytk i{display:block;font-style:normal;font-size:11px;font-weight:800;color:#ffd257;white-space:nowrap}
-  .ytk.out{box-shadow:0 0 0 3px #e0452c} html.short .ytk{top:calc(62px + env(safe-area-inset-top, 0px))} html.short .ytk b{font-size:20px}
+  /* 16/11 khung A (Mai chon): vien/ve = 2 vien goc tren phai; DAILY/CHEST/bua = 3 o icon cot trai; DIG = nut tron goc phai duoi; keo ban do bang ngon */
+  .ytop{position:absolute;right:calc(14px + env(safe-area-inset-right, 0px));top:calc(8px + env(safe-area-inset-top, 0px));display:flex;gap:8px}
+  #scrYard .ytop .plate{border-radius:22px;padding:4px 14px 4px 8px;min-height:44px}
+  #scrYard .ytop .ic{width:26px;height:26px}
+  .ytop b{font-size:22px;line-height:1}
+  .ytk{border:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+  .ytk div{display:flex;align-items:baseline;gap:8px}
+  .ytk i{font-style:normal;font-size:13px;font-weight:800;color:#ffd257;white-space:nowrap}
+  .ytk.out{box-shadow:0 0 0 3px #e0452c}
+  .yleft{position:absolute;left:calc(14px + env(safe-area-inset-left, 0px));top:calc(60px + env(safe-area-inset-top, 0px));display:flex;flex-direction:column;gap:10px}
+  .ysq{width:62px;height:62px;border-radius:18px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    border:0;font:inherit;color:var(--ink);cursor:pointer}
+  #scrYard .ysq .ic{width:30px;height:30px}
+  .ysq b{font-size:13px;font-weight:800;letter-spacing:.02em;color:#f0d8a8;white-space:nowrap;line-height:1.1}
   .tkbig{font-size:46px;font-weight:800;line-height:1;margin:4px 0}
-  .btn.ydig{position:absolute;right:18px;bottom:calc(14px + env(safe-area-inset-bottom, 0px));width:min(300px,40%);flex:none;min-height:66px;font-size:30px;
-    display:flex;align-items:center;justify-content:center;gap:12px}
-  .btn.ydig small{font-size:14px;font-weight:700;opacity:.8;max-width:9em;line-height:1.1;text-align:left}
-  /* 13/11: dai tren = 3 mo; dai duoi = catalog bua + DIG; mui ten keo ban do hai ben */
-  .ymine1{position:absolute;top:calc(10px + env(safe-area-inset-top, 0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:46%;
-    border:3px solid #ffb030;border-radius:12px;padding:4px 12px 4px 4px;cursor:pointer;color:#3a2412;background:#f2e2c0;font:inherit;text-align:left;
+  .btn.ydig{position:absolute;right:calc(16px + env(safe-area-inset-right, 0px));bottom:calc(14px + env(safe-area-inset-bottom, 0px));width:118px;height:118px;min-height:0;border-radius:50%;
+    flex:none;padding:0;font-size:32px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+  .btn.ydig small{font-size:13px;font-weight:700;opacity:.85;white-space:nowrap}
+  #scrYard:has(#yPanel:not([hidden])) .ydig{right:calc(min(430px,52%) + 14px)}   /* bang mo: DIG dung sat mep trai bang, van bam duoc */
+  .ymine1{position:absolute;top:calc(8px + env(safe-area-inset-top, 0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:36%;
+    border:3px solid #ffb030;border-radius:12px;padding:3px 10px 3px 3px;cursor:pointer;color:#3a2412;background:#f2e2c0;font:inherit;text-align:left;
     box-shadow:0 0 0 2px #ffd257,0 3px 0 #140d08,0 6px 18px rgba(255,180,40,.35)}
-  .ymine1 .mt{width:40px;height:40px;flex:none;border-radius:8px;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--a),var(--b))}
+  .ymine1 .mt{width:34px;height:34px;flex:none;border-radius:8px;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--a),var(--b))}
   .ymine1 .mt::after{content:'';position:absolute;left:0;right:0;bottom:0;height:60%;background:var(--c);clip-path:polygon(0 100%,0 45%,35% 0,60% 40%,80% 15%,100% 50%,100% 100%)}
-  .ymine1 b{display:block;font-size:16px;font-weight:800;white-space:nowrap} .ymine1 small{display:block;font-size:12px;font-weight:700;color:#8a3a14;white-space:nowrap}
+  .ymine1 b{display:block;font-size:15px;font-weight:800;white-space:nowrap} .ymine1 small{display:block;font-size:12px;font-weight:700;color:#8a3a14;white-space:nowrap}
   .ymine1 em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.1em;color:#fff;background:#8a3a14;border-radius:7px;padding:4px 7px;margin-left:4px;white-space:nowrap}
   .ypanel.modal.wide{width:min(900px,94%)}
   .mcards{display:flex;gap:10px;flex-wrap:wrap}
@@ -153,31 +157,25 @@
   .och i{width:11px;height:11px;border-radius:3px;display:block;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
   html.short .mcard{padding:5px;gap:2px} html.short .mcard b{font-size:15px} html.short .mcard small{font-size:11px} html.short .och{font-size:10px;padding:1px 4px}
   html.short .mcard img{aspect-ratio:3/1}
-  .yarrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:72px;border-radius:12px;border:2px solid #a8772f;background:rgba(36,26,19,.82);
-    color:var(--gold);font-size:22px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.5)}
-  .yarrow.l{left:8px} .yarrow.r{right:8px}
-  .ycat{position:absolute;left:18px;right:calc(min(300px,40%) + 32px);bottom:calc(14px + env(safe-area-inset-bottom, 0px));min-height:66px;max-width:460px;
-    display:flex;align-items:center;gap:12px;padding:8px 16px;text-align:left;cursor:pointer;font:inherit;color:var(--ink);
-    border:3px solid #a8772f;border-radius:16px;background:linear-gradient(180deg,#7a2e20,#4a1a12);box-shadow:0 0 0 3px #140d08,0 8px 18px rgba(0,0,0,.55)}
-  .ycat .ic{width:34px;height:34px;color:#ffd257;flex:none}
-  .ycat b{display:block;font-size:20px;font-weight:800;color:#ffd257;letter-spacing:.04em}
-  .ycat small{display:block;font-size:13px;font-weight:700;color:#f0d8a8}
-  .ycat i{margin-left:auto;font-style:normal;font-size:12px;font-weight:800;background:#e0452c;color:#fff;border-radius:8px;padding:3px 7px}
-  html.short .ymine b{font-size:13px} html.short .ymine small{font-size:11px} html.short .ymine{padding:2px 6px 4px 40px} html.short .ymine .mt{width:30px}
-  html.short .ycat b{font-size:16px} html.short .ycat small{display:none} html.short .ycat{min-height:52px}
-  /* bang chi tiet xuong = dai tren dai duoi (khong che catalog/DIG); catalog = bang giua man */
-  .ypanel{position:absolute;left:18px;right:calc(min(300px,40%) + 32px);bottom:calc(92px + env(safe-area-inset-bottom, 0px));max-height:40%;overflow-y:auto;padding:12px 16px;
-    border:3px solid #a8772f;border-radius:18px;background:linear-gradient(180deg,#3d2d21,#241a13);box-shadow:0 0 0 3px #140d08,0 14px 30px rgba(0,0,0,.6);color:var(--ink)}
+  .ycat{position:relative;border:2px solid #a8772f;background:linear-gradient(180deg,#7a2e20,#4a1a12);box-shadow:0 0 0 3px #140d08,0 8px 18px rgba(0,0,0,.55)}
+  .ycat .ic{color:#ffd257}
+  .ycat i{position:absolute;right:-6px;top:-6px;font-style:normal;font-size:10px;font-weight:800;background:#e0452c;color:#fff;border-radius:8px;padding:2px 5px}
+  /* bang = tam truot tu mep phai, ban do van thay ben trai (khung tam, kieu panel moi cho Mai chon); bang chi tiet xuong = the goc phai duoi */
+  .ypanel{position:absolute;right:0;bottom:0;width:min(430px,52%);max-height:100%;overflow-y:auto;
+    padding:14px calc(16px + env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) 16px;
+    border:3px solid #a8772f;border-right:0;border-bottom:0;border-radius:22px 0 0 0;background:linear-gradient(180deg,#3d2d21,#241a13);box-shadow:0 0 0 3px #140d08,0 14px 30px rgba(0,0,0,.6);color:var(--ink)}
   .ypanel h2{font-size:24px;font-weight:800;color:var(--gold);margin:0 0 4px;padding-right:30px}
   .ypanel p{font-size:15px;font-weight:600;color:var(--dim);margin:4px 0 8px;line-height:1.3}
   .ypanel .lk{color:#ff9a7a}
   .ypanel .dm{font-size:12px;opacity:.8}
   .ypanel .lv{margin:4px 0 10px}
-  .ypanel .buy{width:100%;max-width:340px}
-  .ypanel.modal{left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);width:min(560px,92%);max-height:88%}
-  .ypanel.modal .buy{max-width:none}
-  html.short .ypanel h2{font-size:19px} html.short .ypanel p{font-size:13px;margin:2px 0 6px} html.short .ypanel{padding:8px 12px}
-  .ypanel .yx{position:absolute;right:10px;top:8px;width:34px;height:34px;border-radius:10px;border:2px solid #7a5428;background:#2a1d14;color:var(--ink);font:800 20px inherit;cursor:pointer}
+  .ypanel .buy{width:100%;min-height:44px;font-size:16px}
+  .ypanel.modal,.ypanel.modal.wide{top:0;width:min(430px,52%);max-height:none;border-bottom:3px solid #a8772f;border-radius:22px 0 0 22px}
+  .ypanel .mcards{flex-direction:column;gap:8px}
+  .ypanel .mcard{flex:none;flex-direction:row;align-items:center;gap:10px} .ypanel .mcard img{width:96px;aspect-ratio:3/2;flex:none} .ypanel .mcard .ores{display:none}
+  .ypanel .dgrid{grid-template-columns:repeat(4,1fr)}
+  html.short .ypanel h2{font-size:21px} html.short .ypanel p{font-size:13px;margin:2px 0 6px}
+  .ypanel .yx{position:absolute;right:calc(10px + env(safe-area-inset-right, 0px));top:8px;width:40px;height:40px;border-radius:10px;border:2px solid #7a5428;background:#2a1d14;color:var(--ink);font:800 20px inherit;cursor:pointer}
   .ycard{background:var(--slot);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0;font-size:14px;font-weight:600;color:var(--dim)}
   .ycard b{color:var(--ink);font-size:16px}
   .ycard.hot{border-color:var(--gold);box-shadow:0 0 12px rgba(255,200,80,.25)}
@@ -196,7 +194,8 @@
   .ph h1{font-size:32px;font-weight:800;line-height:1;color:var(--gold);text-shadow:0 2px 0 #5a3208}
   .ph p{font-size:16px;color:var(--dim);font-weight:600;margin-top:3px}
   .pb{padding:6px 22px 10px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1 1 auto}
-  .pf{padding:10px 22px calc(14px + env(safe-area-inset-bottom));display:flex;gap:10px;border-top:2px solid rgba(168,119,47,.35)}
+  .pf{padding:10px 22px calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:flex-end;gap:10px;border-top:2px solid rgba(168,119,47,.35)}
+  .pf .btn:not(.alt){flex:0 0 52%}   /* 16/11 khung A: nut chinh nua phai, duoi ngon cai phai */
   .btn{flex:1 1 auto;min-height:56px;border:2px solid #ffe7a0;border-radius:16px;font-family:inherit;font-size:23px;font-weight:800;
     letter-spacing:.05em;color:#3b1d06;background:linear-gradient(180deg,#ffd257,#f0951f);
     box-shadow:0 5px 0 var(--deep),0 9px 18px rgba(0,0,0,.4);cursor:pointer}
@@ -251,12 +250,11 @@
   html.short .plate{padding:3px 10px;gap:7px;border-radius:11px}
   html.short .ic{width:20px;height:20px}
   html.short .ic.sm{width:13px;height:13px}
-  html.short .lbl,html.short .t,html.short #money small,html.short #money2 small{font-size:10px}
-  html.short #cash,html.short #ruby{font-size:20px} html.short #clock .v{font-size:18px} html.short #quota .v{font-size:15px}
+  html.short .lbl,html.short .t{font-size:10px}
+  html.short #clock .v{font-size:18px}
  
   html.short #qbar{height:12px} html.short #qCart{width:22px;height:16px}
-  html.short #clock .cw{min-width:52px}
-  html.short #swing .n{font-size:58px} html.short #tip{font-size:16px;padding:6px 14px}
+  html.short #swing .n{font-size:58px}
   html.short .screen{padding:8px}
   html.short .ph{padding:10px 18px 4px} html.short .ph h1{font-size:25px} html.short .ph p{font-size:14px}
   html.short .ph .badge{width:42px;height:42px} html.short .ph .badge svg{width:28px;height:28px}
@@ -269,6 +267,108 @@
   html.short .sum b{font-size:22px} html.short .note{font-size:15px;padding:8px 12px}
   html.narrow #hud{flex-wrap:wrap} html.narrow #quota{order:9;flex:1 1 100%}
   html.narrow .grid{grid-template-columns:1fr 1fr}
+  /* ---- 16/11 P2c (Mai chon "P2c nhe em"): bang ban khung go + giay ghim + anh polaroid chup tu model 3D trong game ----
+     Moi bang: 1 so to, it chu, nut >= 44 px, nut chinh goc phai duoi (khung A). Vua 844x390 va 844x340 (Safari) khong cuon. */
+  .cork{position:relative;border:10px solid #4a2c16;border-radius:10px;color:#3a2412;
+    background:radial-gradient(rgba(90,50,20,.35) 1px,transparent 1.6px) 0 0/7px 7px,radial-gradient(rgba(255,235,190,.3) 1px,transparent 1.6px) 3px 4px/9px 9px,#c4925a;
+    box-shadow:inset 0 0 18px rgba(0,0,0,.45),0 0 0 2px #8a6a40,0 12px 30px rgba(0,0,0,.6)}
+  .pa{position:relative;background:#f4ead2;color:#3a2412;border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.35)}
+  .pin::after,.pboard .chips .chip2::after,.pmain .card.up::after,.pcol .ham::after,.ypanel h2::after{content:"";position:absolute;top:-6px;left:50%;margin-left:-7px;width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#ff9a8a,#c0281c 60%);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+  .pol{position:relative;flex:none;background:#fff;padding:7px 7px 0;box-shadow:0 5px 12px rgba(0,0,0,.45);transform:rotate(-3deg)}
+  .pol .pim,.crow .pim{position:relative;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 40%,#6b4a2c,#1a120c)}
+  .pol .pim .ic,.crow .pim .ic{width:56%;height:56%}
+  .pol .pim img,.crow .pim img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .pol .pim img:not([src]),.crow .pim img:not([src]){display:none}
+  .pol span{display:block;text-align:center;font-size:15px;font-weight:800;color:#3a2412;padding:3px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pttl{align-self:flex-start;padding:5px 16px 6px;transform:rotate(1deg)}
+  .pttl small{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;color:#a0461a;white-space:nowrap}
+  .pttl b{display:block;font-size:24px;font-weight:800;line-height:1.05}
+  /* man ket + lan: [bang ban | cot nut ben phai, nam tren nen san] */
+  .pwrap{display:flex;gap:14px;width:min(820px,100%);height:min(372px,100%)}
+  .pboard{flex:1 1 auto;min-width:0;display:flex;gap:16px;padding:12px}
+  .pmain{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:10px}
+  .pside{width:min(240px,30%);flex:none;display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
+  .pside .btn,.pside .btn.alt{flex:none;width:100%;min-height:56px;font-size:20px;padding:0 8px}
+  .pside .btn.alt{font-size:17px;min-height:50px}
+  .pside .buy{width:100%;min-height:48px;font-size:16px}
+  .pside .adrow{flex-direction:column;flex-wrap:nowrap;margin:0} .pside .adrow .buy{flex:none}
+  .pside .pmoney{margin-bottom:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .plt{display:flex;align-items:center;gap:6px;height:40px;padding:0 14px 0 6px;border-radius:20px;font-size:21px;font-weight:800;
+    background:linear-gradient(180deg,#e9bd68,#b9862f);border:2px solid #5a3a12;color:#3a1d08;box-shadow:0 3px 0 #2a1608}
+  .plt .ic{width:26px;height:26px}
+  .pboard>.pol{align-self:flex-start} #scrEnd .pol{width:min(190px,32%)} #scrEnd .pol .pim{aspect-ratio:19/15}
+  .ehero{align-self:flex-start;display:flex;align-items:center;gap:10px;padding:6px 18px;transform:rotate(-1deg)}
+  .ehero .ic{width:42px;height:42px} .ehero b{font-size:48px;font-weight:800;line-height:1;color:#7a3a10} .ehero small{font-size:16px;font-weight:800}
+  .pboard .chips{gap:12px 10px;padding-top:4px}
+  .pboard .chips .chip2{flex:0 0 92px;min-width:0;height:62px;padding:4px 2px;justify-content:center;gap:0;border:0;border-radius:2px;
+    background:#ffe680;box-shadow:0 4px 8px rgba(0,0,0,.3);position:relative;transform:rotate(-3deg)}
+  .pboard .chips .chip2:nth-child(3n+2){background:#cfe8ff;transform:rotate(2deg)} .pboard .chips .chip2:nth-child(3n){background:#d8f0c0;transform:rotate(-1deg)}
+  .pboard .chips .chip2 .ic{width:22px;height:22px} .pboard .chips .chip2 b,.pboard .chips .chip2.gold b{font-size:21px;color:#3a2412}
+  .pboard .chips .chip2 small{font-size:12px;letter-spacing:0;font-weight:700;color:#3a2412;text-transform:lowercase}
+  /* lan */
+  .pcol{display:flex;flex-direction:column;gap:12px;width:min(150px,26%);flex:none}
+  #scrShop .pol .pim{aspect-ratio:5/4}
+  .pcol .hams{gap:8px;flex-wrap:nowrap}
+  .pcol .ham{flex:1 1 0;min-width:0;height:52px;padding:0;justify-content:center;border:0;border-radius:2px;background:#f4ead2;box-shadow:0 4px 8px rgba(0,0,0,.3);position:relative}
+  .pcol .ham b,.pcol .ham small{display:none} .pcol .ham svg{width:36px;height:36px}
+  .pcol .ham.sel{outline:3px solid #f0951f;box-shadow:0 0 0 6px rgba(255,210,87,.35),0 4px 8px rgba(0,0,0,.3)}
+  #sP{margin:0;padding:5px 10px;font-size:15px;font-weight:700}
+  .pmain .grid{display:flex;align-items:flex-start;gap:10px;flex:none;margin-top:4px}
+  .pmain .card.up{flex:1 1 0;min-width:0;min-height:176px;align-items:center;text-align:center;gap:3px;padding:10px 8px 8px;border:0;border-radius:2px;background:#f4ead2;box-shadow:0 4px 8px rgba(0,0,0,.35);position:relative}
+  .pmain .card.up:nth-child(2){transform:rotate(1.5deg)} .pmain .card.up:nth-child(3){transform:rotate(-1deg)}
+  .pmain .card .hd{flex-direction:column;gap:3px} .pmain .card .ico{width:auto;height:auto;background:none;border:0}
+  .pmain .card .ico svg{width:34px;height:34px} .pmain .card .nm{font-size:16px;color:#3a2412} .pmain .card.up .ds{font-size:12px;color:#6a4a2a;min-height:0}
+  .pmain .card .lv{width:85%;margin-top:auto} .pmain .card .lv i{background:#d8c8a8}
+  .pmain .card .buy{width:100%;min-height:44px;font-size:18px}
+  /* bang cu con lai (man thang, xoay may): cung chat ban + giay */
+  .panel{background:radial-gradient(rgba(90,50,20,.35) 1px,transparent 1.6px) 0 0/7px 7px,#c4925a;border:10px solid #4a2c16;border-radius:10px}
+  .panel::before{display:none} .panel .ph h1{color:#3a2412;text-shadow:none} .panel .ph p,.panel .kicker{color:#7a3a10}
+  .panel .sum div{background:#f4ead2;border:0;border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.3)} .panel .sum b{color:#3a2412} .panel .sum span{color:#a0461a}
+  .panel .note.good{background:#f4ead2;color:#3a2412;border-left-color:#2f8a3a} .panel .pf{border-top:0}
+  /* Yard: bang tam truot = bang ban sang; ban do sau lung toi lai cho tach bach (Mai 16/11: catalog mock bi chim vao ban do) */
+  #scrYard:has(#yPanel.modal:not([hidden]))::before{content:"";position:absolute;inset:0;background:rgba(10,8,6,.55);pointer-events:none}
+  .ypanel,.ypanel.modal,.ypanel.modal.wide{color:#3a2412;border:8px solid #4a2c16;border-right:0;
+    background:radial-gradient(rgba(90,50,20,.3) 1px,transparent 1.6px) 0 0/7px 7px,radial-gradient(rgba(255,240,205,.35) 1px,transparent 1.6px) 3px 4px/9px 9px,#d2a46c;
+    box-shadow:inset 0 0 16px rgba(0,0,0,.35),-8px 0 26px rgba(0,0,0,.6);overflow-x:hidden}
+  .ypanel h2{display:inline-block;position:relative;background:#f4ead2;color:#3a2412;padding:4px 16px 5px;margin:0 0 10px;transform:rotate(-1.5deg);
+    box-shadow:0 4px 8px rgba(0,0,0,.3);font-size:22px}
+  .ypanel h2 small{font-size:11px;font-weight:800;letter-spacing:.1em;color:#a0461a;margin-left:6px}
+  .ypanel p{background:#f4ead2;color:#3a2412;padding:6px 10px;border-radius:2px;box-shadow:0 3px 6px rgba(0,0,0,.25);font-weight:700}
+  .ypanel .lk{color:#b0301c}
+  .ypanel .tkbig{color:#7a3a10}
+  .ypanel .yx{border:3px solid #2a1608;background:#4a2c16;color:#f2e2c0;width:44px;height:44px;border-radius:50%}
+  .ypanel .buy.alt{background:linear-gradient(180deg,#5a3d24,#3d2816);color:#f2e2c0;border-color:#2a1608}
+  .ypanel .buy.alt[disabled]{opacity:.55}
+  .ypanel .buy.sel,.ypanel .buy.sel[disabled]{color:#2f7a3a;border-color:#2f8a3a;background:#f4ead2}
+  .ypanel .buy.ad{border-color:#1d5a26}
+  .ypanel .dgrid div{background:#f4ead2;border:2px solid #d8c8a8;color:#3a2412} .ypanel .dgrid .on{border-color:#2f8a3a;background:#e4f5d4}
+  .ypanel .mcard{background:#f4ead2;border-color:#d8c8a8}
+  /* catalog bua: moi bua 1 to giay + anh chup that cua bua */
+  .crow{display:flex;align-items:center;gap:8px;height:56px;padding:0 6px 0 4px;margin-bottom:6px}
+  #yPanel.modal>h2{margin-bottom:6px}
+  .crow:nth-of-type(odd){transform:rotate(-.5deg)} .crow:nth-of-type(even){transform:rotate(.5deg)}
+  .crow.hot{background:#fff3c4;outline:3px solid #f0951f}
+  .crow .ph{width:58px;height:50px;flex:none;background:#fff;padding:3px;box-shadow:0 2px 4px rgba(0,0,0,.3);transform:rotate(-4deg)}
+  .crow .ph .pim{width:100%;height:100%}
+  .crow .ctx{flex:1;min-width:0} .crow .ctx b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crow .ctx em{display:block;font-style:normal;font-size:13px;font-weight:700;color:#6a4a2a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crow .ctx b .tag{font-size:10px;font-weight:800;letter-spacing:.1em;background:#e0452c;color:#fff;border-radius:6px;padding:1px 5px;margin-left:4px;vertical-align:2px}
+  .ypanel .crow .buy{flex:none;min-height:44px;height:44px;padding:0 8px;font-size:15px;width:auto;min-width:60px;margin:0}
+  .ypanel .crow .buy.try{background:linear-gradient(#5fbf5f,#2f8a3a);color:#fff;border-color:#1d5a26;text-shadow:0 1px 0 #0d3a12;font-size:13px;min-width:52px}
+  /* chi tiet xuong: anh chup toa xuong + to giay ghim, khong khung bang */
+  .ypanel:not(.modal){width:min(400px,50%);background:none;border:0;box-shadow:none;padding:0 calc(14px + env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) 0;overflow:visible}
+  .ypanel:not(.modal) .yx{right:calc(2px + env(safe-area-inset-right, 0px));top:-12px;z-index:2}
+  .wsx{display:flex;align-items:flex-end}
+  .wsx .pol{width:126px;margin-right:-20px;z-index:1;transform:rotate(-4deg);margin-bottom:10px} .wsx .pol .pim{aspect-ratio:5/4}
+  .wsx .pa{flex:1;min-width:0;padding:12px 14px 12px 32px}
+  .wsx h2{display:block;background:none;box-shadow:none;padding:0;margin:0;transform:none;font-size:19px} .wsx h2::after{display:none}
+  .wsx .eff{font-size:40px;font-weight:800;line-height:1.1;color:#7a3a10} .wsx .eff small{font-size:14px;color:#3a2412;margin-left:6px}
+  .wsx .efft{font-size:15px;font-weight:700;margin:4px 0;background:none;box-shadow:none;padding:0} .wsx .now{font-size:12px;font-weight:700;color:#6a4a2a}
+  .wsx .lv{margin:6px 0 8px} .wsx .lv i{background:#d8c8a8}
+  .wsx .buy{width:100%;min-height:50px;font-size:19px}
+  html.short .ypanel h2{font-size:20px}
+  html.short .ypanel .buy,html.short .pside .buy,html.short .pmain .card .buy{min-height:44px}   /* nut >= 44 px ca o man thap */
 </style>
 </head>
 <body>
@@ -298,8 +398,8 @@
 <canvas id="cv"></canvas>
 <div id="ui">
   <div id="hud">
-    <div class="plate" id="moneyBox"><svg class="ic"><use href="#i-coin"/></svg><div id="money"><small>CASH</small><span id="cash">$0</span></div></div>
-    <div class="plate" id="rubyBox"><svg class="ic"><use href="#i-ruby"/></svg><div id="money2"><small>RUBIES</small><span id="ruby">0</span></div></div>
+    <div class="plate" id="moneyBox"><svg class="ic"><use href="#i-coin"/></svg><div id="money"><span id="cash">$0</span></div></div>
+    <div class="plate" id="rubyBox"><svg class="ic"><use href="#i-ruby"/></svg><div id="money2"><span id="ruby">0</span></div></div>
     <div class="plate" id="quota"><div class="row"><div class="t" id="qT">FLOOR 1</div><div class="v" id="qV">DEPTH 0 / 4</div></div>
       <div id="qbar"><b id="qB"></b><i id="qCart"><svg viewBox="0 0 40 28"><use href="#i-cart"/></svg></i></div></div>
     <div class="plate" id="clock"><svg class="ic"><use href="#i-clock"/></svg><div class="cw"><div class="t" id="cTl">SHIFT TIME</div>
@@ -319,36 +419,44 @@
       <p>The pile is wide — you swing across the whole floor.</p></div></div>
     <div class="pf"><button class="btn alt" id="rotGo" style="flex:1">PLAY ANYWAY</button></div>
   </div></div>
-  <div class="screen" id="scrEnd"><div class="panel">
-    <div class="ph"><div class="badge" id="eIco"><svg viewBox="0 0 32 32"><use href="#i-ore"/></svg></div><div><div class="kicker" id="eK">SHIFT OVER</div><h1 id="eT">Nice smashing</h1></div></div>
-    <div class="pb">
-      <div class="sum"><div><span><svg class="ic sm"><use href="#i-coin"/></svg>EARNED</span><b id="eMoney">$0</b></div><div><span><svg class="ic sm"><use href="#i-pick"/></svg>BEST SWING</span><b id="eBest">0 ore</b></div></div>
-      <div id="eNote"></div>
-      <div class="adrow" id="eAds"></div>
+  <!-- 16/11 P2c: bang ban (anh chup + giay ghim) ben trai, nut ben phai tren nen san -->
+  <div class="screen" id="scrEnd"><div class="pwrap">
+    <div class="cork pboard">
+      <div class="pol" id="ePol"></div>
+      <div class="pmain">
+        <div class="pa pin pttl"><small id="eK">SHIFT OVER</small><b id="eT">Nice smashing</b></div>
+        <div class="pa pin ehero" id="eHero"><svg class="ic"><use id="eHeroI" href="#i-coin"/></svg><b id="eMoney">$0</b><small id="eHeroL"></small></div>
+        <div id="eNote"></div>
+      </div>
     </div>
-    <div class="pf"><button class="btn alt" id="eAlt" hidden>NEXT FLOOR</button><button class="btn" id="eGo">TO THE SMITHY</button></div>
+    <div class="pside"><div class="adrow" id="eAds"></div><button class="btn alt" id="eAlt" hidden>NEXT FLOOR</button><button class="btn" id="eGo">TO THE SMITHY</button></div>
   </div></div>
 
-  <div class="screen" id="scrShop"><div class="panel">
-    <div class="ph"><div class="badge"><svg viewBox="0 0 32 32" style="color:#37435c"><use href="#i-ham"/></svg></div><div><div class="kicker" id="sK">SMITHY</div><h1><span id="sCash">$0</span> <span class="rb" style="font-size:.7em">· <svg class="ic sm" style="width:22px;height:22px"><use href="#i-ruby"/></svg><span id="sRuby">0</span></span></h1>
-      <p id="sP" hidden></p></div></div>
-    <div class="pb">
-      <h3>UPGRADES <small>· THIS FLOOR</small></h3><div class="grid" id="sUp"></div>
-      <h3 id="sHamH">HAMMER</h3><div class="hams" id="sHam"></div>
+  <div class="screen" id="scrShop"><div class="pwrap">
+    <div class="cork pboard">
+      <div class="pcol"><div class="pol" id="sPol"></div><div class="hams" id="sHam"></div></div>
+      <div class="pmain">
+        <div class="pa pin pttl"><small id="sK">SMITHY</small><b>Smithy</b></div>
+        <p class="pa" id="sP" hidden></p>
+        <div class="grid" id="sUp"></div>
+      </div>
     </div>
-    <div class="pf"><button class="btn alt" id="sYard">&#9664; YARD</button><button class="btn" id="sGo">START SHIFT &#9654;</button></div>
+    <div class="pside"><div class="pmoney"><div class="plt"><svg class="ic"><use href="#i-coin"/></svg><span id="sCash">$0</span></div><div class="plt"><svg class="ic"><use href="#i-ruby"/></svg><span id="sRuby">0</span></div></div>
+      <button class="btn alt" id="sYard">&#9664; YARD</button><button class="btn" id="sGo">START SHIFT &#9654;</button></div>
   </div></div>
 
   <div class="screen yard" id="scrYard">
-    <div class="ytitle">THE YARD</div>
     <button class="ymine1" id="yMineBtn"></button>
-    <div class="plate yrub"><svg class="ic"><use href="#i-ruby"/></svg><div><small>RUBIES</small><b id="yRuby">0</b></div></div>
-    <button class="plate yside" id="yDaily"><svg class="ic"><use href="#i-cal"/></svg><div><small>DAILY</small><b id="yDailyS">Day 1</b></div></button>
-    <button class="plate yside" id="yChest"><svg class="ic"><use href="#i-chest"/></svg><div><small>CHEST</small><b id="yChestS">OPEN!</b></div></button>
-    <button class="plate ytk" id="yTk"><svg class="ic"><use href="#i-ticket"/></svg><div><small>TICKETS</small><b id="yTkN">0</b><i id="yTkT"></i></div></button>
-    <button class="yarrow l" id="yL">&#9664;</button><button class="yarrow r" id="yR">&#9654;</button>
+    <div class="ytop">
+      <div class="plate"><svg class="ic"><use href="#i-ruby"/></svg><b id="yRuby">0</b></div>
+      <button class="plate ytk" id="yTk"><svg class="ic"><use href="#i-ticket"/></svg><div><b id="yTkN">0</b><i id="yTkT"></i></div></button>
+    </div>
+    <div class="yleft">
+      <button class="plate ysq yside" id="yDaily"><svg class="ic"><use href="#i-cal"/></svg><b id="yDailyS">Day 1</b></button>
+      <button class="plate ysq yside" id="yChest"><svg class="ic"><use href="#i-chest"/></svg><b id="yChestS">OPEN!</b></button>
+      <button class="ysq ycat" id="yCat"><svg class="ic"><use href="#i-ham"/></svg><b>Hammers</b><i id="yCatNew">NEW</i></button>
+    </div>
     <div class="ypanel" id="yPanel" hidden></div>
-    <button class="ycat" id="yCat"><svg class="ic"><use href="#i-ham"/></svg><span><b>HAMMER CATALOG</b></span><i id="yCatNew">NEW</i></button>
     <button class="btn ydig" id="yDig">DIG &#9654;<small id="yDigS"></small></button>
   </div>
 
@@ -569,10 +677,10 @@ var UP_ICON = {headroom:'i-props', value:'i-ore', chain:'i-chain', fastBelt:'i-f
 function chip(t){ var T = TYPES[t]; return '<span class="chip" style="background:#' + ('00000' + T.color.toString(16)).slice(-6) + '"></span>'; }
 var HAMMERS = {
   // 12/11: bua khong ban o lan nua - catalog trong The Yard (CFG.hamPrice)
-  sledge:{name:'Sledge', r:1.0,  need:1.0,  val:1,   step:1,   col:0x37435c, ds:'All-rounder.'},
-  broad: {name:'Broad',  r:1.45, need:1.12, val:1,   step:1,   col:0x2f7d5b, ds:'Huge head. Needs a faster swing.'},
-  shock: {name:'Shock',  r:1.0,  need:1.0,  val:1,   step:1,   col:0x2d6fd6, shock:1.7, ds:'Each smash zaps the ore next to it.'},
-  maul:  {name:'Maul',   r:0.9,  need:1.0,  val:1.6, step:0.6, col:0x7a2e1e, iron:1, ds:'Takes two layers off stone, coal and diamond. +60% cash, smaller combo bonus.'}
+  sledge:{name:'Sledge', r:1.0,  need:1.0,  val:1,   step:1,   col:0x37435c, ds:'All-rounder.', tag:'All-rounder'},
+  broad: {name:'Broad',  r:1.45, need:1.12, val:1,   step:1,   col:0x2f7d5b, ds:'Huge head. Needs a faster swing.', tag:'Big head'},
+  shock: {name:'Shock',  r:1.0,  need:1.0,  val:1,   step:1,   col:0x2d6fd6, shock:1.7, ds:'Each smash zaps the ore next to it.', tag:'Zaps next ore'},
+  maul:  {name:'Maul',   r:0.9,  need:1.0,  val:1.6, step:0.6, col:0x7a2e1e, iron:1, ds:'Takes two layers off stone, coal and diamond. +60% cash, smaller combo bonus.', tag:'+60% cash'}
 };
 var HAM_ORDER = ['sledge','broad','shock','maul'];
 
@@ -1183,7 +1291,8 @@ for(var tk in TYPES){ var T0 = TYPES[tk]; T0.mat = MV(T0.color); T0.matTop = M(T
     T0.matHurt.push(MV(new THREE.Color(T0.color).lerp(new THREE.Color(0xffd79a), .20 + .22*hh).getHex()));
 }
 var crates = [], debris = [], DEB = [], sparks = [];
-function makeCrate(type, x, y){
+// 16/11: tach phan dung hinh ra crateMesh() de anh polaroid (Snap) dung lai dung mo hinh thung that
+function crateMesh(type){
   var T = TYPES[type], g = new THREE.Group();
   var body = new THREE.Mesh(BODY_GEO[type] || crateGeo, T.mat); body.castShadow = true; g.add(body);
   // khoi bang / kim cuong giu mot lop mat tren sang (doc la tinh the); keg co 2 dai sat
@@ -1211,6 +1320,10 @@ function makeCrate(type, x, y){
       lp.position.set((e0-1)*CRATE*0.27, CRATE*0.52, (Math.random()-.5)*CRATE*0.3); g.add(lp); }
     var em = new THREE.Mesh(chipGeo, emberMat); em.position.set(0, 0, CRATE*0.49); em.scale.setScalar(.55); g.add(em); }
   if(T.hp === 2 && !T.ember){ var rk = new THREE.Mesh(chipGeo, T.matTop); rk.position.set(0, CRATE*0.54, 0); rk.scale.set(1.5,.8,1.2); g.add(rk); }
+  g.userData.body = body; return g;
+}
+function makeCrate(type, x, y){
+  var T = TYPES[type], g = crateMesh(type), body = g.userData.body;
   scene.add(g);
   var c = {mesh:g, body:body, type:type, T:T, x:x, y:y, py:y, vx:0, vy:0, hp:T.hp, flash:0, spin:0, rot:0,
     dead:false, belt:-1, born:S.t, hopT:1+Math.random()*2, frz:0, cr:0};
@@ -1708,22 +1821,27 @@ var bossMats = BOSS_SKIN.map(function(k, i){ return {body:MV(k.body), vein:i ===
   eye:new THREE.MeshBasicMaterial({color:k.eye}), crown:M(k.crown)}; });
 var bossEyeG = new THREE.SphereGeometry(.2, 10, 8), bossBrowG = new THREE.BoxGeometry(.62, .16, .2), bossSpikeG = new THREE.ConeGeometry(.32, .9, 6);
 function bossHere(){ return S.mode === 'shift' && !noBottom() && !S.bottom && G.depth >= floorCfg().notches; }
-function spawnBoss(){
-  var B = CFG.boss, k = Math.min(B.hp.length-1, G.kho), mi = Math.min(BOSS_SKIN.length-1, G.mine), mt = bossMats[mi];
-  BD_W = Math.min(2.3, ARENA*.32); BD_H = 1.8;
-  var g = new THREE.Group(), bx = boulderSide()*(ARENA - BD_W - .05);
-  var body = new THREE.Mesh(bdGeo, mt.body); body.scale.set(BD_W*2, BD_H*2, 2.4); body.castShadow = true; g.add(body);
+// 16/11: hinh boss tach ra de anh polaroid (Snap) dung lai (W, H = nua be ngang / nua chieu cao)
+function bossMesh(mi, W, H){
+  var mt = bossMats[mi], g = new THREE.Group();
+  var body = new THREE.Mesh(bdGeo, mt.body); body.scale.set(W*2, H*2, 2.4); body.castShadow = true; g.add(body);
   for(var i=0;i<7;i++){ var v = new THREE.Mesh(veinGeo, mt.vein);
-    v.position.set((Math.random()-.5)*BD_W*1.4, -BD_H*.15 - Math.random()*BD_H*.7, 1.22); v.rotation.z = (Math.random()-.5)*1.6; v.scale.setScalar(.8 + Math.random()*.5); g.add(v); }
+    v.position.set((Math.random()-.5)*W*1.4, -H*.15 - Math.random()*H*.7, 1.22); v.rotation.z = (Math.random()-.5)*1.6; v.scale.setScalar(.8 + Math.random()*.5); g.add(v); }
   [-1, 1].forEach(function(sd){   // mat + long may: "no song" - nhin la biet khong phai tang da thuong
-    var e = new THREE.Mesh(bossEyeG, mt.eye); e.position.set(sd*BD_W*.36, BD_H*.3, 1.25); g.add(e);
-    var br = new THREE.Mesh(bossBrowG, mt.crown); br.position.set(sd*BD_W*.36, BD_H*.3 + .3, 1.28); br.rotation.z = -sd*.35; g.add(br); });
+    var e = new THREE.Mesh(bossEyeG, mt.eye); e.position.set(sd*W*.36, H*.3, 1.25); g.add(e);
+    var br = new THREE.Mesh(bossBrowG, mt.crown); br.position.set(sd*W*.36, H*.3 + .3, 1.28); br.rotation.z = -sd*.35; g.add(br); });
   for(var j=-1;j<=1;j++){ var sp = new THREE.Mesh(bossSpikeG, mt.crown);   // vuong mien gai tren dinh
-    sp.position.set(j*BD_W*.45, BD_H*.95 + (j ? 0 : .15), 0); sp.rotation.z = -j*.3; sp.scale.y = j ? 1 : 1.3; sp.castShadow = true; g.add(sp); }
+    sp.position.set(j*W*.45, H*.95 + (j ? 0 : .15), 0); sp.rotation.z = -j*.3; sp.scale.y = j ? 1 : 1.3; sp.castShadow = true; g.add(sp); }
+  return {g:g, body:body};
+}
+function spawnBoss(){
+  var B = CFG.boss, k = Math.min(B.hp.length-1, G.kho), mi = Math.min(BOSS_SKIN.length-1, G.mine);
+  BD_W = Math.min(2.3, ARENA*.32); BD_H = 1.8;
+  var bx = boulderSide()*(ARENA - BD_W - .05), bm = bossMesh(mi, BD_W, BD_H), g = bm.g, body = bm.body;
   scene.add(g); clearFootprint(bx);
   var hp = Math.round(B.hp[k]*(1 + B.mineHp*G.mine)), secs = B.secs + (S.st.bdSecs - CFG.boulder.secs);   // Breaker Yard cong gio ca boss
   S.bd = {g:g, body:body, x:bx, y:-BD_H, hp:hp, max:hp, t:secs, secs:secs, cd:0, flash:0, live:true, rise:0, sink:0, cr:0,
-    boss:true, name:B.name[mi], hitSp:B.hitSp[mi], keg:B.keg[mi], mat:mt.body};
+    boss:true, name:B.name[mi], hitSp:B.hitSp[mi], keg:B.keg[mi], mat:bossMats[mi].body};
   S.bossFight = B.name[mi];
   g.position.set(bx, -BD_H, 0);
   for(var x=-BD_W; x<=BD_W; x+=0.6) burst(bx + x, 0.2, BOSS_SKIN[mi].body, 3, 9, 'rock');
@@ -2135,7 +2253,7 @@ function adRevive(){
 }
 function endShift(){
   S.mode = 'idle'; G.shifts++; S.endGo = 'shop'; var mineDone = false; bdHud(); helperUi();
-  var note = '', title = 'Nice smashing', f = floorCfg();
+  var note = '', title = 'Nice smashing', f = floorCfg(), hero = null;
   // 12/11: khong con het suc => ca chi het vi tran vach do (hoac toi day tang, ben duoi)
   var kick = 'SHIFT OVER', wasOver = !!S.over;
   if(S.over) title = 'Pile overflow';
@@ -2157,7 +2275,8 @@ function endShift(){
     kick = 'FLOOR ' + G.kho + ' CLEARED!'; title = 'Floor ' + (G.kho+1) + ' next';
     var nf = CFG.floors[Math.min(CFG.floors.length-1, G.kho)].pay;
     // 13/11: the nho thay doan van. Ruong = so ruby to; tang moi = he so tien; mo moi = ten mo.
-    note = (S.bossRub ? chip2('i-crown', '+' + S.bossRub, 'BOSS') : '') + chip2('i-chest', '+' + chest, 'RUBIES', 'gold') + (mineDone ? chip2('i-ore', MINES[G.mine + 1].name, 'OPEN') : chip2('i-coin', '×' + nf, 'ORE PAY')) +
+    hero = ['i-ruby', '+' + chest, 'rubies'];   // P2c: qua tang thi so to = ruby ruong tang
+    note = (S.bossRub ? chip2('i-crown', '+' + S.bossRub, 'BOSS') : '') + (mineDone ? chip2('i-ore', MINES[G.mine + 1].name, 'OPEN') : chip2('i-coin', '×' + nf, 'ORE PAY')) +
       (vault > 0 ? chip2('i-coin', '+' + fmt(vault).slice(1), 'VAULT') : '');
     if(mineDone){ kick = 'MINE CLEARED!'; title = mineNow().name; }
     chime(10);
@@ -2183,14 +2302,18 @@ function endShift(){
   $('eGo').textContent = toYard ? 'TO THE YARD' : 'TO THE SMITHY'; $('eAlt').hidden = !toYard || !!mineDone || !floorDone;
   save(); hud();   // B4: HUD sau man ket phai ra tien/ruby SAU ruong, khong phai so cu
   $('eK').textContent = kick; $('eT').textContent = title;
-  $('eIco').innerHTML = '<svg viewBox="0 0 32 32"><use href="#' + (/CLEARED/.test(kick) ? 'i-gold' : 'i-ore') + '"/></svg>';
-  $('eMoney').textContent = fmt(S.earned); $('eBest').textContent = S.best + ' ore';
+  // P2c: 1 so to (tien ca, hoac ruby ruong tang) + anh chup dong quang / boss
+  hero = hero || ['i-coin', '+' + fmt(S.earned), ''];
+  $('eHeroI').setAttribute('href', '#' + hero[0]); $('eMoney').textContent = hero[1]; $('eHeroL').textContent = hero[2];
+  var bossPic = floorDone || S.bossFight, mi = Math.min(BOSS_SKIN.length-1, G.mine);
+  $('ePol').innerHTML = polHtml(bossPic ? 'boss:' + mi : 'pile', bossPic ? 'i-crown' : 'i-ore',
+    mineDone ? 'Mine cleared!' : floorDone ? 'Boss down!' : S.bossFight ? 'Boss healed' : kick === 'RUN OVER' ? 'Run over' : 'Shift over');
   S.over = 0; S.timeUp = 0; S.bossEnd = 0;
   $('eNote').innerHTML = note;
   // B7 QC gia lap: dong tran (chua qua tang, chua choi tiep lan nao) => don dong choi tiep; con tien ca => x2
   var ah = '';
-  if(wasOver && !floorDone && !S.revived) ah += adBtn('eRevive', 'revive', 'CLEAR PILE &amp; KEEP GOING');
-  if(S.earned > 0 && !floorDone) ah += adBtn('eCash2', 'cash', '×2 CASH (+' + fmt(S.earned) + ')');
+  if(wasOver && !floorDone && !S.revived) ah += adBtn('eRevive', 'revive', 'KEEP GOING', true);
+  if(S.earned > 0 && !floorDone) ah += adBtn('eCash2', 'cash', '×2 CASH', true);
   $('eAds').innerHTML = ah;
   if($('eRevive')) $('eRevive').onclick = function(){ adWatch('revive', adRevive); };
   if($('eCash2')) $('eCash2').onclick = function(){ var e = S.earned; adWatch('cash', function(){ G.bank += e; hud(); }); $('eCash2').remove(); };
@@ -2646,7 +2769,9 @@ function renderShop(){
   // 13/11: chi hien bua DA CO (+ bua dang thu); bua chua co nam o catalog trong Yard. 1 bua thi an ca muc.
   var hb = $('sHam'); hb.innerHTML = '';
   var hl = HAM_ORDER.filter(function(k){ return G.owned[k] || G.trial === k; });
-  $('sHamH').hidden = hb.hidden = hl.length < 2;
+  hb.hidden = hl.length < 2;
+  var eq = G.trial || G.ham;   // P2c: anh chup bua dang cam
+  $('sPol').innerHTML = polHtml('ham:' + eq, 'i-ham', HAMMERS[eq].name + (G.trial ? ' · try' : ''));
   hl.forEach(function(k){
     var h = HAMMERS[k], own = !!G.owned[k], trying = G.trial === k, sel = trying || (!G.trial && G.ham === k);
     var b = document.createElement('button'); b.className = 'ham' + (sel ? ' sel' : ''); b.id = 'ham_' + k; b.title = h.ds;
@@ -3130,6 +3255,7 @@ function flash(){ var n = performance.now(); if(n - flashT < 160 || BOT) return;
   flashEl = flashEl || document.getElementById('flash'); if(!flashEl) return;
   flashEl.classList.remove('on'); void flashEl.offsetWidth; flashEl.classList.add('on'); }
 function draw(){
+  Snap.tick();   // P2c: chup anh polaroid vao goc khung, lan ve duoi xoa de len
   if(S.mode === 'yard'){ Yard.draw(); return; }   // The Yard: canh rieng, cung renderer
   animFx();
   var shk = (HIDE_ACT || NO_SHAKE) ? 0 : S.shake;
@@ -3208,6 +3334,91 @@ function updateHeadColor(sp, dt, base){
   if(headHotW < 1e-4) headHotW = 0; else if(headHotW > 1-1e-4) headHotW = 1;
   headMat.color.copy(base || HEAD_COLD).lerp(HEAD_HOT, headHotW);
   return headHotW;
+}
+// ---- 16/11 P2c: anh polaroid tren cac bang = CHUP model 3D that (bua, dong quang, boss, toa xuong) ----
+// Dat mo hinh o XA (x + SNAP_FAR) ngay trong canh cua no (ham mo / The Yard): cung den => dung lai shader da dich,
+// khong giat. (Canh phu rieng = den khac = dich lai moi shader: do duoc 160 ms/anh, 16/11.) Ve vao goc khung
+// hinh chinh ngay TRUOC lan ve that cua khung do (lan ve that xoa de len) roi doc pixel => mau sRGB dung nhu
+// man choi. Khong chup trong ca (khong giat tay dap). Chup dan 1 anh/khung sau SNAP_WAIT ms tu luc mo game;
+// bang dang can anh thi chup ngay khung sau. Loi => '' : bang hien o mau + icon thay the, khong crash.
+var SNAP_W = 160, SNAP_H = 128;   // px CSS moi anh (x devicePixelRatio)
+var SNAP_WAIT = 1500;             // ms sau khi mo game moi chup dan (de vao game khong bi cham)
+var SNAP_FAR = 1000;              // dat mo hinh o x nay khi chup (ngoai tam nhin + ngoai vung bong cua canh)
+var SNAP_BG = {main:new THREE.Color(0x5a3d26), yard:new THREE.Color(0xe9d3a8).convertSRGBToLinear()};   // nen anh (doi mau nen khong dich lai shader)
+var Snap = (function(){
+  var cache = {}, want = [], urg = [], t0 = performance.now(), cvs = null, broken = false;
+  var cam = new THREE.PerspectiveCamera(30, SNAP_W/SNAP_H, .1, 100);
+  var vp = new THREE.Vector4(), box3 = new THREE.Box3(), sph = new THREE.Sphere(), dir = new THREE.Vector3();
+  var stat = {n:0, ms:0, max:0, fail:0, each:[]};
+  function hammerModel(k){
+    var g = mallet.clone(true), hg = g.children[0], hm = M(HAMMERS[k].col), xs = hg.children.slice(-3);
+    g.position.set(0, 0, 0); g.rotation.set(0, 0, -.45); g.visible = true; hg.scale.setScalar(1);
+    g.traverse(function(o){ if(o.material === headMat) o.material = hm; });
+    ['broad', 'shock', 'maul'].forEach(function(x, i){ xs[i].visible = x === k; });
+    return {obj:g, focus:hg, pad:.95, dir:[.55, .3, 1], kind:'main'};
+  }
+  function pileModel(){
+    var g = new THREE.Group();
+    [[-1.15, 0, 'wood'], [0, 0, 'wood'], [1.15, 0, 'gold'], [-.58, 1.12, 'wood'], [.58, 1.12, 'stone']].forEach(function(q, i){
+      var c = crateMesh(q[2]); c.position.set(q[0], q[1], 0); c.rotation.z = [.05, -.04, .06, -.08, .04][i]; g.add(c); });
+    return {obj:g, pad:1.0, dir:[.3, .35, 1], kind:'main'};
+  }
+  function make(key){
+    if(broken) throw new Error('snap off');
+    var a = key.split(':');
+    if(a[0] === 'ham') return hammerModel(a[1]);
+    if(a[0] === 'pile') return pileModel();
+    if(a[0] === 'boss') return {obj:bossMesh(+a[1], 2.3, 1.8).g, pad:.95, dir:[.25, .12, 1], kind:'main'};
+    if(a[0] === 'ws'){ var o = Yard.wsModel(a[1]); return o && {obj:o, pad:1.0, dir:[.35, .9, .9], kind:'yard'}; }
+    return null;
+  }
+  function shoot(key){
+    var t = performance.now(), out = '', host = null, m = null, bg0 = null;
+    try{
+      m = make(key); if(!m) throw new Error('no model ' + key);
+      host = m.kind === 'yard' ? Yard.snapHost() : scene;
+      var lights = []; m.obj.traverse(function(o){ if(o.isLight) lights.push(o); });   // den rieng cua mo hinh doi so den => dich lai shader: bo
+      lights.forEach(function(l){ l.parent.remove(l); });
+      m.obj.position.x += SNAP_FAR; host.add(m.obj); m.obj.updateMatrixWorld(true); bg0 = host.background; host.background = SNAP_BG[m.kind];
+      box3.setFromObject(m.focus || m.obj); box3.getBoundingSphere(sph);
+      var d = sph.radius*m.pad/Math.sin(cam.fov*Math.PI/360);
+      dir.fromArray(m.dir).normalize(); cam.position.copy(sph.center).addScaledVector(dir, d); cam.lookAt(sph.center);
+      cam.near = d/20; cam.far = d*4; cam.updateProjectionMatrix();
+      var pr = renderer.getPixelRatio(), w = Math.floor(SNAP_W*pr), h = Math.floor(SNAP_H*pr), gl = renderer.getContext(), px = new Uint8Array(w*h*4);
+      renderer.getViewport(vp); renderer.setViewport(0, 0, SNAP_W, SNAP_H); renderer.setScissor(0, 0, SNAP_W, SNAP_H); renderer.setScissorTest(true);
+      renderer.render(host, cam);
+      gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      cvs = cvs || document.createElement('canvas'); cvs.width = w; cvs.height = h;
+      var x = cvs.getContext('2d'), im = x.createImageData(w, h);
+      for(var r=0;r<h;r++) im.data.set(px.subarray((h - 1 - r)*w*4, (h - r)*w*4), r*w*4);   // WebGL doc tu duoi len
+      x.putImageData(im, 0, 0); out = cvs.toDataURL('image/jpeg', .85);
+    }catch(e){ stat.fail++; out = ''; }
+    try{ renderer.setScissorTest(false); if(vp.z) renderer.setViewport(vp); }catch(e){}
+    if(host && m){ host.remove(m.obj); if(bg0) host.background = bg0; }
+    cache[key] = out; var dt = performance.now() - t; stat.n++; stat.ms += dt; stat.max = Math.max(stat.max, dt); stat.each.push(Math.round(dt));
+    if(out) [].forEach.call(document.querySelectorAll('img[data-snap="' + key + '"]'), function(i){ i.src = out; });
+  }
+  function ask(key, hot){ if(cache[key] !== undefined) return; var i = want.indexOf(key); if(i >= 0) want.splice(i, 1);
+    if(hot){ if(urg.indexOf(key) < 0) urg.push(key); } else if(urg.indexOf(key) < 0) want.push(key); }
+  return {
+    url:function(key){ if(cache[key] === undefined){ ask(key, true); return ''; } return cache[key]; },
+    // goi dau moi khung ve (truoc lan ve that); 1 anh/khung, khong chup trong ca
+    tick:function(){
+      if(S.mode === 'shift') return;
+      var key = urg[0] || (performance.now() - t0 > SNAP_WAIT ? want[0] : null); if(!key) return;
+      if(/^ws:/.test(key) && !Yard.ready()) return;
+      (urg[0] === key ? urg : want).shift(); shoot(key);
+    },
+    warm:function(){ HAM_ORDER.forEach(function(k){ ask('ham:' + k); }); ask('pile'); BOSS_SKIN.forEach(function(b, i){ ask('boss:' + i); });
+      WS_TREE.forEach(function(r){ ask('ws:' + r[0]); }); },
+    stat:function(){ return {n:stat.n, ms:Math.round(stat.ms), max:Math.round(stat.max*10)/10, fail:stat.fail, left:want.length + urg.length, each:stat.each.join(' ')}; },
+    breakIt:function(){ broken = true; cache = {}; }   // test: ep loi chup -> o mau thay the
+  };
+})();
+// o anh polaroid: anh chup (neu co) de len o mau + icon thay the
+function polHtml(key, icon, cap){
+  var u = key ? Snap.url(key) : '';
+  return '<div class="pim"><svg class="ic"><use href="#' + icon + '"/></svg><img data-snap="' + (key || '') + '"' + (u ? ' src="' + u + '"' : '') + ' alt=""></div>' + (cap ? '<span>' + cap + '</span>' : '');
 }
 var last = performance.now(), acc = 0;
 // FIXED physics step at 1/120: once the pendulum is quick the head crosses half a crate in a
@@ -3701,7 +3912,6 @@ var Yard = (function(){
     cam.position.copy(tgt).addScaledVector(cam.userData.dir, cam.userData.d); cam.lookAt(tgt);
     // ban do lech len/xuong cho nam giua hai dai: xoay nhe goc nhin (dung offset ma tran chieu)
     cam.setViewOffset(vpW(), vpH(), 0, -cam.userData.off*vpH()/2, vpW(), vpH()); cam.updateProjectionMatrix(); cam.updateMatrixWorld();
-    $('yL').hidden = panX <= -panMax + .3; $('yR').hidden = panX >= panMax - .3;
   }
   function panBy(dxWorld){ panT = Math.max(-panMax, Math.min(panMax, panT + dxWorld)); }
   // px tren man -> don vi the gioi theo truc ngang (o mat giay)
@@ -3717,11 +3927,9 @@ var Yard = (function(){
     tkTick();
     $('yTkN').textContent = G.tk; $('yTkT').textContent = G.tk >= CFG.run.cap ? 'FULL' : '+1 in ' + fmtT(tkNext());
     $('yTk').classList.toggle('out', G.tk <= 0 && !G.run);
-    var m = mineNow();
     var cl = tchestLeft(); $('yChestS').textContent = cl > 0 ? fmtH(cl) : 'OPEN!'; $('yChest').classList.toggle('ready', cl <= 0);   // B7
-    $('yDailyS').textContent = dailyReady() ? 'Day ' + (G.daily.n % CFG.daily.length + 1) : 'Done ✓'; $('yDaily').classList.toggle('ready', dailyReady());
-    $('yDigS').textContent = G.run && runLeft() > 0 ? 'Continue · ' + runLeft() + ' shifts left'
-      : '1 ticket · ' + m.name + ' · ' + (noBottom() ? 'endless' : 'Floor ' + (G.kho + 1));
+    $('yDailyS').textContent = dailyReady() ? 'Day ' + (G.daily.n % CFG.daily.length + 1) : '✓'; $('yDaily').classList.toggle('ready', dailyReady());
+    $('yDigS').textContent = G.run && runLeft() > 0 ? runLeft() + ' left' : '−1 ticket';
   }
   function showAway(){   // B5 qua luc vang (B7 them nut x2 quang cao)
     var h = '<h2>While you were away</h2><p>Your helper dug for ' + fmtMin(G.awayMin || 0) + (G.awayCap ? ' (max — upgrade the Bunkhouse to dig longer)' : '') + '.</p>' +
@@ -3769,9 +3977,13 @@ var Yard = (function(){
     if(k === 'depot'){ panel('<h2>Depot</h2><p>Your mine office. Rails start here. Build along the rails: each workshop helps in every mine, for good.</p>'); return; }
     var max = l >= CFG.ws[k].cost.length, open = wsOpen(k), c = wsCost(k);
     var pips = ''; for(var i=0;i<CFG.ws[k].cost.length;i++) pips += '<i' + (i < l ? ' class="f"' : '') + '></i>';
-    panel('<h2>' + r[4] + '</h2><p>' + (l ? 'Now: ' + WS_FX[k](l) + '<br>' : '') + (max ? 'Fully built.' : 'Next: ' + WS_FX[k](l + 1)) + '</p><div class="lv">' + pips + '</div>' +
+    // 16/11 P2c: anh chup toa xuong + to giay ghim; hieu ung = 1 so to (cap ke tiep, hoac cap hien tai khi da max)
+    var fx = WS_FX[k](max ? l : l + 1), m = fx.indexOf('·') < 0 && /^(.*?)([+×$]?\d[\d.]*%?)(.*)$/.exec(fx);
+    var eff = m ? '<div class="eff">' + m[2] + '<small>' + (m[1] + m[3]).replace(/\s+/g, ' ').trim() + '</small></div>' : '<p class="efft">' + fx + '</p>';
+    panel('<div class="wsx"><div class="pol">' + polHtml('ws:' + k, 'i-props') + '</div><div class="pa pin"><h2>' + r[4] + '</h2>' + eff +
+      '<div class="now">' + (max ? 'Fully built' : (l ? 'Level ' + l + ' → ' + (l + 1) : 'Not built yet')) + '</div><div class="lv">' + pips + '</div>' +
       '<button class="buy" id="yBuy"' + (max || !open || G.gems < c ? ' disabled' : '') + '>' +
-      (max ? 'MAXED' : (!open ? 'NEEDS ' + wsRow(r[2])[4].toUpperCase() : (l ? 'UPGRADE ' : 'BUILD ') + rub(c))) + '</button>');
+      (max ? 'MAXED' : (!open ? 'NEEDS ' + wsRow(r[2])[4].toUpperCase() : (l ? 'UPGRADE ' : 'BUILD ') + rub(c))) + '</button></div></div>');
     var b = $('yBuy'); if(b) b.onclick = function(){ if(wsBuild(k)){ refresh(); showWs(k); } };
   }
   function showMine(i){
@@ -3779,17 +3991,17 @@ var Yard = (function(){
     if(mineSelect(i)) refresh();
     panel('');
   }
+  // 16/11 P2c: moi bua = 1 to giay ghim + anh chup that cua bua; cau mo ta dai nam o title (giu/di chuot)
   function showCat(){
-    var h = '<h2>Hammer Catalog</h2><p>A hammer changes how every swing feels. Yours for good, in every mine.</p>';
-    if(!G.starter) h += '<div class="ycard hot"><b>STARTER PACK</b> · ' + HAMMERS[CFG.starter.ham].name + ' + ' + rub(CFG.starter.rubies) +
-      '<button class="buy" id="yStarter">' + CFG.starter.usd + ' · DEMO</button></div>';
+    var h = '<h2>Hammers<small>DEMO · FREE</small></h2>', pic = function(k){ return '<div class="ph">' + polHtml('ham:' + k, 'i-ham') + '</div>'; };
+    if(!G.starter) h += '<div class="pa crow hot">' + pic(CFG.starter.ham) + '<div class="ctx"><b>' + HAMMERS[CFG.starter.ham].name + ' + ' + rub(CFG.starter.rubies) +
+      '<span class="tag">STARTER</span></b><em>Best deal</em></div><button class="buy" id="yStarter">' + CFG.starter.usd + '</button></div>';
     HAM_ORDER.forEach(function(k){ if(!CFG.hamPrice[k]) return; var pr = CFG.hamPrice[k], own = !!G.owned[k];
-      h += '<div class="ycard"><b>' + HAMMERS[k].name + '</b> — ' + HAMMERS[k].ds + (G.tried[k] && !own ? ' <i>(tried)</i>' : '') +
-        (own ? '<button class="buy sel" disabled>OWNED</button>' : '<div class="yb"><button class="buy" data-k="' + k + '" data-how="usd">' + pr.usd + ' · DEMO</button>' +
+      h += '<div class="pa crow" title="' + HAMMERS[k].ds + '">' + pic(k) + '<div class="ctx"><b>' + HAMMERS[k].name + '</b><em>' + HAMMERS[k].tag + (G.tried[k] && !own ? ' · tried' : '') + '</em></div>' +
+        (own ? '<button class="buy sel" disabled>OWNED</button>' : '<button class="buy" data-k="' + k + '" data-how="usd">' + pr.usd + '</button>' +
         '<button class="buy alt" data-k="' + k + '" data-how="ruby"' + (G.gems < pr.ruby ? ' disabled' : '') + '>' + rub(pr.ruby) + '</button>' +
-        (G.trial === k ? '<button class="buy sel" disabled>TRYING NEXT SHIFT</button>'
-          : (G.tried[k] ? '' : '<button class="buy try" data-t="' + k + '">TRY FREE · 1 SHIFT</button>')) + '</div>') + '</div>'; });
-    h += '<p class="dm">DEMO: prices are not charged — tap to get.</p>';
+        (G.trial === k ? '<button class="buy sel" disabled>TRYING</button>'
+          : (G.tried[k] ? '' : '<button class="buy try" data-t="' + k + '">TRY FREE</button>'))) + '</div>'; });
     panel(h, true);
     var s = $('yStarter'); if(s) s.onclick = function(){ starterBuy(); refresh(); showCat(); };
     [].forEach.call($('yPanel').querySelectorAll('button[data-k]'), function(b){ b.onclick = function(){ if(hamBuy(b.dataset.k, b.dataset.how)){ refresh(); showCat(); } }; });
@@ -3814,7 +4026,10 @@ var Yard = (function(){
   }
   return {
     open: function(){ if(!built) build(); fitCam(); refresh(); panel(''); },
-    refresh: refresh, fit: function(){ if(built) fitCam(); }, tap: tap, screenOf: screenOf, showCat: showCat, showMines: showMines,
+    refresh: refresh, fit: function(){ if(built) fitCam(); }, tap: tap,
+    ready: function(){ return built; }, snapHost: function(){ return scene; },
+    // P2c: mo hinh toa xuong (da xay, it nhat cap 1) cho anh polaroid
+    wsModel: function(k){ var r = wsRow(k); return built && r ? piece(r[1], true, Math.max(1, wsLv(k)), 0) : null; }, screenOf: screenOf, showCat: showCat, showMines: showMines,
     showTickets: showTickets, showAway: showAway, showDaily: showDaily, showChest: showChest, tkHud: function(){ if(built) tkHud(); },
     panBy: panBy, pxToWorld: pxToWorld, pan: function(){ return {x:panX, max:panMax}; },
     draw: function(){ if(!built) return; if(Math.abs(panT - panX) > .005){ panX += (panT - panX)*.25; placeCam(); } renderer.render(scene, cam); }
@@ -3828,7 +4043,7 @@ function adWatch(spot, fn){   // gia lap: bam la nhan, ghi lai luot bam
   G.ads.n[spot] = (G.ads.n[spot] || 0) + 1; ev('ad', {spot:spot, left:adLeft(spot)}); fn(); save();
   tip('DEMO ad — reward granted', true); setTimeout(function(){ tip(''); }, 1600); return true;
 }
-function adBtn(id, spot, label){ return adLeft(spot) > 0 ? '<button class="buy ad" id="' + id + '">&#9654; AD · ' + label + '</button>' : ''; }
+function adBtn(id, spot, label, bare){ return adLeft(spot) > 0 ? '<button class="buy ad" id="' + id + '">&#9654; ' + (bare ? '' : 'AD · ') + label + '</button>' : ''; }   // bare: man ket P2c ("▶ KEEP GOING")
 function tchestLeft(){ if(!G.tchest) G.tchest = Date.now(); return Math.max(0, G.tchest - Date.now()); }   // 0 = mo duoc (ruong dau: ngay)
 function tchestOpen(){
   if(tchestLeft() > 0) return null;
@@ -3884,7 +4099,6 @@ window.addEventListener('pointermove', function(e){ if(!yDrag) return; var l = t
   if(yDrag.moved){ Yard.panBy(-(l.x - yDrag.x)*yDrag.k); yDrag.x = l.x; } });
 window.addEventListener('pointerup', function(e){ if(!yDrag) return; var d = yDrag; yDrag = null; if(!d.moved) Yard.tap(e.clientX, e.clientY); });
 $('scrYard').addEventListener('wheel', function(e){ if(S.mode !== 'yard') return; Yard.panBy((e.deltaX || e.deltaY)*Yard.pxToWorld()); e.preventDefault(); }, {passive:false});
-$('yL').onclick = function(){ Yard.panBy(-14); }; $('yR').onclick = function(){ Yard.panBy(14); };
 $('yCat').onclick = function(){ ac(); Yard.showCat(); };
 $('yMineBtn').onclick = function(){ ac(); Yard.showMines(); };
 $('yTk').onclick = function(){ ac(); Yard.showTickets(); };
@@ -3910,7 +4124,7 @@ function botYard(){
 }
 
 window.__game = {
-  G:function(){ return G; }, S:S, stats:stats,
+  G:function(){ return G; }, S:S, stats:stats, snapStat:function(){ return Snap.stat(); }, snapBreak:function(){ Snap.breakIt(); },
   info:function(){ return {mode:S.mode, tut:S.tut, kho:G.kho, gems:G.gems, spent:G.spent, lv:G.lv, depth:G.depth, dprog:G.dprog, bottom:S.bottom, falling:S.fallT > 0, fallers:fallers.length, bank:G.bank, best:G.best,
     shifts:G.shifts, won:G.won, playMin:G.playMs/60000, crates:crates.length, swinging:S.swinging,
     pile:Math.round(pileTop()*10)/10 + '/' + Math.round(DL*10)/10, combo:S.combo, over:S.overflow > 0,
@@ -3977,6 +4191,7 @@ window.__game = {
 fit(); setHammer(G.ham || 'sledge'); buildSeam();
 if(G.tut === 0) startTutorial(); else { buildShelves(Math.min(3, G.kho)); openYard(true); }   // 12/11: mo game = The Yard
 hud();
+Snap.warm();
 requestAnimationFrame(loop);
 ev('boot');
 // Lan 6: cac bai do keo-trong-khong-gian chay khong co tuong (xem WALL_ON)
