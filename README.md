@@ -1,5 +1,5 @@
 # smash-shift
 
-Smash Shift: smash ore in the mine pit
+Smash Shift - mining smash demo (New Moon Games game jam)
 
 Play: https://maivu-prog.github.io/smash-shift/
