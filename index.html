@@ -1057,7 +1057,12 @@ function pers(){ return PERS[S.pers] || PERS.steady; }
 // => doi khoa, ban v2 nam yen trong may (khong doc, khong xoa).
 // kho = TANG dang dao (giu ten bien cu de bo cuc mang/loai quang theo tang khong phai sua)
 // depth = so nac da sap trong tang nay · dprog = diem quang dang co tren thanh nac
-var SAVE_KEY = 'smashshift.v4';   // 26/11 progression 10 tang/mo: khoa moi, ban v3 nam yen trong may
+// 27/11 Mai: "ban dem di test phai giu save qua moi lan cap nhat. Hien moi lan doi SAVE_KEY la save bi reset" =>
+// KHOA LUU CO DINH, KHONG BAO GIO DOI NUA. Doi cau truc save => tang SAVE_VER + them 1 buoc vao migrateSave().
+// Chua co save o khoa nay thi doc save khoa cu (v3 / v2 / v1) va CHUYEN sang (khong xoa khoa cu = ban du phong).
+var SAVE_KEY = 'smashshift.v4';
+var SAVE_OLD = [['smashshift.v3', 3], ['smashshift.v2', 2], ['smashshift.v1', 1]];
+var SAVE_VER = 5;   // 3 = 4 tang / mo (12/11) · 4 = 10 tang / mo + vang meta (26/11) · 5 = cay xuong v2 (27/11)
 // B4: gems = ruby (giu vinh vien) · spent = tien ca da tieu vao nang cap o tang nay (=> ruong tang).
 // Truong moi co mac dinh qua Object.assign(freshSave()) nen KHONG doi khoa luu.
 // Yard (12/11): ws = cap xuong · mine = mo dang chon · mines[i] = tien do cat cua mo khong chon · cleared[i] ·
@@ -1068,14 +1073,38 @@ function freshSave(){ return {bank:0, gems:0, spent:0, lv:{}, kho:0, depth:0, dp
   tk:CFG.run.start, tkT:0, run:null,
   saveT:0, away:0,   // B5
   ads:null, tchest:0, daily:{last:'', n:0},   // B7: luot QC theo ngay {day, n:{cho:so}} · ruong hen gio mo luc (ms) · diem danh: luc luu cuoi (ms) · qua luc vang dang cho nhan (tien ca)   // B3: ve dang co · moc tinh hoi ve (ms) · luot dang choi {n: so ca da dung o tang nay} hoac null
-  tut:0, best:0, shifts:0, crates:0, playMs:0, won:0, seen:{}}; }
+  tut:0, best:0, shifts:0, crates:0, playMs:0, won:0, seen:{}, sv:SAVE_VER}; }
 var G = freshSave();
+// doc save: khoa hien tai, khong co thi khoa cu moi nhat (ghi so phien ban cua khoa do vao sv)
+function readSave(){
+  var raw = localStorage.getItem(SAVE_KEY); if(raw){ var s0 = JSON.parse(raw); if(s0 && typeof s0 === 'object' && !s0.sv) s0.sv = 4; return s0; }
+  for(var i=0;i<SAVE_OLD.length;i++){ raw = localStorage.getItem(SAVE_OLD[i][0]);
+    if(raw){ var o = JSON.parse(raw); if(o && typeof o === 'object'){ o.sv = SAVE_OLD[i][1]; o._from = SAVE_OLD[i][0]; return o; } } }
+  return null;
+}
+// chuyen save cu len cau truc hien tai, tung buoc mot (khong bo buoc nao)
+function migrateSave(s){
+  var v = s.sv || 4;
+  if(v <= 2){   // v1 / v2 (truoc 12/11): tien do theo chi tieu tien, khong doi sang tang duoc => giu bua, vang, da hoc, thong ke
+    s = {bank:+s.bank || 0, owned:s.owned, ham:s.ham, tut:s.tut, best:s.best, shifts:s.shifts, crates:s.crates, playMs:s.playMs, won:0, seen:s.seen || {}, lv:{}, _from:s._from};
+    v = 3; }
+  if(v === 3){  // v3 (12/11-26/11): 4 tang / mo, vang reset moi tang + vang rieng tung mo => 10 tang / mo, vang meta chung
+    var map = function(k){ k = +k || 0; return k >= 4 ? 10 : Math.min(9, Math.floor(k*2.5)); };
+    var gold = +s.bank || 0;
+    s.kho = map(s.kho); s.depth = 0; s.dprog = 0; s.lv = {}; s.bdone = {}; s.run = null; s.spent = 0;
+    if(Array.isArray(s.mines)) s.mines = s.mines.map(function(m){ if(!m) return m; gold += +m.bank || 0; return {kho:map(m.kho), depth:0, dprog:0, lv:{}, spent:0}; });
+    s.bank = gold; v = 4; }
+  if(v === 4){ v = 5; }   // v4 -> v5: cay xuong v2 (Bunkhouse cu -> 1 tho + Training Yard) xu ly bang co G.wsv ben duoi
+  s.sv = SAVE_VER; return s;
+}
 // Dap ban luu LEN mac dinh thay vi thay han G: ban luu thieu mot truong (vd `owned`) thi
 // truoc day game no ngay luc khoi dong (TypeError o setHammer) va chi thay man den.
 function load(){ if(QS.get('reset')||BOT) return;
-  try{ var s = JSON.parse(localStorage.getItem(SAVE_KEY));
-    if(s && typeof s === 'object' && s.lv){
+  try{ var s = readSave();
+    if(s && typeof s === 'object'){
+      var from = s._from; s = migrateSave(s); delete s._from;
       G = Object.assign(freshSave(), s);
+      if(from) setTimeout(function(){ ev('saveMigrated', {from:from}); save(); }, 0);   // ghi sang khoa hien tai (khoa cu giu nguyen); ev khai bao sau load()
       if(!G.lv || typeof G.lv !== 'object') G.lv = {};
       if(!G.owned || typeof G.owned !== 'object') G.owned = {sledge:1};
       if(!G.seen || typeof G.seen !== 'object') G.seen = {};
@@ -4651,6 +4680,7 @@ var Yard = (function(){
   // 16/11 P2c: moi bua = 1 to giay ghim + anh chup that cua bua; cau mo ta dai nam o title (giu/di chuot)
   // 27/11 hoc KDR: bang uu dai (mo sau boss dau). Starter dem nguoc; Shift Pay = the thang.
   function showOffers(){
+    if(S.mode === 'shift' || S.mode === 'tut') return;   // 27/11: khong bao gio giua ca
     var h = '<h2>Offers<small>DEMO · FREE</small></h2>', sl = starterLeft(), C = CFG.card;
     if(sl > 0) h += '<div class="pa crow hot"><div class="ph">' + polHtml('ham:' + CFG.starter.ham, 'i-ham') + '</div><div class="ctx"><b>' + HAMMERS[CFG.starter.ham].name + ' + ' + rub(CFG.starter.rubies) +
       '<span class="tag">ONCE ONLY</span></b><em>Ends in ' + (sl > DAY_MS ? Math.floor(sl/DAY_MS) + 'd ' : '') + fmtH(sl % DAY_MS || sl) + '</em></div><button class="buy" id="yStarter2">' + CFG.starter.usd + '</button></div>';
@@ -4767,6 +4797,7 @@ function digGo(){
   }
   buildShelves(layOf(G.kho)); openShop();
 }
+var OFFER_POPPED = 0;   // 27/11: da tu bat bang uu dai trong phien nay chua (khong luu: mo app lai = phien moi)
 function openYard(keepRun){
   if(!keepRun) runEnd('yard');   // B3: ve Yard = het luot (mo app thi giu luot do dang: keepRun)
   if(G.mines) mineSave();
@@ -4777,7 +4808,10 @@ function openYard(keepRun){
   Yard.open(); save(); ev('yard', {gems:G.gems, mine:G.mine}); music('yard'); musicUi();   // 27/11 nhac
   if(G.away > 0) Yard.showAway();   // B5 (nhan xong => diem danh)
   else if(dailyReady() || cardReady()) Yard.showDaily();   // B7 (+ the thang)
-  else if((G.offerPop === 1 && starterLeft() > 0) || (G.offerPop === 2 && stuckLeft() > 0)){ G.offerPop = 0; save(); Yard.showOffers(); }   // 27/11: boss dau vua vo => chao starter 1 lan
+  // 27/11 Mai: popup monetize "dung loai nguoi choi che nhieu nhat" => TOI DA 1 LAN MOI PHIEN (mo app), chi luc vao Yard,
+  // khong chong len bang khac (else-if), khong bao gio giua ca. Chua bat duoc thi uu dai van nam trong Offers + badge.
+  else if(!OFFER_POPPED && S.mode === 'yard' && ((G.offerPop === 1 && starterLeft() > 0) || (G.offerPop === 2 && stuckLeft() > 0))){
+    OFFER_POPPED = 1; G.offerPop = 0; save(); Yard.showOffers(); }
 }
 // 13/11: keo trai/phai de cuon ban do; nhan nhe (khong keo) = cham xuong. Toa do qua toLocal (man xoay doc).
 var yDrag = null;
@@ -4877,6 +4911,7 @@ window.__game = {
   head:function(){ return {mx:mx, my:my, px:pvx, py:pvy, ax:px, ay:py, sp:Math.hypot(mvx, mvy)}; },
   endShift:function(){ if(S.mode === 'shift') endShift(); },
   bossHere:function(){ return bossHere(); },
+  popped:function(){ return OFFER_POPPED; }, migrate:function(o){ return migrateSave(JSON.parse(JSON.stringify(o))); },
   offers:function(){ return {starterLeft:starterLeft(), starterAt:G.starterAt, card:G.card, cardOn:cardOn(), cardReady:cardReady(), gems:G.gems}; },
   cardBuy:function(){ var r = cardBuy(); Yard.refresh(); return r; },
   bossWinOffers:function(){ offersBossWin(); return G.vault; }, bossLoseOffers:function(k){ offersBossLose(k); return stuckLeft(); },
