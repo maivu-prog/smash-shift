@@ -4460,10 +4460,53 @@ var Yard = (function(){
     var lc = toLocal(sc.x, sc.y);   // screenOf tra toa do man that -> doi ve toa do trong khung 19,5:9 (co the xoay)
     el.style.left = lc.x + 'px'; el.style.top = (lc.y - 30) + 'px'; $('scrYard').appendChild(el); setTimeout(function(){ el.remove(); }, 1300);
   }
+  // 27/11 Mai "cho model may structure da unlock co vai tho mo mini lam viec, cap cang cao cang nhieu tho mini":
+  // so tho = 1..4 theo tien do dong xuong (tong cap / cap toi da: <=25 % 1 tho, <=50 % 2, <=75 % 3, con lai 4); Depot 2 tho.
+  // Tho DAO dung vung cuoc vao cuc da; tho KHUAN vac bao di qua lai mep truoc o dat. Mu vang co den nhu tho phu trong ca.
+  var MW = null, MW_SPOTS = [[-1.25, 1.2], [1.1, 1.42], [1.3, .05], [-.2, 1.7]];   // dao: truoc-trai, canh phai · khuan: 2 lan mep truoc
+  function mwKit(){ if(MW) return MW;
+    MW = {g:{body:new THREE.BoxGeometry(.2, .22, .14), head:new THREE.SphereGeometry(.085, 8, 6), helm:new THREE.SphereGeometry(.098, 8, 5, 0, Math.PI*2, 0, Math.PI/2),
+          lamp:new THREE.CylinderGeometry(.025, .025, .03, 6), leg:new THREE.BoxGeometry(.07, .13, .08), haft:new THREE.BoxGeometry(.025, .28, .025),
+          pick:new THREE.BoxGeometry(.2, .035, .035), sack:new THREE.SphereGeometry(.1, 7, 5), rock:new THREE.DodecahedronGeometry(.13, 0), chip:new THREE.TetrahedronGeometry(.035)},
+      m:{skin:YS(0xe8b48a), helm:YS(0xffc53a, {roughness:.4}), lamp:new THREE.MeshBasicMaterial({color:0xfff6c8}), boot:YS(0x2a1c12), wood:YS(0x8a5a2c),
+         iron:YS(0x9aa0a8, {metalness:.6, roughness:.35}), sack:YS(0xa07c4c), rock:YS(0x7a7066), chip:YS(0x9a948a),
+         shirt:[0x2f6fd0, 0x2f9a5a, 0xc0562a, 0x8a3ab0].map(function(c){ return YS(c); })}};
+    return MW; }
+  function makeMiner(i, kind){
+    var K = mwKit(), g = new THREE.Group(), e = function(geo, mat, x, y, z){ var o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); o.castShadow = true; g.add(o); return o; };
+    var l1 = e(K.g.leg, K.m.boot, -.05, .065, 0), l2 = e(K.g.leg, K.m.boot, .05, .065, 0);
+    e(K.g.body, K.m.shirt[i % 4], 0, .24, 0); e(K.g.head, K.m.skin, 0, .42, 0); e(K.g.helm, K.m.helm, 0, .445, 0);
+    var lp = e(K.g.lamp, K.m.lamp, 0, .48, .09); lp.rotation.x = Math.PI/2;
+    var arm = new THREE.Group(); arm.position.set(.1, .3, 0); g.add(arm);
+    if(kind === 'dig'){ var h = new THREE.Mesh(K.g.haft, K.m.wood); h.position.y = .13; arm.add(h); var pk = new THREE.Mesh(K.g.pick, K.m.iron); pk.position.y = .27; arm.add(pk); }
+    else { var sk = new THREE.Mesh(K.g.sack, K.m.sack); sk.position.set(-.1, .1, -.08); arm.add(sk); arm.position.set(-.02, .3, -.06); }
+    g.scale.setScalar(2.2); return {g:g, arm:arm, l1:l1, l2:l2, kind:kind}; }   // ~1/3 chieu cao cong trinh: van "mini" nhung thay o khung dien thoai
+  function addWorkers(P, k){
+    var l = wsLv(k), n = k === 'depot' ? 2 : (CFG.ws[k] ? Math.min(4, Math.max(1, Math.ceil(4*l/wsMax(k)))) : 0);
+    P.workers = []; if(!n) return;
+    for(var i=0;i<n;i++){ var kind = i === 1 || i === 3 ? 'haul' : 'dig', w = makeMiner(i + k.length, kind), sp = MW_SPOTS[i];
+      w.x0 = sp[0]; w.z0 = sp[1]; w.ph = Math.random()*6.28; w.g.position.set(sp[0], 1.3, sp[1]);
+      if(kind === 'dig'){ w.g.rotation.y = -Math.PI/2 + (i ? .4 : -.3);   // quay vao cuc da ben canh
+        var rk = new THREE.Mesh(mwKit().g.rock, mwKit().m.rock); rk.position.set(sp[0] + .52*Math.cos(w.g.rotation.y + Math.PI/2), 1.4, sp[1] - .52*Math.sin(w.g.rotation.y + Math.PI/2)); rk.scale.setScalar(1.5);
+        rk.rotation.set(1, 2, .5); rk.castShadow = true; P.g.add(rk); w.rock = rk; }
+      P.g.add(w.g); P.workers.push(w); }
+  }
+  function stepWorkers(P, dt){
+    for(var i=0;i<P.workers.length;i++){ var w = P.workers[i], t = polishT*1 + w.ph;
+      if(w.kind === 'dig'){   // gio cuoc len cham (0,55 s) roi bo xuong nhanh (0,15 s), nghi chut
+        var c = (t*1.25) % 1, a = c < .55 ? c/.55*1.9 : (c < .7 ? 1.9 - (c - .55)/.15*2.6 : -.7 + (c - .7)/.3*.7);
+        w.arm.rotation.x = -a;
+        if(w.rock){ var hit = c >= .68 && c < .74; w.rock.scale.setScalar(hit ? 1.32 : 1.5); }
+      } else {   // di qua lai mep truoc o dat, vac bao
+        var u = Math.sin(t*.7), du = Math.cos(t*.7); w.g.position.x = w.x0*.15 + u*1.05; w.g.position.z = w.z0; w.g.rotation.y = du > 0 ? Math.PI/2 : -Math.PI/2;
+        w.l1.position.y = .065 + Math.max(0, Math.sin(t*9))*.04; w.l2.position.y = .065 + Math.max(0, -Math.sin(t*9))*.04;
+        w.g.position.y = 1.3 + Math.abs(Math.sin(t*9))*.025; }
+    }
+  }
   function polishStep(dt){
     polishT += dt; var pul = .5 + .5*Math.sin(polishT*5);
     glowMat.opacity = .55 + .4*pul;
-    for(var k in pieces){ var g = pieces[k].g;
+    for(var k in pieces){ var g = pieces[k].g; if(pieces[k].workers) stepWorkers(pieces[k], dt);
       if(pieces[k].aff) g.children.forEach(function(o){ if(o.userData.glow) o.scale.setScalar(1 + .06*pul); if(o.userData.bob) o.position.y = 4.4 + .35*Math.abs(Math.sin(polishT*3.2)); });
       if(g.userData.pop !== undefined){ g.userData.pop += dt; var u = g.userData.pop/.45; g.scale.setScalar(u < 1 ? 1 + .28*Math.sin(u*Math.PI) : 1); if(u >= 1) delete g.userData.pop; } }
     for(var i=fx.length-1;i>=0;i--){ var f = fx[i]; f.t += dt; f.vy -= 18*dt; f.m.position.x += f.vx*dt; f.m.position.y += f.vy*dt; f.m.position.z += f.vz*dt;
@@ -4550,6 +4593,7 @@ var Yard = (function(){
       var g = piece(r[1], l > 0, tq ? (l >= wsMax(k) ? tq.n : tq.j) : l, l > 0 || !CFG.ws[k] ? 0 : (open ? fmt(wsCost(k)).slice(1) : 0), multi && l > 0 ? tq.t : -1, tq ? tq.n : 3);   // 27/11: gia vang · cap trong bac + co bac
       if(aff) nodeGlow(g); else if(CFG.ws[k] && !open) nodeLock(g);
       g.position.set(r[3][0], .05, r[3][1]); g.userData.pick = {ws:k}; scene.add(g); pick.push(g); pieces[k] = {g:g, sig:sig, aff:aff, x:r[3][0], z:r[3][1]};
+      if(l > 0 || k === 'depot') addWorkers(pieces[k], k);   // 27/11 tho mo mini
     });
   }
   function fitCam(){
@@ -4747,7 +4791,8 @@ var Yard = (function(){
     showTickets: showTickets, showAway: showAway, showDaily: showDaily, showChest: showChest, tkHud: function(){ if(built) tkHud(); },
     panBy: panBy, pxToWorld: pxToWorld, pan: function(){ return {x:panX, max:panMax}; },
     draw: function(){ if(!built) return; if(Math.abs(panT - panX) > .005){ panX += (panT - panX)*.25; placeCam(); } polishStep(drawDt || 1/60); renderer.render(scene, cam); },
-    celebrate: celebrate, panTo: function(x){ panTo(x); }, carts: function(){ return carts.map(function(c){ return {to:c.R && c.R.to, t:+c.t.toFixed(2)}; }); }
+    celebrate: celebrate, panTo: function(x){ panTo(x); },
+    workers: function(){ var o = {}; for(var k in pieces) if(pieces[k].workers && pieces[k].workers.length) o[k] = pieces[k].workers.length; return o; }, carts: function(){ return carts.map(function(c){ return {to:c.R && c.R.to, t:+c.t.toFixed(2)}; }); }
   };
 })();
 // ---- B7 QUANG CAO GIA LAP + RUONG HEN GIO + DIEM DANH ----
@@ -4922,6 +4967,7 @@ window.__game = {
   bdPos:function(){ return S.bd ? {boss:!!S.bd.boss, name:S.bd.name, x:S.bd.x, y:S.bd.y, w:BD_W, h:BD_H, rise:S.bd.rise, hp:S.bd.hp, max:S.bd.max, t:S.bd.t, pen:S.bd.penMax || 0, rod:ROD, r:ham.r} : null; },
   spawnThief:function(side){ var t = spawnThief(side); return {x:t.x, y:t.y}; },
   pause:function(){ pauseShift(); return !!S.paused; }, resume:function(){ resumeShift(); return !S.paused; }, quit:function(){ quitShift(); return S.mode; },
+  workers:function(){ return Yard.workers ? Yard.workers() : {}; },
   cartList:function(){ return Yard.carts ? Yard.carts() : []; }, mus:function(){ return {track:MUS.track, on:musOn(), timer:!!MUS.timer}; },
   helpersN:function(){ return helpers.length; }, wsTier:function(k){ return wsTier(k); }, wsEff:function(k){ return wsEff(k); }, wsMax:function(k){ return wsMax(k); },
   thiefs:function(){ return thieves.map(function(t){ return {st:t.st, mode:t.mode, x:t.x, n:t.n, tgt:t.tgt ? {x:t.tgt.x, y:t.tgt.y, net:!!t.tgt.net} : null}; }); },
