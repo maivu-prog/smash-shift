@@ -2326,21 +2326,65 @@ var hpSkin = M(0xe8b48a), hpHelm = M(0xffc53a), hpLamp = new THREE.MeshBasicMate
 var hpHelmG = new THREE.SphereGeometry(.3, 12, 8, 0, Math.PI*2, 0, Math.PI/2), hpLampG = new THREE.CylinderGeometry(.08, .08, .08, 10),
     hpHeadG = new THREE.BoxGeometry(.7, .12, .12), hpHaftG = new THREE.BoxGeometry(.08, .8, .08);
 function helperOn(){ return wsLv('bunk') > 0 && S.mode === 'shift'; }
-function makePick(){ var g = new THREE.Group(), h = new THREE.Mesh(hpHaftG, hpHaft); g.add(h); var p = new THREE.Mesh(hpHeadG, hpPick); p.position.y = .38; g.add(p); return g; }
+// 27/11 cuoc moi: can go + dau sat 2 dau nhon (cung dung cho cuoc bay khi tho nem)
+var pkHaftG = new THREE.CylinderGeometry(.045, .055, .95, 7), pkHeadG = new THREE.BoxGeometry(.42, .1, .1), pkTipG = new THREE.ConeGeometry(.055, .26, 6),
+    pkIron = new THREE.MeshLambertMaterial({color:0x9aa2ac}), pkWood = M(0x8a5a2c), pkBand = M(0x5a3a1a);
+function makePick(){ var g = new THREE.Group(), h = new THREE.Mesh(pkHaftG, pkWood); h.position.y = .1; g.add(h);
+  var bd = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, .1, 7), pkBand); bd.position.y = .5; g.add(bd);
+  var hd = new THREE.Mesh(pkHeadG, pkIron); hd.position.y = .55; g.add(hd);
+  [-1, 1].forEach(function(s){ var t = new THREE.Mesh(pkTipG, pkIron); t.position.set(s*.33, .53, 0); t.rotation.z = -s*Math.PI/2 - s*.25; g.add(t); });
+  g.traverse(function(o){ if(o.isMesh) o.castShadow = true; }); return g; }
+// 27/11 Mai "lam lai model tho trong man dao": tho mo moi. Dung quay +x, lat bang scale.x (nhu orc).
+var mnDenim = M(0x34507a), mnDenimD = M(0x25395a), mnBoot = M(0x4a2e18), mnGlove = M(0xc8a060), mnBrass = M(0xd9a43a), mnHair = M(0x6a4024),
+    mnHelm = new THREE.MeshLambertMaterial({color:0xffc22a}), mnLamp = new THREE.MeshBasicMaterial({color:0xfff6c8}),
+    mnBeam = new THREE.MeshBasicMaterial({color:0xffe27a, transparent:true, opacity:.09, depthWrite:false, side:THREE.DoubleSide, blending:THREE.AdditiveBlending}), mnEye = M(0x1a1008), mnCanteen = M(0x5e6b3a);
+var mnG = {sph:new THREE.SphereGeometry(1, 14, 10), box:new THREE.BoxGeometry(1, 1, 1), cyl:new THREE.CylinderGeometry(1, 1, 1, 12),
+  half:new THREE.SphereGeometry(1, 14, 8, 0, Math.PI*2, 0, Math.PI/2), cone:new THREE.ConeGeometry(1, 1, 16, 1, true)};
+function mnPart(geo, mat, sx, sy, sz, x, y, z, par){ var m = new THREE.Mesh(geo, mat); m.scale.set(sx, sy, sz); m.position.set(x, y, z); par.add(m); return m; }
+function buildMiner(i){
+  var shirt = M(HP_TUNIC[i % HP_TUNIC.length]), g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  var legs = [];
+  [.13, -.13].forEach(function(z){ var L = new THREE.Group(); L.position.set(0, .48, z); body.add(L);
+    mnPart(mnG.box, mnDenimD, .2, .4, .19, 0, -.2, 0, L); mnPart(mnG.box, mnBoot, .32, .15, .22, .05, -.42, 0, L); legs.push(L); });
+  // than: ao so mi mau + quan yem bo + day deo + that lung khoa dong + tui yem
+  mnPart(mnG.sph, shirt, .3, .34, .26, 0, .86, 0, body);
+  mnPart(mnG.box, mnDenim, .5, .42, .46, .02, .74, 0, body).scale.set(.44, .4, .42);
+  mnPart(mnG.box, mnDenim, .08, .26, .34, .2, .95, 0, body);                        // yem truoc
+  mnPart(mnG.box, mnDenimD, .1, .1, .14, .245, .96, 0, body);                        // tui yem
+  [.12, -.12].forEach(function(z){ mnPart(mnG.box, mnDenimD, .05, .36, .04, .05, .98, z, body).rotation.z = -.12; });
+  mnPart(mnG.box, M(0x3a2414), .46, .06, .44, .02, .58, 0, body); mnPart(mnG.box, mnBrass, .05, .07, .1, .25, .58, 0, body);
+  var can = mnPart(mnG.cyl, mnCanteen, .1, .16, .1, -.24, .7, -.12, body);           // binh nuoc sau lung
+  // dau: mat, mui, mat, ria, toc mai; mu bao ho vang co vanh + den + vet sang
+  var head = new THREE.Group(); head.position.set(.05, 1.22, 0); body.add(head);
+  mnPart(mnG.sph, hpSkin, .2, .21, .2, 0, 0, 0, head);
+  mnPart(mnG.sph, hpSkin, .06, .055, .06, .2, -.01, 0, head);
+  [.07, -.07].forEach(function(z){ mnPart(mnG.sph, mnEye, .028, .032, .028, .18, .05, z, head); });
+  mnPart(mnG.box, mnHair, .07, .045, .2, .19, -.07, 0, head).rotation.x = 0;
+  [.09, -.09].forEach(function(z){ mnPart(mnG.sph, mnHair, .05, .03, .05, .18, -.09, z, head); });
+  mnPart(mnG.box, mnHair, .14, .1, .02, -.03, -.02, .19, head); mnPart(mnG.box, mnHair, .14, .1, .02, -.03, -.02, -.19, head);
+  mnPart(mnG.half, mnHelm, .25, .2, .24, 0, .07, 0, head);
+  mnPart(mnG.cyl, mnHelm, .3, .025, .28, .03, .07, 0, head);
+  mnPart(mnG.box, mnHelm, .04, .05, .3, -.01, .2, 0, head);                          // gan mu
+  var lamp = mnPart(mnG.cyl, mnLamp, .055, .05, .055, .23, .16, 0, head); lamp.rotation.z = Math.PI/2;
+  var beam = mnPart(mnG.cone, mnBeam, .32, 1.2, .32, .85, .02, 0, head); beam.rotation.z = Math.PI/2 + .25;
+  // tay sau buong, tay truoc cam cuoc (truc o vai -> vung theo vong sac)
+  var arm2 = new THREE.Group(); arm2.position.set(-.02, 1.0, -.27); body.add(arm2); arm2.rotation.z = -.25;
+  mnPart(mnG.cyl, shirt, .07, .38, .07, 0, -.17, 0, arm2); mnPart(mnG.sph, mnGlove, .08, .08, .08, 0, -.38, 0, arm2);
+  var arm = new THREE.Group(); arm.position.set(.02, 1.0, .27); body.add(arm);
+  mnPart(mnG.cyl, shirt, .07, .36, .07, 0, -.16, 0, arm); var hand = mnPart(mnG.sph, mnGlove, .085, .085, .085, 0, -.36, 0, arm);
+  var pick = makePick(); pick.position.set(0, -.38, .02); pick.rotation.z = -1.25; arm.add(pick);
+  g.traverse(function(o){ if(o.isMesh && o.material !== mnBeam) o.castShadow = true; });
+  g.scale.setScalar(1.08);
+  return {g:g, body:body, arm:arm, pick:pick, legs:legs, beam:beam};
+}
 // 27/11 cay v2: Bunkhouse I/II/III = 1/2/3 tho (helpers); helper = tho dau (vong sac #helperUi + test cu)
 var helpers = [], HP_TUNIC = [0x2f6fd0, 0x2f9a5a, 0xc0562a];
 function spawnHelper(){
   removeHelper(); var n = Math.min(3, wsLv('bunk')); if(n <= 0) return;
   for(var i=0;i<n;i++){
-    var g = new THREE.Group(), body = new THREE.Mesh(thBodyG, i ? M(HP_TUNIC[i]) : hpTunic); body.position.y = .5; g.add(body);
-    var head = new THREE.Mesh(thHeadG, hpSkin); head.position.y = 1.02; g.add(head);
-    var helm = new THREE.Mesh(hpHelmG, hpHelm); helm.position.y = 1.08; g.add(helm);
-    var lamp = new THREE.Mesh(hpLampG, hpLamp); lamp.rotation.x = Math.PI/2; lamp.position.set(0, 1.28, .26); g.add(lamp);
-    var l1 = new THREE.Mesh(thLegG, thBoot), l2 = new THREE.Mesh(thLegG, thBoot); l1.position.set(-.15, .15, 0); l2.position.set(.15, .15, 0); g.add(l1); g.add(l2);
-    var pick = makePick(); pick.position.set(.4, .75, .1); pick.rotation.z = -.5; g.add(pick);
-    g.traverse(function(o){ if(o.isMesh) o.castShadow = true; });
+    var mo = buildMiner(i), g = mo.g;   // 27/11 tho mo moi
     scene.add(g);
-    var h = {g:g, pick:pick, idx:i, side:-1, x:0, y:0, t:0, ch:i*1.3, fly:null, sw:0}; helpers.push(h); helperPlace(h);
+    var h = {g:g, body:mo.body, arm:mo.arm, pick:mo.pick, legs:mo.legs, idx:i, side:-1, x:0, y:0, t:Math.random()*3, ch:i*1.3, fly:null, sw:0}; helpers.push(h); helperPlace(h);
   }
   helper = helpers[0]; ev('helper', {lv:wsLv('bunk'), n:n});
 }
@@ -2359,8 +2403,14 @@ function helperTarget(skip){   // cuc CAO NHAT dang nam yen tren dong (khong o t
 }
 function stepHelper(dt){ for(var i=0;i<helpers.length;i++) stepOneHelper(helpers[i], dt); }
 function stepOneHelper(h, dt){
-  helperPlace(h); h.g.position.set(h.x, h.y, .2); h.g.rotation.y = h.side < 0 ? .5 : -.5;
-  if(h.sw > 0){ h.sw -= dt; h.pick.rotation.z = -.5 - Math.sin((1 - h.sw/.3)*Math.PI)*1.6*h.side*-1; } else h.pick.rotation.z = -.5;
+  helperPlace(h); h.t += dt;
+  var face = h.side < 0 ? 1 : -1;   // tuong trai => quay sang phai (vao dong)
+  h.g.position.set(h.x, h.y + Math.sin(h.t*2.4)*.012, .2); h.g.scale.x = 1.08*face; h.g.rotation.y = -.5*face;
+  // 27/11: tay cuoc theo vong sac - sac dan thi gio cuoc qua dau; nem (sw) => bo manh ve truoc; cho thi tho nhe
+  var chg = h.fly ? 0 : Math.min(1, h.ch/helperCharge()), want = h.sw > 0 ? (-1.3 + (h.sw/.3)*3.2) : (-.15 + chg*2.0 + Math.sin(h.t*2.4)*.04);
+  if(h.sw > 0) h.sw -= dt;
+  h.arm.rotation.z += (want - h.arm.rotation.z)*Math.min(1, dt*(h.sw > 0 ? 30 : 8));
+  h.body.rotation.z = chg*.08 - (h.sw > 0 ? .12 : 0);
   if(h.fly){ var f = h.fly; f.t += dt; var u = Math.min(1, f.t/CFG.helper.flight);
     var tx = f.c.bd && S.bd ? S.bd.x : f.c.x, ty = f.c.bd && S.bd ? S.bd.y : f.c.y;
     f.m.position.set(f.x0 + (tx - f.x0)*u, f.y0 + (ty - f.y0)*u + Math.sin(u*Math.PI)*1.6, .4); f.m.rotation.z -= dt*22;
