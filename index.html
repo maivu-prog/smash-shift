@@ -93,6 +93,13 @@
   #lineT{position:absolute;transform:translate(-50%,-100%);pointer-events:none;font:800 58px/1 'Baloo 2',sans-serif;color:#fff1c2;
     -webkit-text-stroke:3px #b3180a;paint-order:stroke fill;text-shadow:0 4px 0 #5a0c04,0 0 18px rgba(255,50,20,.9)}
   #lineT[hidden]{display:none}
+  #tutLine{position:absolute;inset:0;z-index:30;pointer-events:auto;cursor:pointer} #tutLine[hidden]{display:none}
+  #tutLine .hole{position:absolute;left:0;right:0;box-shadow:0 0 0 2400px rgba(12,7,3,.72);border-top:3px solid rgba(255,80,50,.9);border-bottom:3px solid rgba(255,80,50,.9);animation:tlPulse .6s ease-in-out infinite alternate}
+  @keyframes tlPulse{from{border-color:rgba(255,80,50,.5)}to{border-color:rgba(255,120,80,1)}}
+  #tutLine .tx{position:absolute;left:50%;transform:translateX(-50%);text-align:center;display:flex;flex-direction:column;gap:4px;width:min(560px,90%)}
+  #tutLine .tx b{font:800 24px/1.15 'Baloo 2',sans-serif;color:#fff1c2;text-shadow:0 2px 0 #3a1c0a}
+  #tutLine .tx span{font:800 19px/1.2 'Baloo 2',sans-serif;color:#ffb030;text-shadow:0 2px 0 #3a1c0a}
+  #tutLine .tx em{font:800 12px/1 'Baloo 2',sans-serif;font-style:normal;color:#f0d8a8;opacity:.8;margin-top:6px;letter-spacing:.08em}
   #bdBar{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none}
   #bdBar span{font-size:13px;font-weight:800;letter-spacing:.14em;color:#ffe7a0;text-shadow:0 2px 0 #2a1a10}
   #bdBar i{display:block;width:150px;height:12px;border-radius:6px;background:#140e0a;box-shadow:0 0 0 2px #4a3524;overflow:hidden}
@@ -172,6 +179,12 @@
   .och i{width:11px;height:11px;border-radius:3px;display:block;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
   html.short .mcard{padding:5px;gap:2px} html.short .mcard b{font-size:15px} html.short .mcard small{font-size:11px} html.short .och{font-size:10px;padding:1px 4px}
   html.short .mcard img{aspect-ratio:3/1}
+  #yPtr{position:absolute;z-index:5;pointer-events:none;font-size:44px;transform:translate(-30%,-10%);animation:yPtrB .7s ease-in-out infinite alternate;filter:drop-shadow(0 3px 2px rgba(0,0,0,.5))} #yPtr[hidden]{display:none}
+  @keyframes yPtrB{from{margin-top:0}to{margin-top:14px}}
+  #yDig.pulse{animation:digPulse .8s ease-in-out infinite alternate} @keyframes digPulse{from{transform:scale(1)}to{transform:scale(1.09);box-shadow:0 0 26px rgba(255,190,60,.9)}}
+  #yTmr{position:absolute;left:calc(92px + env(safe-area-inset-left, 0px));bottom:calc(10px + env(safe-area-inset-bottom, 0px));z-index:3;max-width:min(470px,52%);
+    padding:6px 12px;border-radius:12px;background:rgba(36,22,12,.82);border:2px solid #a8772f;color:#f0d8a8;font:700 12px/1.3 'Baloo 2',sans-serif;pointer-events:none}
+  #yTmr b{color:#ffd257;letter-spacing:.06em;margin-right:4px} #yTmr.hot{border-color:#ffb030;box-shadow:0 0 14px rgba(255,170,40,.6)} #yTmr[hidden]{display:none}
   .yedge{position:absolute;top:50%;transform:translateY(-50%);z-index:3;border:2px solid #fff3c4;border-radius:14px;padding:6px 10px;
     font:800 15px/1 'Baloo 2',sans-serif;color:#3a2412;background:linear-gradient(#ffd257,#e0a020);box-shadow:0 4px 0 #6a4410,0 0 14px rgba(255,200,60,.7);cursor:pointer;animation:edgePulse 1s ease-in-out infinite alternate}
   .yedge.l{left:calc(90px + env(safe-area-inset-left, 0px))} .yedge.r{right:calc(14px + env(safe-area-inset-right, 0px))}
@@ -447,6 +460,7 @@
   <div id="flash"></div>
   <div id="bdBar" hidden><span>BOULDER</span><i><b id="bdB"></b></i></div>
   <div id="lineT" hidden>3</div>
+  <div id="tutLine" hidden><div class="hole"></div><div class="tx"><b>Ore above the red line ends your shift.</b><span>You get 3 s — smash it down!</span><em>TAP TO CONTINUE</em></div></div>
   <div id="helperUi" hidden><i></i></div>
   <div id="fillBar" hidden><b id="fillB"></b><s id="fillM"></s><em id="fillT">0%</em></div>
   <button class="buy ad" id="adBoss" hidden>&#9654; AD · +15s</button>
@@ -509,6 +523,8 @@
       <button class="ysq ycat yoff" id="yOff" hidden><svg class="ic"><use href="#i-gem"/></svg><b>Offers</b><i id="yOffT"></i></button>
     </div>
     <div class="ypanel" id="yPanel" hidden></div>
+    <div id="yPtr" hidden>👆</div>
+    <div id="yTmr" hidden></div>
     <button class="yedge l" id="yEdgeL" hidden>◀ <b>0</b></button><button class="yedge r" id="yEdgeR" hidden><b>0</b> ▶</button>
     <button class="btn ydig" id="yDig">DIG &#9654;<small id="yDigS"></small></button>
   </div>
@@ -633,6 +649,8 @@ var CFG = {
   // Bo luat lap 80 % + luat mang bi chan (26/11). lineMin / lineSpan: so cot phai vuot vach moi tinh (1 / 0 = vach cu;
   // 3 / 0,2 = ban "buc tuong" thu 27/11, Mai khong chon).
   lineSecs: 3, lineMin: 1, lineSpan: 0,
+  // 27/11 kich ban tutorial (tasks/SMASH/tutorial-script.md, Mai duyet): Van Tap = buoc 1-2, ca dau = buoc 3-4, Yard lan dau = 5
+  tut: { feedMul: 0.6, burstAt: 6, oreGoal: 12, maxSecs: 90, holdSecs: 4, bossFree: 15 },
   fillMax: 0.8, fillWarn: 0.65,   // (khong dung tu 27/11 - giu cho test cu)
   fallSecs: 0.7,     // nhip san sap: ngan, khong khoa tay, khong cat combo (vision 9.1)
   fallDist: 4.0,     // vach hang truot len bay nhieu don vi moi nac (chi la hinh)
@@ -1108,6 +1126,8 @@ function load(){ if(QS.get('reset')||BOT) return;
       if(!G.lv || typeof G.lv !== 'object') G.lv = {};
       if(!G.owned || typeof G.owned !== 'object') G.owned = {sledge:1};
       if(!G.seen || typeof G.seen !== 'object') G.seen = {};
+      // 27/11 kich ban tutorial moi: save cu (da qua Van Tap truoc ban nay) bo qua moi buoc huong dan moi
+      if(G.tut === 1 && !G.seen.tut2){ ['tut2', 'boss', 'bossWin', 'yardIntro', 'helperTip', 'ticket', 'pick'].forEach(function(k){ G.seen[k] = G.seen[k] || 'old'; }); }
       if(!HAMMERS[G.ham]) G.ham = 'sledge';
       if(!G.owned[G.ham]) G.owned[G.ham] = 1;
       if(!(G.kho >= 0)) G.kho = 0;
@@ -1130,6 +1150,7 @@ function load(){ if(QS.get('reset')||BOT) return;
     }
   }catch(e){} }
 function save(){ if(BOT) return; G.saveT = Date.now(); try{ localStorage.setItem(SAVE_KEY, JSON.stringify(G)); }catch(e){} }
+var FIRST_SESSION = 0;   // 27/11: phien cua nguoi moi (vua vao Van Tap) - khong tu bat uu dai
 load();
 
 function lvl(k){ return G.lv[k]||0; }
@@ -2187,7 +2208,8 @@ function spawnBoss(){
   S.shake = Math.max(S.shake, .8); thunk(45, .9, .6, true); thunk(90, .5, .5, true);
   pop(0, DL*0.62, B.name[mi] + '!', 'big', 50);
   pop(0, DL*0.62 - 1.4, 'Break it in ' + secs + 's', 'miss', 28);
-  ev('boss', {kho:G.kho, mine:G.mine, hp:hp, secs:secs});
+  ev('boss', {kho:G.kho, mine:G.mine, hp:hp, secs:secs}); S.bossFree = 0;
+  if(!G.seen.boss){ G.seen.boss = 1; save(); setTimeout(function(){ if(S.mode === 'shift') tip('Smash the boss before time runs out!', true); }, 60); setTimeout(function(){ if(S.mode === 'shift') tip(''); }, 4000); }   // hoan 1 nhip: chu dau ca (startShift) khong de len
 }
 function bossBreak(){
   var b = S.bd, B = CFG.boss, rub = Math.round(floorCfg().rub*S.st.bounty);   // 26/11 bang tang · Bounty Office
@@ -2199,11 +2221,16 @@ function bossBreak(){
   pop(b.x, b.y + BD_H + 0.5, '+' + rub + ' RUBIES', 'big', 32);
   scene.remove(b.g); S.bd = null; S.bottom = 1; S.bossEnd = 1.3; save(); hud();   // nhin no vo xong moi sang man qua tang
   ev('bossWin', {kho:G.kho, mine:G.mine, rubies:rub, left:Math.round(b.t*10)/10});
+  if(!G.seen.bossWin){ G.seen.bossWin = 1; ev('tut', {step:'boss_win'}); save(); }
   if(!G.starterAt){ G.starterAt = Date.now(); G.offerPop = 1; save(); ev('offersOpen', {}); }   // 27/11 KDR: uu dai mo sau boss dau
   else offersBossWin();
 }
 function bossTimeUp(){
-  var b = S.bd; b.live = false; b.sink = 1.1; S.timeUp = 1; S.bossEnd = 1.2;
+  var b = S.bd;
+  if(G.mine === 0 && G.kho === 0 && !(G.seen && G.seen.bossWin)){   // 27/11 kich ban buoc 4: boss DAU khong bao gio thua
+    if(!S.bossFree){ S.bossFree = 1; b.t = CFG.tut.bossFree; b.secs = Math.max(b.secs || 0, b.t); pop(b.x, b.y + BD_H + 1.4, 'ONE MORE TRY! +' + CFG.tut.bossFree + 's', 'big', 30); ev('tut', {step:'boss_extra'}); return; }
+    b.hp = Math.min(b.hp, 1); b.t = 8; pop(b.x, b.y + BD_H + 1.4, 'FINISH IT!', 'big', 30); ev('tut', {step:'boss_assist'}); return; }
+  b.live = false; b.sink = 1.1; S.timeUp = 1; S.bossEnd = 1.2;
   pop(b.x, b.y + BD_H + 1.4, 'TIME UP — ' + b.name + ' HEALS', 'miss', 32); thunk(60, .8, .5, true);
   ev('bossLose', {kho:G.kho, mine:G.mine, hp:b.hp, why:'time'});
   offersBossLose(G.mine + '-' + G.kho);
@@ -2426,6 +2453,7 @@ function stepOneHelper(h, dt){
     thunk(260, .06, .12, false); }
 }
 function helperStrike(c){
+  if(!G.seen.helperTip && S.mode === 'shift'){ G.seen.helperTip = 1; save(); tip('Your helper smashes for you!', true); setTimeout(function(){ if(S.mode === 'shift') tip(''); }, 3000); ev('tut', {step:'helper_first'}); }
   if(c.bd){   // S3 26/11: trung tang da / boss · 27/11 Tool Shed II: +1 mau moi cap
     if(S.bd && S.bd.live && S.mode === 'shift'){ var bx = S.bd.x, by = S.bd.y; pop(bx, by + BD_H + .6, 'HELPER!', '', 20); ev('helperHit', {ore:'bd'}); boulderHit(1 + (S.st.toolsBoss || 0), bx, by); }
     return; }
@@ -2950,6 +2978,7 @@ function stepArm(dt){
 
 function step(dt){
   if(S.mode === 'yard'){ if(BOT) botYard(); return; }
+  if(S.tutHold > 0){ S.tutHold -= dt; if(S.tutHold <= 0) tutLineGo(); return; }   // 27/11: dung hinh luc giai thich vach do
   document.documentElement.classList.toggle('tutmode', S.mode !== 'shift');
   if(S.paused) return;   // 27/11: nut dung trong ca
   if(S.pick){ if(BOT) pickBuff(0); return; }   // 26/11: dang chon buff tu tang da => dung hinh
@@ -2975,7 +3004,7 @@ function step(dt){
     S.t += dt;
     for(var si=0; si<SHELVES.length; si++){
       var s = SHELVES[si];
-      S.spawnT[si] -= dt;
+      S.spawnT[si] -= dt*(S.mode === 'tut' && S.tutFeed ? S.tutFeed : 1);   // 27/11: Van Tap nha cham (CFG.tut.feedMul)
       if(S.spawnT[si] > 0) continue;
       // nhip nha dan nhanh len theo thoi gian ca (Mallet Mash): ap luc tang => ca nao cung
       // ket thuc o vach do trong khoang 60-110 s, khong keo dai vo han.
@@ -3223,43 +3252,77 @@ function startTutorial(){
   S.mode = 'tut'; S.tut = 0; S.st = stats(); S.swinging = false; S.t = 0;
   S.spawnT = [99]; S.burst=[0]; S.bn=[0]; S.bk=[0]; S.bv=[0]; S.combo = 0; S.comboT = 0; S.overflow = 0; S.tutN = 0; S.over = 0;
   S.pers = 'steady'; S.secs = CFG.shiftSecs;   // Van Tap luon nhip chuan, khong co tinh cach ca
-  for(var i=0;i<6;i++) for(var r=0;r<2;r++) makeCrate('wood', -3.2 + i*CRATE*1.04, CRATE*.5 + r*CRATE);
+  for(var i=0;i<6;i++) for(var r=0;r<2;r++) makeCrate(i === 3 && r === 1 ? 'gold' : 'wood', -3.2 + i*CRATE*1.04, CRATE*.5 + r*CRATE);   // 27/11: 1 cuc vang (x5)
   placeHand(-5.4, CRATE*2.4 + ROD);
-  tip('DRAG FAST through the pile');
+  S.tutT = 0; S.tutBurst = 0; S.tutExplained = 0; S.tutSaved = 0; S.tutWas = 0; S.tutHold = 0;
+  G.seen.tut2 = 1; FIRST_SESSION = 1;   // nguoi moi: phien nay khong tu bat uu dai (kich ban: phien dau khong popup ban hang)
+  tip('DRAG FAST through the pile'); ev('tut', {step:'start'});
   hud();
 }
 function tutStep(dt){
   var r = document.body.getBoundingClientRect();
   if(S.tut === 0){
-    var left = crates.filter(function(c){ return !c.dead; }).length;
+    var left = crates.filter(function(c){ return !c.dead; }).length; S.tutT = (S.tutT || 0) + dt;
+    if(S.tutT > 5 && left >= 11 && !S.swinging) tip('Swipe FAST through the ore!');   // 27/11: cham / vuot cham
     var p = camera ? worldToScreen(0.0, CRATE*2.4) : null;
     if(p){ elPtr.style.display = 'block'; elPtr.style.left = p.x+'px'; elPtr.style.top = p.y+'px'; }
     if(left <= 2){
       elPtr.style.display = 'none';
       if(S.swinging) swingEnd();
       S.tut = 1; S.spawnT = [0.3]; S.burst=[0]; S.bn=[0]; S.bk=[0]; S.bv=[0]; S.best = 0; S.tutN = 0; S.t = 0;
-      S.pers = 'steady'; S.secs = CFG.shiftSecs;
+      S.pers = 'steady'; S.secs = CFG.shiftSecs; S.tutFeed = CFG.tut.feedMul;
       for(var i=0;i<crates.length;i++) crates[i].dead = true;
-      tip('Chutes feed the pile now. Keep it UNDER THE RED LINE.', true);
+      tip('The chutes feed the pile now.', true); ev('tut', {step:'swipe_ok'});   // 27/11: vach do hien san, chua co chu
       hud();
     }
   } else if(S.tut === 1){
+    // 27/11 kich ban buoc 2b: dap du 6 cuc => mang xa 1 dot lon, bao dam ai cung cham vach 1 lan
+    if(!S.tutBurst && (S.tutN >= CFG.tut.burstAt || S.t > 20)){ S.tutBurst = 1;
+      for(var bc=0; bc<5; bc++) for(var br=0; br<5; br++) makeCrate('wood', (bc - 2)*CRATE*1.04, DL + 1 + br*CRATE*1.05);   // khoi rong 5x5: dung vung, hang tren do roi van con hang 4 qua vach (3 cot x5 tu do sau ~3 s => SAVED! ma khong can dap)
+      thunk(140, .3, .3, true); }
+    // 2c: lan dau co quang nam yen vuot vach => DUNG HINH + lam noi vach do + 2 dong giai thich
+    if(!S.tutExplained && (S.lineN || 0) > 0 && S.overflow >= .6) return tutLineExplain();   // dong da nam yen tren vach 0,6 s (khong bat luc khoi con dang roi)
+    // 2d: lam thu - dong ho 3-2-1 chay; het gio KHONG thua (dung o "1" + ngon tay chi); dap xuong kip => SAVED!
+    if(S.tutExplained){
+      if(S.overflow > 0) S.tutWas = 1;
+      else if(S.tutWas){ S.tutWas = 0; if(!S.tutSaved && S.tutN > S.tutN0){ S.tutSaved = 1; pop(0, DL + 1.6, 'SAVED!', 'big', 40); chime(9); ev('tut', {step:'line_saved'}); } }   // SAVED chi tinh khi NGUOI CHOI dap vo quang (dong tu lun khong tinh)
+      var stuck = S.overflow >= (S.st.grace || CFG.lineSecs), LC = stuck ? lineCols() : null;
+      if(stuck && LC.n){ var pp = worldToScreen(LC.over[0], DL + .9); elPtr.style.display = 'block'; elPtr.style.left = pp.x + 'px'; elPtr.style.top = pp.y + 'px'; }
+      else elPtr.style.display = 'none';
+    }
     if(!S.swinging){
       if((S.lineN || 0) > 0) tip('Too high! SMASH IT DOWN');
-      else tip('Keep smashing — ' + S.tutN + '/12 ore', true);
+      else tip('Keep smashing — ' + Math.min(S.tutN, CFG.tut.oreGoal) + '/' + CFG.tut.oreGoal + ' ore', true);
     }
     // `!S.swinging` o day tung la DIEU KIEN CUA, giong cho het ca truoc khi sua 07/11. Hau qua
     // y het: quet qua lai lien tuc thi bua LUC NAO CUNG dang vung => Van Tap KHONG BAO GIO xong.
     // Do duoc 08/11 bang bot kieu 'mash': 24 phut game van dung o bai 2, 0 ca, khong ra noi xuong.
     // Cho het ca da duoc gia han 2 giay hom 07/11, cho nay la cho duy nhat con sot.
-    if(S.tutN >= 12 || S.t > 26){
+    if(S.tutN >= CFG.tut.oreGoal && (S.tutSaved || S.t > CFG.tut.maxSecs)){
       S.endT += dt;
       if(S.endT > 1.2 && (!S.swinging || S.endT > 2.2)){
         if(S.swinging) swingEnd();       // cu vung dang do van duoc tinh tien, khong cat trang
-        S.endT = 0; S.tut = 2; S.mode = 'idle'; G.bank = Math.max(G.bank, cost('headroom')); save(); openShop();   // 26/11: gia x3 => dam bao du mua Tall Props
+        S.endT = 0; S.tut = 2; finishTutorial();   // 27/11: bo bai "The Smithy" (lan khong ban buff tu 26/11) => vao thang ca dau
       }
     } else S.endT = 0;
   }
+}
+// 27/11 kich ban buoc 2c: dung hinh, toi man tru dai vach do (va cac cuc vuot vach), 2 dong ngan, cham de choi tiep (4 s tu tiep)
+function tutLineExplain(){
+  S.tutExplained = 1; S.tutN0 = S.tutN; ev('tut', {step:'line_explain'});
+  if(BOT) return;
+  var y = worldToScreen(0, DL).y, el = $('tutLine'); el.hidden = false;
+  el.querySelector('.hole').style.top = Math.max(0, y - 96) + 'px'; el.querySelector('.hole').style.height = '118px';
+  el.querySelector('.tx').style.top = Math.min(vpH() - 120, y + 34) + 'px';
+  S.tutHold = CFG.tut.holdSecs; if(S.swinging) swingEnd(); tip('');
+}
+function tutLineGo(){ S.tutHold = 0; $('tutLine').hidden = true; }
+// 27/11: xong Van Tap => luu da hoc, vao CA DAU (luot mien phi) - tang 1: sap nac, boss dau (khong thua)
+function finishTutorial(){
+  G.tut = 1; G.shifts = 0; G.bank = Math.max(0, G.bank); S.tutFeed = 0; elPtr.style.display = 'none';
+  G.run = {n:0}; save(); ev('tut', {step:'done'});
+  startShift();
+  tip('Dig down to the boss!', true); setTimeout(function(){ if(S.mode === 'shift') tip(''); }, 3000);
 }
 function worldToScreen(x, y){ var v = new THREE.Vector3(x, y, 0).project(camera);
   return {x:(v.x*.5+.5)*vpW(), y:(-v.y*.5+.5)*vpH()}; }
@@ -3277,7 +3340,9 @@ function renderShop(){
     (noBottom() ? ' · DEPTH ' + G.depth : ' · DEPTH ' + G.depth + '/' + floorCfg().notches) +
     (G.run ? ' · SHIFT ' + Math.min(CFG.run.shifts, G.run.n + 1) + '/' + CFG.run.shifts : ''));   // B3
   $('sRuby').textContent = G.gems;
-  $('sP').textContent = tut ? 'Buffs come from BUFF ROCKS in the mine. Pick a hammer, then start.' : ''; $('sP').hidden = !tut;   // 13/11: chi Van Tap con cau dan
+  var tkTip = !tut && G.run && !G.seen.ticket;   // 27/11 kich ban buoc 6: lan dau vao lan co ve
+  $('sP').textContent = tut ? 'Buffs come from BUFF ROCKS in the mine. Pick a hammer, then start.' : (tkTip ? '1 ticket = up to ' + CFG.run.shifts + ' shifts on this floor.' : ''); $('sP').hidden = !(tut || tkTip);
+  if(tkTip){ G.seen.ticket = 1; save(); }
   // 13/11: chi hien bua DA CO (+ bua dang thu); bua chua co nam o catalog trong Yard. 1 bua thi an ca muc.
   var hb = $('sHam'); hb.innerHTML = '';
   var hl = HAM_ORDER.filter(function(k){ return G.owned[k] || G.trial === k; });
@@ -3341,6 +3406,7 @@ function openPick(){
     g.appendChild(upCard(k, '+' + add + ' LEVEL' + (add > 1 ? 'S' : '') + (k === 'headroom' ? ' · NEXT SHIFT' : ''), function(){ pickBuff(i); }));
   });
   $('scrPick').classList.add('on'); ev('buffOffer', {opts:opts.join(',')}); return true;
+  if(!G.seen.pick){ G.seen.pick = 1; save(); setTimeout(function(){ tip('Pick a boost for this floor', true); }, 60); ev('tut', {step:'pick_first'}); }   // 27/11 buoc 7
 }
 function pickBuff(i){
   var k = S.pick && S.pick[i]; if(!k) return;
@@ -4211,7 +4277,7 @@ function wsBuild(k, withRuby){
   if(!wsAfford(k)){ q = withRuby ? wsQuote(k) : null; if(!q || G.gems < q) return false; }
   if(q){ G.gems -= q; G.bank = 0; }                       // bu: tieu HET vang dang co, ruby tra phan thieu
   else if(wsCur(k) === 'g') G.bank -= wsCost(k); else G.gems -= wsCost(k);
-  G.ws[k] = wsLv(k) + 1; chime(3 + G.ws[k]); save(); ev('ws', {k:k, lv:G.ws[k], ruby:q}); return true;
+  G.ws[k] = wsLv(k) + 1; chime(3 + G.ws[k]); save(); ev('ws', {k:k, lv:G.ws[k], ruby:q}); if(S.mode === 'yard') Yard.guideBought(k); return true;
 }
 // 3 mo: tien do rieng tung mo (tang, do sau, nang cap tang, tien ca); mo sau mo khi xong mo truoc.
 var MINES = [
@@ -4426,6 +4492,7 @@ var Yard = (function(){
     var BRC = {cash:'#8a5a08', power:'#8a2a14', hammer:'#1f4f8a', crew:'#2a6a34'};
     WS_TREE.forEach(function(r){ var p = toP(r[3], CW, CH), l = wsLv(r[0]);
       x.font = 'italic 700 44px ' + INK; x.textAlign = 'center';
+      var fog = CFG.ws[r[0]] && !l && (!wsOpen(r[0]) || (guideK && r[0] !== guideK && !wsAfford(r[0]))); if(fog){ x.fillStyle = 'rgba(80,60,40,.28)'; x.fillText(r[4], p[0], p[1] + 196); return; }   // 27/11 suong: ten mo, khong nen
       var tw = x.measureText(r[4]).width + 28; x.fillStyle = 'rgba(246,234,204,.82)'; x.beginPath();
       if(x.roundRect) x.roundRect(p[0] - tw/2, p[1] + 158, tw, l && r[0] !== 'depot' ? 86 : 50, 16); else x.rect(p[0] - tw/2, p[1] + 158, tw, l && r[0] !== 'depot' ? 86 : 50); x.fill();   // 27/11 polish: nen chu
       x.fillStyle = l ? (BRC[r[5]] || '#4a240e') : 'rgba(80,60,40,.75)'; x.fillText(r[4], p[0], p[1] + 196);
@@ -4561,7 +4628,7 @@ var Yard = (function(){
       if(g.userData.pop !== undefined){ g.userData.pop += dt; var u = g.userData.pop/.45; g.scale.setScalar(u < 1 ? 1 + .28*Math.sin(u*Math.PI) : 1); if(u >= 1) delete g.userData.pop; } }
     for(var i=fx.length-1;i>=0;i--){ var f = fx[i]; f.t += dt; f.vy -= 18*dt; f.m.position.x += f.vx*dt; f.m.position.y += f.vy*dt; f.m.position.z += f.vz*dt;
       f.m.scale.setScalar(Math.max(.01, 1 - f.t/.9)); if(f.t > .9){ scene.remove(f.m); fx.splice(i, 1); } }
-    edgeChips(); stepCarts(dt);
+    edgeChips(); stepCarts(dt); guideStep();
   }
   // 27/11 polish: chip o 2 mep man = so node MUA DUOC ngoai tam nhin; bam => keo ban do toi node gan nhat
   var edgeN = 0;
@@ -4574,6 +4641,13 @@ var Yard = (function(){
     l.dataset.x = L.length ? Math.max.apply(null, L) : 0; r.dataset.x = R.length ? Math.min.apply(null, R) : 0;
   }
   function panTo(x){ panT = Math.max(-panMax, Math.min(panMax, x)); }
+  // 27/11 kich ban buoc 5: ngon tay chi node + chu; mua xong Bunkhouse => "Pick one more upgrade" => DIG nhay
+  var guideK = null;
+  function guide(k, txt){ guideK = k; refresh(); tip(txt); var P = pieces[k]; if(P) panTo(P.x); $('yPtr').hidden = !k; $('yDig').classList.toggle('pulse', !k && !!txt); }
+  function guideStep(){ var el = $('yPtr'), tm = $('yTmr'), tipOn = !elTip.classList.contains('hide') && !!elTip.textContent; if(tm.style.visibility !== (tipOn ? 'hidden' : '')) tm.style.visibility = tipOn ? 'hidden' : ''; if(!guideK || !pieces[guideK]){ if(!el.hidden) el.hidden = true; return; }
+    var P = pieces[guideK], v = new THREE.Vector3(P.x, 3.2, P.z).project(cam); el.style.left = ((v.x*.5 + .5)*vpW()) + 'px'; el.style.top = ((-v.y*.5 + .5)*vpH()) + 'px'; }
+  function guideBought(k){ if(guideK && k === guideK){ guideK = null; $('yPtr').hidden = true; setTimeout(refresh, 0); G.seen.yardIntro = 1; save(); tip('Nice! Pick one more upgrade', true); ev('tut', {step:'yard_first_build'});
+      setTimeout(function(){ if(S.mode === 'yard'){ tip('Back to the mine!', true); $('yDig').classList.add('pulse'); setTimeout(function(){ if(S.mode === 'yard') tip(''); }, 4000); } }, 4500); } }
   // 27/11 Mai "cho vai cai xe than mini chay tren may duong ray cho sinh dong": xe goong chay theo DUNG duong cong ray da ve
   // tren giay (bezier cha -> con, chi ray SANG = con da xay). Toi dau ray: re sang ray khac noi o nut do, khong co thi quay dau.
   var carts = [], cartRails = [], CART_MAX = 6;
@@ -4637,10 +4711,12 @@ var Yard = (function(){
   function refreshPieces(){
     WS_TREE.forEach(function(r){
       var k = r[0], l = wsLv(k), open = wsOpen(k), tq = CFG.ws[k] ? wsTier(k) : null, multi = CFG.ws[k] && CFG.ws[k].tiers.length > 1;
-      var aff = !!CFG.ws[k] && open && l < wsMax(k) && wsAfford(k), sig = l + '/' + open + '/' + aff;   // 27/11 polish: trang thai mua duoc
+      var aff = !!CFG.ws[k] && open && l < wsMax(k) && wsAfford(k), fog = !!CFG.ws[k] && l === 0 && (!open || (!!guideK && k !== guideK && !aff)),
+          sig = l + '/' + open + '/' + aff + '/' + fog;   // 27/11 polish: trang thai mua duoc · suong (Yard lan dau: chi sang node mua duoc)
       if(pieces[k] && pieces[k].sig === sig) return;
       if(pieces[k]){ scene.remove(pieces[k].g); pick.splice(pick.indexOf(pieces[k].g), 1); }
       var g = piece(r[1], l > 0, tq ? (l >= wsMax(k) ? tq.n : tq.j) : l, l > 0 || !CFG.ws[k] ? 0 : (open ? fmt(wsCost(k)).slice(1) : 0), multi && l > 0 ? tq.t : -1, tq ? tq.n : 3);   // 27/11: gia vang · cap trong bac + co bac
+      if(fog) g.traverse(function(o){ if(o.isMesh && o.material){ o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = .24; o.material.depthWrite = false; } });   // 27/11 suong
       if(aff) nodeGlow(g); else if(CFG.ws[k] && !open) nodeLock(g);
       g.position.set(r[3][0], .05, r[3][1]); g.userData.pick = {ws:k}; scene.add(g); pick.push(g); pieces[k] = {g:g, sig:sig, aff:aff, x:r[3][0], z:r[3][1]};
       if(l > 0 || k === 'depot') addWorkers(pieces[k], k);   // 27/11 tho mo mini
@@ -4687,10 +4763,21 @@ var Yard = (function(){
     $('yTkN').textContent = G.tk; $('yTkT').textContent = G.tk >= CFG.run.cap ? 'FULL' : '+1 in ' + fmtT(tkNext());
     $('yTk').classList.toggle('out', G.tk <= 0 && !G.run);
     var cl = tchestLeft(); $('yChestS').textContent = cl > 0 ? fmtH(cl) : 'OPEN!'; $('yChest').classList.toggle('ready', cl <= 0);   // B7
+    tomorrowStrip();
     $('yDailyS').textContent = dailyReady() ? 'Day ' + (G.daily.n % CFG.daily.length + 1) : (cardReady() ? '+' + CFG.card.daily : '✓'); $('yDaily').classList.toggle('ready', dailyReady() || cardReady());
     var sl = starterLeft(); $('yOff').hidden = !offersOn(); $('yOffT').textContent = sl > 0 ? (sl > DAY_MS ? Math.ceil(sl/DAY_MS) + 'd' : fmtH(sl)) : (stuckLeft() > 0 ? '!' : (vaultReady() ? 'FULL' : (cardOn() ? '' : 'NEW'))); $('yOffT').hidden = !$('yOffT').textContent;
     $('yDigS').textContent = G.run && runLeft() > 0 ? runLeft() + ' left' : '−1 ticket';
   }
+  // 27/11 kich ban buoc 9 (de xuat D3-4): dai "Tomorrow" - qua diem danh ke, ve day lai luc nao, tho dao luc vang
+  function tomorrowStrip(){ var el = $('yTmr'); if(!(G.tut === 1 && G.shifts >= 1) || BOT){ el.hidden = true; return; }
+    var n = G.daily.n % CFG.daily.length, r = CFG.daily[dailyReady() ? n : (G.daily.n % CFG.daily.length)], parts = [];
+    var rw = r.ham ? HAMMERS[r.ham].name.toUpperCase() + ' hammer' : (r.ruby ? '+' + r.ruby + ' rubies' : '+' + r.tk + ' tickets');
+    parts.push(dailyReady() ? 'Day ' + (n + 1) + ' gift ready!' : 'Day ' + (n + 1) + ': ' + rw);
+    var full = G.tk >= CFG.run.cap ? 0 : tkNext() + Math.max(0, CFG.run.cap - G.tk - 1)*TK_MS;
+    parts.push(full ? 'tickets full in ' + fmtH(full) : 'tickets full');
+    if(wsLv('bunk') > 0) parts.push('helper digs ' + (CFG.helper.capH[0] + wsEff('night')) + 'h while you\'re away');
+    el.innerHTML = '<b>TOMORROW</b>' + parts.join(' · '); el.hidden = false; el.classList.toggle('hot', G.tk <= 0 && !G.run);
+    if(!S.tmrSeen){ S.tmrSeen = 1; ev('tut', {step:'tomorrow_seen'}); } }
   function showAway(){   // B5 qua luc vang (B7 them nut x2 quang cao)
     var h = '<h2>While you were away</h2><p>Your helper dug for ' + fmtMin(G.awayMin || 0) + (G.awayCap ? ' (max — build Night Shift to dig longer)' : '') + '.</p>' +
       '<div class="tkbig">+' + fmt(G.away) + '</div><div class="yb"><button class="buy" id="yAwayGet">COLLECT</button>' + adBtn('yAway2', 'away', '×2') + '</div>';
@@ -4841,7 +4928,7 @@ var Yard = (function(){
     showTickets: showTickets, showAway: showAway, showDaily: showDaily, showChest: showChest, tkHud: function(){ if(built) tkHud(); },
     panBy: panBy, pxToWorld: pxToWorld, pan: function(){ return {x:panX, max:panMax}; },
     draw: function(){ if(!built) return; if(Math.abs(panT - panX) > .005){ panX += (panT - panX)*.25; placeCam(); } polishStep(drawDt || 1/60); renderer.render(scene, cam); },
-    celebrate: celebrate, panTo: function(x){ panTo(x); },
+    celebrate: celebrate, panTo: function(x){ panTo(x); }, guide: guide, guideBought: guideBought, guideK: function(){ return guideK; },
     workers: function(){ var o = {}; for(var k in pieces) if(pieces[k].workers && pieces[k].workers.length) o[k] = pieces[k].workers.length; return o; }, carts: function(){ return carts.map(function(c){ return {to:c.R && c.R.to, t:+c.t.toFixed(2)}; }); }
   };
 })();
@@ -4901,11 +4988,16 @@ function openYard(keepRun){
   S.mode = 'yard'; hideScreens(); clearPops(); tip(''); elPtr.style.display = 'none';
   document.documentElement.classList.add('yard'); $('scrYard').classList.add('on');
   Yard.open(); save(); ev('yard', {gems:G.gems, mine:G.mine}); music('yard'); musicUi();   // 27/11 nhac
-  if(G.away > 0) Yard.showAway();   // B5 (nhan xong => diem danh)
+  if(G.tut === 1 && !G.seen.yardIntro && wsLv('bunk') === 0 && !BOT){   // 27/11 kich ban buoc 5: Yard lan dau
+    var need = wsCost('bunk') + Math.min(wsCost('grip'), wsCost('assay'));
+    if(G.shifts <= 4 && G.bank < need) G.bank = need;   // nguoi moi: vang tu ruong boss luon du Bunkhouse + 1 mon re
+    save(); Yard.refresh(); Yard.guide('bunk', 'Hire your first helper'); ev('tut', {step:'yard_intro'});
+  }
+  else if(G.away > 0) Yard.showAway();   // B5 (nhan xong => diem danh)
   else if(dailyReady() || cardReady()) Yard.showDaily();   // B7 (+ the thang)
   // 27/11 Mai: popup monetize "dung loai nguoi choi che nhieu nhat" => TOI DA 1 LAN MOI PHIEN (mo app), chi luc vao Yard,
   // khong chong len bang khac (else-if), khong bao gio giua ca. Chua bat duoc thi uu dai van nam trong Offers + badge.
-  else if(!OFFER_POPPED && S.mode === 'yard' && ((G.offerPop === 1 && starterLeft() > 0) || (G.offerPop === 2 && stuckLeft() > 0))){
+  else if(!OFFER_POPPED && !FIRST_SESSION && S.mode === 'yard' && ((G.offerPop === 1 && starterLeft() > 0) || (G.offerPop === 2 && stuckLeft() > 0))){
     OFFER_POPPED = 1; G.offerPop = 0; save(); Yard.showOffers(); }
 }
 // 13/11: keo trai/phai de cuon ban do; nhan nhe (khong keo) = cham xuong. Toa do qua toLocal (man xoay doc).
@@ -4929,6 +5021,7 @@ function pauseShift(){ if(S.mode !== 'shift' || S.paused || S.pick) return; S.pa
 function resumeShift(){ if(!S.paused) return; S.paused = false; $('scrPause').classList.remove('on'); music(MUS.track); }
 function quitShift(){ S.paused = false; $('scrPause').classList.remove('on'); ev('quitShift', {kho:G.kho, depth:G.depth, t:Math.round(S.t), earned:Math.round(S.earned)});
   clearWorld(); $('lineT').hidden = true; S.mode = 'idle'; save(); openYard(); }
+$('tutLine').addEventListener('pointerdown', function(e){ e.stopPropagation(); e.preventDefault(); tutLineGo(); });
 $('hPause').onclick = function(e){ e.stopPropagation(); ac(); pauseShift(); };
 $('hPause').addEventListener('pointerdown', function(e){ e.stopPropagation(); });
 $('pGo').onclick = function(){ resumeShift(); };
@@ -5019,6 +5112,9 @@ window.__game = {
   pause:function(){ pauseShift(); return !!S.paused; }, resume:function(){ resumeShift(); return !S.paused; }, quit:function(){ quitShift(); return S.mode; },
   workers:function(){ return Yard.workers ? Yard.workers() : {}; },
   cartList:function(){ return Yard.carts ? Yard.carts() : []; }, mus:function(){ return {track:MUS.track, on:musOn(), timer:!!MUS.timer}; },
+  tutInfo:function(){ return {tut:S.tut, tutN:S.tutN, burst:S.tutBurst, explained:S.tutExplained, saved:S.tutSaved, hold:S.tutHold, guide:Yard.guideK ? Yard.guideK() : null, G:G.tut}; },
+  tutGo:function(){ tutLineGo(); },
+  killAll:function(){ for(var i=0;i<crates.length;i++) crates[i].dead = true; },
   helpersN:function(){ return helpers.length; }, wsTier:function(k){ return wsTier(k); }, wsEff:function(k){ return wsEff(k); }, wsMax:function(k){ return wsMax(k); },
   thiefs:function(){ return thieves.map(function(t){ return {st:t.st, mode:t.mode, x:t.x, n:t.n, tgt:t.tgt ? {x:t.tgt.x, y:t.tgt.y, net:!!t.tgt.net} : null}; }); },
   spawnThief:function(side){ var t = spawnThief(side); t.t = 0; return thieves.length; },
