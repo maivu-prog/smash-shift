@@ -42,6 +42,10 @@
   .plate{border-radius:14px;padding:6px 14px;display:flex;align-items:center;gap:9px}
   /* 16/11 khung A: HUD trong ca = 1 dai mong (icon + so, bo nhan chu) de khong che mang tha quang */
   #hud .plate{padding:2px 12px;min-height:36px;border-radius:18px}
+  #hud .hpause{pointer-events:auto;position:relative;z-index:5;flex:none;width:44px;padding:0;justify-content:center;gap:5px;cursor:pointer} #hud .hpause i{display:block;width:5px;height:16px;border-radius:2px;background:#ffd257}
+  html.tutmode #hud .hpause{display:none}
+  #scrPause .panel{width:min(360px,92%)} #scrPause .pb{display:flex;flex-direction:column;gap:10px;padding:14px 22px 18px}
+  #scrPause .buy{min-height:50px;font-size:19px} #scrPause .buy.off{opacity:.65}
   #hud #quota .row,#hud #cTl{display:none}
   .lbl,.t{font-size:12px;letter-spacing:.13em;color:var(--brass);font-weight:800;line-height:1.1;white-space:nowrap}
   #money,#money2{line-height:1}
@@ -86,11 +90,14 @@
     text-shadow:0 3px 0 #2f6b3e,0 5px 12px rgba(0,0,0,.6);pointer-events:none;will-change:transform,opacity}
   .pop.big{color:var(--gold);text-shadow:0 3px 0 #6a2a08,0 0 14px rgba(255,190,60,.5)}
   .pop.miss{color:#e9eef5;text-shadow:0 3px 0 #3b4250}
+  #lineT{position:absolute;transform:translate(-50%,-100%);pointer-events:none;font:800 58px/1 'Baloo 2',sans-serif;color:#fff1c2;
+    -webkit-text-stroke:3px #b3180a;paint-order:stroke fill;text-shadow:0 4px 0 #5a0c04,0 0 18px rgba(255,50,20,.9)}
+  #lineT[hidden]{display:none}
   #bdBar{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none}
   #bdBar span{font-size:13px;font-weight:800;letter-spacing:.14em;color:#ffe7a0;text-shadow:0 2px 0 #2a1a10}
   #bdBar i{display:block;width:150px;height:12px;border-radius:6px;background:#140e0a;box-shadow:0 0 0 2px #4a3524;overflow:hidden}
   #helperUi{position:absolute;transform:translate(-50%,-100%);pointer-events:none}
-  /* 26/11 Mai "de no overflow khi man hinh bi lap 80%": bo vach do, thay bang thanh DO DAY mep phai (moc do = CFG.fillMax) */
+  /* 26/11 Mai "de no overflow khi man hinh bi lap 80%": thanh DO DAY mep phai. 27/11: vach do tro lai => thanh nay AN (khong goi fillUi) */
   #fillBar{position:absolute;right:calc(12px + env(safe-area-inset-right, 0px));top:26%;height:46%;width:16px;border-radius:9px;
     background:rgba(24,16,10,.6);border:2px solid rgba(255,233,199,.6);pointer-events:none;box-shadow:0 2px 6px rgba(0,0,0,.4)}
   #fillBar b{position:absolute;left:2px;right:2px;bottom:2px;border-radius:6px;background:#7bd36a;height:0;transition:height .12s linear,background .2s}
@@ -165,8 +172,24 @@
   .och i{width:11px;height:11px;border-radius:3px;display:block;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
   html.short .mcard{padding:5px;gap:2px} html.short .mcard b{font-size:15px} html.short .mcard small{font-size:11px} html.short .och{font-size:10px;padding:1px 4px}
   html.short .mcard img{aspect-ratio:3/1}
+  .yedge{position:absolute;top:50%;transform:translateY(-50%);z-index:3;border:2px solid #fff3c4;border-radius:14px;padding:6px 10px;
+    font:800 15px/1 'Baloo 2',sans-serif;color:#3a2412;background:linear-gradient(#ffd257,#e0a020);box-shadow:0 4px 0 #6a4410,0 0 14px rgba(255,200,60,.7);cursor:pointer;animation:edgePulse 1s ease-in-out infinite alternate}
+  .yedge.l{left:calc(90px + env(safe-area-inset-left, 0px))} .yedge.r{right:calc(14px + env(safe-area-inset-right, 0px))}
+  .yedge[hidden]{display:none} @keyframes edgePulse{from{transform:translateY(-50%) scale(1)}to{transform:translateY(-50%) scale(1.08)}}
+  .ypop{position:absolute;z-index:4;pointer-events:none;transform:translate(-50%,-50%);font:800 24px/1 'Baloo 2',sans-serif;color:#fff3c4;
+    -webkit-text-stroke:2px #6a3a10;paint-order:stroke fill;text-shadow:0 3px 0 #3a2008;animation:ypop 1.3s ease-out forwards}
+  .ypop.big{font-size:32px;color:#ffd257}
+  @keyframes ypop{0%{opacity:0;margin-top:10px;transform:translate(-50%,-50%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}30%{transform:translate(-50%,-50%) scale(1)}100%{opacity:0;margin-top:-46px}}
   .ycat{position:relative;border:2px solid #a8772f;background:linear-gradient(180deg,#7a2e20,#4a1a12);box-shadow:0 0 0 3px #140d08,0 8px 18px rgba(0,0,0,.55)}
   .ycat .ic{color:#ffd257}
+  .ymus{height:44px!important;background:linear-gradient(180deg,#5a4a3a,#2a2018)} .ymus b{font-size:22px;color:#ffd257} .ymus i{position:static!important;background:none!important;font-size:9px!important;color:#f0d8a8!important;padding:0!important}
+  .ymus.off b{color:#7d6a55;text-decoration:line-through}
+  .yoff{background:linear-gradient(180deg,#2d6fd6,#173a7a)} .yoff .ic{color:#bfe3ff}
+  .packh{margin:12px 0 10px;font-size:16px;font-weight:800;color:#3a2412;text-shadow:none} .packs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .pack{position:relative;border:2px solid #a8772f;border-radius:12px;background:linear-gradient(#fff3d6,#f0d8a8);padding:8px 4px 6px;font-family:inherit;cursor:pointer;color:#3a2412;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .pack b{font-size:17px;font-weight:800} .pack s{font-size:11px;color:#8a6a40} .pack em{font-style:normal;font-weight:800;font-size:13px;background:#ffb030;border-radius:8px;padding:1px 8px;color:#3a2412}
+  .pack i{position:absolute;top:-8px;right:-4px;font-style:normal;font-size:10px;font-weight:800;background:#e0452c;color:#fff;border-radius:8px;padding:1px 5px}
+  .cardln{grid-column:1/-1;margin:6px 0 0;font-size:13px;font-weight:800;color:#2d6fd6}
   .ycat i{position:absolute;right:-6px;top:-6px;font-style:normal;font-size:10px;font-weight:800;background:#e0452c;color:#fff;border-radius:8px;padding:2px 5px}
   /* bang = tam truot tu mep phai, ban do van thay ben trai (khung tam, kieu panel moi cho Mai chon); bang chi tiet xuong = the goc phai duoi */
   .ypanel{position:absolute;right:0;bottom:0;width:min(430px,52%);max-height:100%;overflow-y:auto;
@@ -375,6 +398,13 @@
   .wsx .efft{font-size:15px;font-weight:700;margin:4px 0;background:none;box-shadow:none;padding:0} .wsx .now{font-size:12px;font-weight:700;color:#6a4a2a}
   .wsx .lv{margin:6px 0 8px} .wsx .lv i{background:#d8c8a8}
   .wsx .buy{width:100%;min-height:50px;font-size:19px}
+  .wsx .buy.top{background:linear-gradient(#e0556b,#a3243a);border-color:#ffc2cc;color:#fff;text-shadow:0 1px 0 #4a0c18}
+  .wsx .buy.top.armed{background:linear-gradient(#ffd257,#d89a1c);border-color:#fff3c4;color:#3a2412;text-shadow:none}
+  .wsx .buy.top[disabled]{background:#2e241d;border-color:#4a3828;color:#7d6a55;text-shadow:none}
+  .wsx .tiers{display:flex;gap:6px;margin:0 0 8px;font-size:12px;font-weight:800} .wsx .tiers span{padding:1px 7px;border-radius:8px;background:#e8d8b8;color:#6a4a2a}
+  .wsx .tiers .done{background:#5fbf5f;color:#fff} .wsx .tiers .cur{background:#ffb030;color:#3a2412} .wsx .tiers .lock{opacity:.6}
+  .wsx .short .getr{display:block;width:100%;min-height:34px;font-size:14px;margin-top:6px}
+  .wsx .short{font-size:12px;font-weight:700;color:#8a3a14;margin:6px 0 0;line-height:1.3}
   html.short .ypanel h2{font-size:20px}
   html.short .ypanel .buy,html.short .pside .buy,html.short .pmain .card .buy{min-height:44px}   /* nut >= 44 px ca o man thap */
 </style>
@@ -406,6 +436,7 @@
 <canvas id="cv"></canvas>
 <div id="ui">
   <div id="hud">
+    <button class="plate hpause" id="hPause" title="Pause"><i></i><i></i></button>
     <div class="plate" id="moneyBox"><svg class="ic"><use href="#i-coin"/></svg><div id="money"><span id="cash">$0</span></div></div>
     <div class="plate" id="rubyBox"><svg class="ic"><use href="#i-ruby"/></svg><div id="money2"><span id="ruby">0</span></div></div>
     <div class="plate" id="quota"><div class="row"><div class="t" id="qT">FLOOR 1</div><div class="v" id="qV">DEPTH 0 / 4</div></div>
@@ -415,6 +446,7 @@
   </div>
   <div id="flash"></div>
   <div id="bdBar" hidden><span>BOULDER</span><i><b id="bdB"></b></i></div>
+  <div id="lineT" hidden>3</div>
   <div id="helperUi" hidden><i></i></div>
   <div id="fillBar" hidden><b id="fillB"></b><s id="fillM"></s><em id="fillT">0%</em></div>
   <button class="buy ad" id="adBoss" hidden>&#9654; AD · +15s</button>
@@ -473,11 +505,19 @@
       <button class="plate ysq yside" id="yDaily"><svg class="ic"><use href="#i-cal"/></svg><b id="yDailyS">Day 1</b></button>
       <button class="plate ysq yside" id="yChest"><svg class="ic"><use href="#i-chest"/></svg><b id="yChestS">OPEN!</b></button>
       <button class="ysq ycat" id="yCat"><svg class="ic"><use href="#i-ham"/></svg><b>Hammers</b><i id="yCatNew">NEW</i></button>
+      <button class="ysq ycat ymus" id="yMus" title="Music on"><b>♪</b><i>MUSIC</i></button>
+      <button class="ysq ycat yoff" id="yOff" hidden><svg class="ic"><use href="#i-gem"/></svg><b>Offers</b><i id="yOffT"></i></button>
     </div>
     <div class="ypanel" id="yPanel" hidden></div>
+    <button class="yedge l" id="yEdgeL" hidden>◀ <b>0</b></button><button class="yedge r" id="yEdgeR" hidden><b>0</b> ▶</button>
     <button class="btn ydig" id="yDig">DIG &#9654;<small id="yDigS"></small></button>
   </div>
 
+  <div class="screen" id="scrPause"><div class="panel">
+    <div class="ph"><div><div class="kicker">SHIFT PAUSED</div><h1>Take a breather</h1></div></div>
+    <div class="pb"><button class="buy" id="pGo">▶ RESUME</button><button class="buy alt" id="pYard">⌂ BACK TO THE YARD</button><button class="buy alt" id="pMus">♪ MUSIC: ON</button>
+      <p class="note" style="margin:2px 0 0;font-size:13px;opacity:.8">Gold you dug stays. Depth is saved. Leaving ends this run.</p></div>
+  </div></div>
   <div class="screen" id="scrWin"><div class="panel">
     <div class="ph"><div class="badge"><svg viewBox="0 0 32 32"><use href="#i-gold"/></svg></div><div><div class="kicker">BOTTOM OF THE MINE</div><h1>You dug through it all!</h1></div></div>
     <div class="pb"><div class="sum">
@@ -535,42 +575,42 @@ var CFG = {
   // 3 mo x 10 tang, BANG RIENG moi mo (CFG.floors = bang cua mo dang chon, getter ben duoi CFG).
   // Moi so dat cho NGUOI CHOI = 0,6 x bot normal (Mai 26/11: "player choi do hon bot 30-50%").
   //   notches/ore = nac + diem quang de sap 1 nac · pay = 1,05^(tang-1) · hp/rub = mau + ruby boss day tang
-  //   (mau = 15 x 1,038^(tang-1); tuong mem tang 5 x1,61; tuong mo tang 10 x1,85; tang 1 = 10 - bot normal do 26/11 ~35 nhat/30 s) · chest = ruby ruong tang
+  //   (27/11 cay v2: mau theo LUC TUNG TANG cua nguoi muc tieu trong mo hinh, lam muot tang thuong; tang 1 = 10 - bot normal do 26/11 ~35 nhat/30 s) · chest = ruby ruong tang
   //   (so co dinh, S7) · bd = nac co tang da (0 = khong) + bdHp/bdRub · th = so lun toi da (0 = khong) · lay = kieu mang 0-3
   mineFloors: [
     [ // Copper Gulch (tang 1-10)
       {notches:3, ore:19, pay:1, hp:10, rub:5, chest:10, bd:0, bdHp:0, bdRub:0, th:0, lay:0},
-      {notches:3, ore:23, pay:1.05, hp:16, rub:6, chest:11, bd:0, bdHp:0, bdRub:0, th:1, lay:0},
-      {notches:4, ore:24, pay:1.1, hp:16, rub:6, chest:12, bd:2, bdHp:11, bdRub:5, th:0, lay:1},
-      {notches:4, ore:27, pay:1.16, hp:17, rub:7, chest:14, bd:0, bdHp:0, bdRub:0, th:1, lay:1},
-      {notches:5, ore:28, pay:1.22, hp:28, rub:11, chest:15, bd:2, bdHp:12, bdRub:6, th:0, lay:1},
-      {notches:5, ore:30, pay:1.28, hp:18, rub:8, chest:16, bd:0, bdHp:0, bdRub:0, th:0, lay:2},
-      {notches:5, ore:31, pay:1.34, hp:19, rub:8, chest:17, bd:0, bdHp:0, bdRub:0, th:1, lay:2},
-      {notches:6, ore:32, pay:1.41, hp:19, rub:9, chest:18, bd:3, bdHp:14, bdRub:8, th:0, lay:2},
-      {notches:6, ore:36, pay:1.48, hp:20, rub:9, chest:20, bd:0, bdHp:0, bdRub:0, th:1, lay:3},
-      {notches:7, ore:38, pay:1.55, hp:39, rub:24, chest:21, bd:3, bdHp:15, bdRub:9, th:0, lay:3} ],
+      {notches:3, ore:20, pay:1.05, hp:13, rub:6, chest:11, bd:0, bdHp:0, bdRub:0, th:1, lay:0},
+      {notches:4, ore:22, pay:1.1, hp:13, rub:6, chest:12, bd:2, bdHp:9, bdRub:5, th:0, lay:1},
+      {notches:4, ore:23, pay:1.16, hp:14, rub:7, chest:14, bd:0, bdHp:0, bdRub:0, th:1, lay:1},
+      {notches:5, ore:26, pay:1.22, hp:21, rub:11, chest:15, bd:2, bdHp:10, bdRub:6, th:0, lay:1},
+      {notches:5, ore:29, pay:1.28, hp:16, rub:8, chest:16, bd:0, bdHp:0, bdRub:0, th:0, lay:2},
+      {notches:5, ore:34, pay:1.34, hp:18, rub:8, chest:17, bd:0, bdHp:0, bdRub:0, th:1, lay:2},
+      {notches:6, ore:35, pay:1.41, hp:19, rub:9, chest:18, bd:3, bdHp:12, bdRub:8, th:0, lay:2},
+      {notches:6, ore:39, pay:1.48, hp:20, rub:9, chest:20, bd:0, bdHp:0, bdRub:0, th:1, lay:3},
+      {notches:7, ore:42, pay:1.55, hp:36, rub:24, chest:21, bd:3, bdHp:13, bdRub:9, th:0, lay:3} ],
     [ // Frost Hollow (tang 11-20)
-      {notches:5, ore:60, pay:1.63, hp:22, rub:10, chest:22, bd:0, bdHp:0, bdRub:0, th:0, lay:0},
-      {notches:5, ore:64, pay:1.71, hp:23, rub:11, chest:23, bd:0, bdHp:0, bdRub:0, th:1, lay:0},
-      {notches:6, ore:72, pay:1.8, hp:23, rub:11, chest:24, bd:3, bdHp:16, bdRub:10, th:0, lay:1},
-      {notches:6, ore:81, pay:1.89, hp:24, rub:12, chest:26, bd:0, bdHp:0, bdRub:0, th:1, lay:1},
-      {notches:7, ore:88, pay:1.98, hp:41, rub:18, chest:27, bd:3, bdHp:18, bdRub:11, th:0, lay:1},
-      {notches:7, ore:91, pay:2.08, hp:26, rub:13, chest:28, bd:0, bdHp:0, bdRub:0, th:0, lay:2},
-      {notches:8, ore:94, pay:2.18, hp:27, rub:13, chest:29, bd:0, bdHp:0, bdRub:0, th:2, lay:2},
-      {notches:8, ore:102, pay:2.29, hp:28, rub:14, chest:30, bd:4, bdHp:20, bdRub:13, th:0, lay:2},
-      {notches:9, ore:112, pay:2.41, hp:29, rub:14, chest:32, bd:0, bdHp:0, bdRub:0, th:2, lay:3},
-      {notches:10, ore:121, pay:2.53, hp:56, rub:36, chest:33, bd:5, bdHp:21, bdRub:14, th:0, lay:3} ],
+      {notches:5, ore:63, pay:1.63, hp:20, rub:10, chest:22, bd:0, bdHp:0, bdRub:0, th:0, lay:0},
+      {notches:5, ore:71, pay:1.71, hp:20, rub:11, chest:23, bd:0, bdHp:0, bdRub:0, th:1, lay:0},
+      {notches:6, ore:77, pay:1.8, hp:20, rub:11, chest:24, bd:3, bdHp:15, bdRub:10, th:0, lay:1},
+      {notches:6, ore:81, pay:1.89, hp:21, rub:12, chest:26, bd:0, bdHp:0, bdRub:0, th:1, lay:1},
+      {notches:7, ore:92, pay:1.98, hp:35, rub:18, chest:27, bd:3, bdHp:17, bdRub:11, th:0, lay:1},
+      {notches:7, ore:110, pay:2.08, hp:22, rub:13, chest:28, bd:0, bdHp:0, bdRub:0, th:0, lay:2},
+      {notches:8, ore:134, pay:2.18, hp:24, rub:13, chest:29, bd:0, bdHp:0, bdRub:0, th:2, lay:2},
+      {notches:8, ore:143, pay:2.29, hp:26, rub:14, chest:30, bd:4, bdHp:20, bdRub:13, th:0, lay:2},
+      {notches:9, ore:163, pay:2.41, hp:27, rub:14, chest:32, bd:0, bdHp:0, bdRub:0, th:2, lay:3},
+      {notches:10, ore:210, pay:2.53, hp:50, rub:36, chest:33, bd:5, bdHp:22, bdRub:14, th:0, lay:3} ],
     [ // Ember Deep (tang 21-30)
-      {notches:6, ore:126, pay:2.65, hp:32, rub:15, chest:34, bd:0, bdHp:0, bdRub:0, th:0, lay:0},
-      {notches:7, ore:135, pay:2.79, hp:33, rub:16, chest:35, bd:0, bdHp:0, bdRub:0, th:1, lay:0},
-      {notches:7, ore:139, pay:2.93, hp:34, rub:16, chest:36, bd:3, bdHp:24, bdRub:15, th:0, lay:1},
-      {notches:8, ore:144, pay:3.07, hp:35, rub:17, chest:38, bd:0, bdHp:0, bdRub:0, th:1, lay:1},
-      {notches:8, ore:149, pay:3.23, hp:59, rub:26, chest:39, bd:4, bdHp:26, bdRub:16, th:0, lay:1},
-      {notches:9, ore:163, pay:3.39, hp:38, rub:18, chest:40, bd:0, bdHp:0, bdRub:0, th:0, lay:2},
-      {notches:9, ore:180, pay:3.56, hp:40, rub:18, chest:41, bd:0, bdHp:0, bdRub:0, th:2, lay:2},
-      {notches:10, ore:191, pay:3.73, hp:41, rub:19, chest:42, bd:5, bdHp:29, bdRub:18, th:0, lay:2},
-      {notches:11, ore:204, pay:3.92, hp:43, rub:19, chest:44, bd:0, bdHp:0, bdRub:0, th:2, lay:3},
-      {notches:12, ore:210, pay:4.12, hp:82, rub:49, chest:45, bd:6, bdHp:31, bdRub:19, th:0, lay:3} ]
+      {notches:6, ore:228, pay:2.65, hp:28, rub:15, chest:34, bd:0, bdHp:0, bdRub:0, th:0, lay:0},
+      {notches:7, ore:274, pay:2.79, hp:29, rub:16, chest:35, bd:0, bdHp:0, bdRub:0, th:1, lay:0},
+      {notches:7, ore:296, pay:2.93, hp:30, rub:16, chest:36, bd:3, bdHp:26, bdRub:15, th:0, lay:1},
+      {notches:8, ore:336, pay:3.07, hp:35, rub:17, chest:38, bd:0, bdHp:0, bdRub:0, th:1, lay:1},
+      {notches:8, ore:384, pay:3.23, hp:53, rub:26, chest:39, bd:4, bdHp:28, bdRub:16, th:0, lay:1},
+      {notches:9, ore:412, pay:3.39, hp:45, rub:18, chest:40, bd:0, bdHp:0, bdRub:0, th:0, lay:2},
+      {notches:9, ore:549, pay:3.56, hp:58, rub:18, chest:41, bd:0, bdHp:0, bdRub:0, th:2, lay:2},
+      {notches:10, ore:654, pay:3.73, hp:68, rub:19, chest:42, bd:5, bdHp:33, bdRub:18, th:0, lay:2},
+      {notches:11, ore:732, pay:3.92, hp:71, rub:19, chest:44, bd:0, bdHp:0, bdRub:0, th:2, lay:3},
+      {notches:12, ore:824, pay:4.12, hp:143, rub:49, chest:45, bd:6, bdHp:37, bdRub:19, th:0, lay:3} ]
   ],
   // ---- 12/11 SMASH-BUILD B4: NANG CAP CUA TANG + 2 LOAI TIEN (vision 3.6, 4.1, 4.2) ----------
   // Qua tang: nang cap ve 0, tien ca ve 0, phan da tieu vao nang cap gom thanh RUONG TANG ra RUBY
@@ -587,53 +627,93 @@ var CFG = {
   gemRate: [0.025, 0.035, 0.045],
   // 26/11 Mai: tran = quang LAP 80 % vung quang roi toi duoc (tu cho mang dau tien do quang -> tuong phai, san -> day
   // mang thap nhat), KHONG con vach do. Dong cham day mang cung tinh tran (khong thi mang ket, ca keo dai mai).
-  fillMax: 0.8, fillWarn: 0.65,
+  // 27/11 Mai "bo vach do thay game hoi chan" -> "luc cham vach do thi nhay nhay trong 3s, sau 3s neu ko xu li thi thua"
+  // + "bo luat lap, cu lay vach cu": VACH DO CU (1 cuc NAM YEN vuot vach la tinh) nhung cho lineSecs giay (+ Safety Post)
+  // de dap xuong: vach + o tren cot vuot vach nhap nhay, so dem nguoc tren vach. Xuong duoi vach 0,25 s => dong ho ve 0.
+  // Bo luat lap 80 % + luat mang bi chan (26/11). lineMin / lineSpan: so cot phai vuot vach moi tinh (1 / 0 = vach cu;
+  // 3 / 0,2 = ban "buc tuong" thu 27/11, Mai khong chon).
+  lineSecs: 3, lineMin: 1, lineSpan: 0,
+  fillMax: 0.8, fillWarn: 0.65,   // (khong dung tu 27/11 - giu cho test cu)
   fallSecs: 0.7,     // nhip san sap: ngan, khong khoa tay, khong cat combo (vision 9.1)
   fallDist: 4.0,     // vach hang truot len bay nhieu don vi moi nac (chi la hinh)
   // "Don bot" khi sap (vision 3.3): san nut fallHoles KHE rong fallHoleW, quang LOP SAT SAN nam
   // tren khe thi roi xuong (khong an tien). Ban dau thu roi CA lop sat san: do bang
   // test/fallprobe, 15/19 thung bien mat => sap thanh nut "xoa dong", qua tay.
   fallHoles: 3, fallHoleW: 2.4,
-  // The Yard (12/11): xuong giu mai, mua bang RUBY. per = dung phan da nerf khoi nang cap tang
+  // The Yard (12/11): xuong giu mai (27/11: mua bang VANG, ruby bu phan thieu - xem ws/topup). per = dung phan da nerf khoi nang cap tang
   // (12/11 nerf 50%) => xay du xuong thi ve lai gan suc cu. Gia: dau game hao phong (ruong tang 1
   // ~20-28 ruby => xay duoc 1-2 xuong cap 1 ngay lan dau ve Yard). Chest Hall nhan ruby ruong tang.
   // 13/11 Mai "phat trien them skill tree di chu gio it qua": 7 -> 19 xuong, gia theo COT tinh tu Depot
   // (cot 1 [8,18,35] · cot 2 [15,30,55] · cot 3 [30,60,110] · cot 4 [50,100,180]). per = hieu ung moi cap.
   // 26/11 Mai: "tien ca cho dung cho meta ben canh ruby. Cac node mua boi vang hoac ruby, chia ti le cho can voi do hiem".
-  // Nhanh CASH (xuong sinh tien) mua bang VANG (gold: gia 3 cap, giu mai, khong ve 0 khi qua tang); nhanh POWER + Bunkhouse
-  // mua bang RUBY (cost) - ruby hiem danh cho loi giai tuong. Gia vang tang doc theo cot vi vang lan cau tuyet (xuong CASH
-  // nhan vang): mo hinh 26/11 => nguoi 30 phut/ngay co ~78 % nhanh CASH toi D8, nguoi 14 phut/ngay ~48 % (can voi POWER).
-  // cost (ruby) cua nut CASH giu lai chi de doi chieu, khong dung.
+  // 27/11 Mai "ok" (hoc King Dies Rich): MOI node mua bang VANG (gold: gia 3 cap). Thieu vang thi RUBY BU PHAN THIEU
+  // (CFG.topup), TRU nhanh CASH (= nhanh Mint cua KDR, "never sold for crowns": ruby khong mua may de vang).
+  // Gia CASH tang doc theo cot vi vang lan cau tuyet; gia POWER + Bunkhouse = gia ruby cu x 35/105/245/420 theo cot
+  // (0,7 x ty gia vang/ruby luc mua cot do). Mo hinh 27/11: nguoi 30 phut/ngay co 47/60 cap toi D8, ruby bu ~22 % vang tieu.
+  // cost (ruby) giu lai chi de doi chieu, khong dung.
+  // 27/11 Mai duyet CAY V2 (tasks/SMASH/progression/tree_v2.py -> gen_tree_js.py): 32 dong, 4 nhanh (cash trai,
+  // power phai, hammer hang tren, crew hang duoi). Moi dong co BAC I -> II -> III: bac sau chi mo khi bac truoc MAX,
+  // moi cap manh hon va dat hon (Mai: "dung don upgrade vao 1 node, node sau unlock khi node truoc max, buff nhieu hon
+  // voi gia cao hon"). G.ws[k] = tong so cap da mua qua moi bac. Gia vang; ruby bu phan thieu tru nhanh cash.
+  // per = hieu ung moi cap cua bac do (iron / tools: moi bac 1 hieu ung khac - xem stats()); per2 = hieu ung phu.
+  // Gia: mo hinh 27/11 chot x3 / bac sau x8 / cap sau x1,8 => nguoi 30 phut/ngay co ~65 % cay luc het noi dung (D9).
   ws: {
-    // ---- CASH (trai)
-    assay:  { per: 0.25,  gold: [300, 900, 2500], cost: [8, 18, 35] },      // moi quang +25% tien
-    gold:   { per: 0.02,  gold: [3000, 8000, 20000], cost: [15, 30, 55] },     // mach vang +2 diem % ty le
-    cutter: { per: 0.2,   gold: [3000, 8000, 20000], cost: [15, 30, 55] },     // da/than/kim cuong (quang nhieu mang) +20% tien
-    chest:  { per: 0.2,   gold: [3000, 8000, 20000], cost: [15, 30, 55] },     // ruong tang +20% ruby (truoc o cot 3, gia [30,60,110])
-    smith:  { per: 1,     gold: [30000, 70000, 150000], cost: [30, 60, 110] },    // vang tra x5 -> +1 moi cap (x6/x7/x8)
-    pay:    { per: 0.05,  gold: [30000, 70000, 150000], cost: [30, 60, 110] },    // het ca thuong them 5% tien ca do
-    bounty: { per: 0.3,   gold: [30000, 70000, 150000], cost: [30, 60, 110] },    // tang da vo: tien + ruby +30%
-    bank:   { per: 40,    gold: [200000, 400000, 800000], cost: [50, 100, 180] },   // vao tang moi co san 40 x cap x pay tang (mua lai nang cap nhanh)
-    watch:  { per: 0.5,   gold: [200000, 400000, 800000], cost: [50, 100, 180] },   // dap lun tra them 50%, lun cham 15% (speedPer)
-    // ---- POWER (phai)
-    props:  { per: 0.45,  cost: [8, 18, 35] },      // vach do cao +0,45
-    chute:  { per: 0.075, cost: [50, 100, 180] },   // mang nha nhanh +7,5% (S4 26/11: xuong cot 4)
-    whistle:{ per: 0.15,  cost: [15, 30, 55] },     // dong qua vach do duoc them 0,15 s moi het ca (goc 0,45 s)
-    fuse:   { per: 0.05,  cost: [15, 30, 55] },     // moi bac combo +0,05 (truoc o cot 1, gia [8,18,35])
-    drill:  { per: 0.08,  cost: [30, 60, 110] },    // diem quang de sap mot nac -8%
-    trap:   { per: 1,     cost: [30, 60, 110] },    // san sap them 1 khe (goc 3) => don bot nhieu hon
-    powder: { per: 0.025, cost: [30, 60, 110] },    // keg +2,5 diem %
-    breaker:{ per: 3,     cost: [15, 30, 55] },     // tang da + boss +3 s dong ho (S4 26/11: len cot 2 = loi giai re cho tuong dau)
-    clock:  { per: 0.2,   cost: [50, 100, 180] },   // cua so combo +0,2 s (goc 1,3 s)
-    blast:  { per: 0.15,  cost: [50, 100, 180] },   // keg no rong +15%
-    // ---- B5 THO PHU: Bunkhouse ngay duoi Depot. Cap 1 = thue tho; moi cap sau tho sac nhanh hon (per) + qua luc vang lau hon
-    bunk:   { per: 0.15,  cost: [10, 30, 70] }
+    // ---- CASH (trai) - tra vang, KHONG bu ruby
+    assay: { br: 'cash', tiers: [{n: 6, per: 0.1, gold: [900, 1600, 2900, 5200, 9400, 17000]}, {n: 6, per: 0.15, gold: [7200, 13000, 23000, 42000, 76000, 140000]}, {n: 6, per: 0.2, gold: [58000, 100000, 190000, 340000, 600000, 1100000]}] },
+    gold: { br: 'cash', tiers: [{n: 6, per: 0.01, gold: [6000, 11000, 19000, 35000, 63000, 110000]}, {n: 6, per: 0.015, gold: [48000, 86000, 160000, 280000, 500000, 910000]}] },
+    smith: { br: 'cash', tiers: [{n: 4, per: 0.25, gold: [36000, 65000, 120000, 210000]}, {n: 4, per: 0.5, gold: [290000, 520000, 930000, 1700000]}] },
+    cutter: { br: 'cash', tiers: [{n: 6, per: 0.08, gold: [900, 1600, 2900, 5200, 9400, 17000]}, {n: 6, per: 0.12, gold: [7200, 13000, 23000, 42000, 76000, 140000]}] },
+    ledger: { br: 'cash', tiers: [{n: 6, per: 0.01, gold: [6000, 11000, 19000, 35000, 63000, 110000]}, {n: 6, per: 0.02, gold: [48000, 86000, 160000, 280000, 500000, 910000]}] },
+    keg: { br: 'cash', tiers: [{n: 6, per: 0.05, gold: [180000, 320000, 580000, 1000000, 1900000, 3400000]}] },
+    pay: { br: 'cash', tiers: [{n: 6, per: 0.03, gold: [36000, 65000, 120000, 210000, 380000, 680000]}, {n: 6, per: 0.05, gold: [290000, 520000, 930000, 1700000, 3000000, 5400000]}] },
+    save: { br: 'cash', tiers: [{n: 6, per: 0.005, gold: [180000, 320000, 580000, 1000000, 1900000, 3400000]}, {n: 6, per: 0.01, gold: [1400000, 2600000, 4700000, 8400000, 15000000, 27000000]}] },
+    bank: { br: 'cash', tiers: [{n: 3, per: 40, gold: [750000, 1400000, 2400000]}, {n: 3, per: 80, gold: [6000000, 11000000, 19000000]}] },
+    bounty: { br: 'cash', tiers: [{n: 6, per: 0.12, gold: [36000, 65000, 120000, 210000, 380000, 680000]}, {n: 6, per: 0.2, gold: [290000, 520000, 930000, 1700000, 3000000, 5400000]}] },
+    chest: { br: 'cash', tiers: [{n: 6, per: 0.05, gold: [180000, 320000, 580000, 1000000, 1900000, 3400000]}, {n: 6, per: 0.08, gold: [1400000, 2600000, 4700000, 8400000, 15000000, 27000000]}] },
+    watch: { br: 'cash', tiers: [{n: 3, per: 0.2, per2: 0.05, gold: [36000, 65000, 120000]}, {n: 3, per: 0.3, per2: 0.08, gold: [290000, 520000, 930000]}] },
+    // ---- POWER (phai) - dong + nhip
+    props: { br: 'power', tiers: [{n: 3, per: 0.3, gold: [630, 1100, 2000]}, {n: 3, per: 0.45, gold: [5000, 9100, 16000]}] },
+    whistle: { br: 'power', tiers: [{n: 3, per: 0.5, gold: [4200, 7600, 14000]}, {n: 3, per: 0.75, gold: [34000, 60000, 110000]}] },
+    chute: { br: 'power', tiers: [{n: 3, per: 0.05, gold: [4200, 7600, 14000]}, {n: 3, per: 0.075, gold: [34000, 60000, 110000]}] },
+    drill: { br: 'power', tiers: [{n: 3, per: 0.04, gold: [630, 1100, 2000]}, {n: 3, per: 0.06, gold: [5000, 9100, 16000]}, {n: 3, per: 0.08, gold: [40000, 73000, 130000]}] },
+    trap: { br: 'power', tiers: [{n: 2, per: 1, gold: [25000, 45000]}, {n: 2, per: 1, gold: [200000, 360000]}] },
+    powder: { br: 'power', tiers: [{n: 3, per: 0.01, gold: [25000, 45000, 82000]}, {n: 3, per: 0.02, gold: [200000, 360000, 650000]}] },
+    blast: { br: 'power', tiers: [{n: 3, per: 0.1, gold: [130000, 230000, 410000]}, {n: 3, per: 0.15, gold: [1000000, 1800000, 3300000]}] },
+    breaker: { br: 'power', tiers: [{n: 3, per: 2, gold: [25000, 45000, 82000]}, {n: 3, per: 3, gold: [200000, 360000, 650000]}] },
+    bclock: { br: 'power', tiers: [{n: 3, per: 2, gold: [130000, 230000, 410000]}] },
+    // ---- BUA (hang tren) - cam giac tay
+    grip: { br: 'hammer', tiers: [{n: 3, per: 0.08, gold: [180, 320, 580]}, {n: 3, per: 0.1, gold: [1400, 2600, 4700]}, {n: 3, per: 0.12, gold: [12000, 21000, 37000]}] },
+    arm: { br: 'hammer', tiers: [{n: 3, per: 0.05, gold: [180, 320, 580]}, {n: 3, per: 0.08, gold: [1400, 2600, 4700]}] },
+    head: { br: 'hammer', tiers: [{n: 3, per: 0.05, gold: [180, 320, 580]}, {n: 3, per: 0.08, gold: [1400, 2600, 4700]}] },
+    iron: { br: 'hammer', tiers: [{n: 3, per: 0.05, gold: [1200, 2200, 3900]}, {n: 3, per: 0.08, gold: [9600, 17000, 31000]}, {n: 3, per: 1, gold: [77000, 140000, 250000]}] },
+    fuse: { br: 'hammer', tiers: [{n: 3, per: 0.05, gold: [1200, 2200, 3900]}, {n: 3, per: 0.08, gold: [9600, 17000, 31000]}] },
+    clock: { br: 'hammer', tiers: [{n: 3, per: 0.15, gold: [7200, 13000, 23000]}, {n: 3, per: 0.2, gold: [58000, 100000, 190000]}] },
+    // ---- THO (hang duoi) - thue tho + buff tho
+    bunk: { br: 'crew', tiers: [{n: 1, per: 1, gold: [240]}, {n: 1, per: 1, gold: [1900]}, {n: 1, per: 1, gold: [15000]}] },
+    train: { br: 'crew', tiers: [{n: 3, per: 0.06, gold: [240, 430, 780]}, {n: 3, per: 0.08, gold: [1900, 3500, 6200]}] },
+    tools: { br: 'crew', tiers: [{n: 2, per: 1, gold: [1600, 2900]}, {n: 2, per: 1, gold: [13000, 23000]}] },
+    night: { br: 'crew', tiers: [{n: 3, per: 2, gold: [240, 430, 780]}, {n: 3, per: 3, gold: [1900, 3500, 6200]}] },
+    mess: { br: 'crew', tiers: [{n: 3, per: 0.2, gold: [1600, 2900, 5200]}] }
   },
-  wsSpeedPer: 0.15,   // Watchtower: lun cham di bay nhieu moi cap
+  // 27/11 BU VANG BANG RUBY (KDR: ruby = vang thieu / vang 1 tran o tang xa nhat x 10 Crowns). Smash Shift: 1 "ca vang"
+  // o tang xa nhat = shiftA x shiftB^(tang-1) (fit tu vang dap quang / ca cua nguoi muc tieu, mo hinh 27/11) va
+  // rubyPerShift ruby doi 1 ca vang (KDR 10; minh 20 vi ruby de kiem hon Crowns nhieu). Mo sau khi qua boss tang 1.
+  topup: { rubyPerShift: 20, shiftA: 73, shiftB: 1.223, fromFloor: 2 },
   // Bua ban bang IAP (Mai 12/11 "bua kiem cach ban IAP"; demo = gia lap, bam la nhan) hoac ruby GIA CAO
   // (Mai 12/11: nguoi khong nap mua bang ruby duoc - "co"). Moi bua thu mien phi 1 ca o lan.
   hamPrice: { broad: {usd:'$1.99', ruby:120}, shock: {usd:'$4.99', ruby:250}, maul: {usd:'$9.99', ruby:400} },
-  starter: { usd:'$0.99', ham:'broad', rubies:50 },
+  // 27/11 hoc King Dies Rich (doc code): starter CHI hien sau khi ha boss dau tien, dem nguoc `days` ngay roi mat;
+  // the thang "Royal Stipend" => Shift Pay: `now` ruby ngay + `days` ngay, ngay nao vao game nhan `daily` ruby (cung luc diem danh).
+  starter: { usd:'$0.99', ham:'broad', rubies:50, days:3 },
+  card: { usd:'$4.99', now:100, daily:20, days:30 },
+  // 27/11 KDR "Crown Reserve": moi boss (sau boss dau) bo perBoss ruby vao KET (khong phai cua nguoi choi), du min thi
+  // ban mo ket, tran cap. KDR 20 / 300 / 600 cung $4,99.
+  vault: { perBoss:20, min:300, cap:600, usd:'$4.99' },
+  // 27/11 KDR goi "wall": thua CUNG 1 boss `fails` lan => goi ruby hien `hours` gio, toi da 1 lan / ngay
+  stuck: { fails:2, ruby:400, usd:'$4.99', hours:24 },
+  // 27/11 KDR 6 goi Crowns 80-6.500 ($1,99-99,99), lan dau moi goi x2. Ruby minh: ~50-70 ruby / $ (bua Shock 250 ruby = $4,99)
+  packs: [{ruby:100, usd:'$1.99'}, {ruby:260, usd:'$4.99'}, {ruby:550, usd:'$9.99'}, {ruby:1200, usd:'$19.99'}, {ruby:2600, usd:'$39.99'}, {ruby:7000, usd:'$99.99'}],
+  packFirst: 2,
   // 13/11 Mai: "cho 1 vai tang da roi it nhung tren nen dat co 1 cuc da to phai danh vo trong 1 timer, danh xong
   // cho nhieu reward". TANG DA o mot vai NAC: at = [tang, nac] (dem tu 0; nac 0 bo vi trung moc day tang tren).
   // hp = so cu vung trung (theo tang) · secs = dong ho · feed = he so mang nha luc co tang (0,35 = thua ~3 lan)
@@ -646,7 +726,8 @@ var CFG = {
   // buffPool TAM (26/11): chi buff co tac dung that. Ore Value / Combo Bonus / Lucky Seams chi tang TIEN CA - ma tien ca
   // khong con cho tieu (buff khong mua nua) => cho Mai quyet tien ca dung vao dau roi moi mo lai.
   // buffPool null (26/11): vang thanh tien meta => buff tien co tac dung lai, mo du 6
-  boulder: { buffChance: 0.5, buffLv: 2, buffPool: null, at: [[0,2], [1,2], [2,1], [2,3], [3,2], [3,4]], hp: [8, 10, 12, 14], mineHp: 0.25, secs: 20, feed: 0.35,
+  // 27/11 Mai sua sheet Buff: "buff trong tran dang cao qua, da chinh xuong" => moi lan chon +1 cap (truoc 2)
+  boulder: { buffChance: 0.5, buffLv: 1, buffPool: null, at: [[0,2], [1,2], [2,1], [2,3], [3,2], [3,4]], hp: [8, 10, 12, 14], mineHp: 0.25, secs: 20, feed: 0.35,
              cash: 12, rubies: [4, 6, 8, 10], gold: 5,
              // 13/11 "dap ko co luc": hitStop = giay dung hinh moi nhat (x0,6-1 theo luc) · hitSpeed = toc do dam toi thieu
              // (x nguong dap cua bua) moi tinh 1 nhat; cham nhe hon chi nghe cop.
@@ -667,7 +748,7 @@ var CFG = {
   // (charge giay, x (1 - per x (cap - 1))), day thi nem cuoc vao cuc CAO NHAT cua dong: tru 1 mang nhu mot cu dap.
   // Chi DO: khong cong combo, khong danh tang da / boss (vision 4.4 bien "khong tu danh boss"). Ca ~20-30 s => tho dap 3-5 lan.
   // Qua luc vang: tien ca = perMin x phut vang (toi da capH gio theo cap) x pay tang, nhan khi mo Yard (toi thieu minMin phut).
-  helper: { charge: 6, perMin: 0.5, capH: [2, 4, 6], minMin: 5, flight: 0.35 },
+  helper: { charge: 6, perMin: 0.5, capH: [2, 4, 6], minMin: 5, flight: 0.35 },   // 27/11: tran gio vang = capH[0] + Night Shift; so tho = Bunkhouse I/II/III
   // B3 LUOT + VE (vision 3.4 + 9.3; Mai 12/11 "luot = tu DIG toi khi ve Yard"). DIG = tru 1 ve; dang co luot do dang (thoat app
   // giua chung) thi DIG vao tiep, khong tru. Ve ve Yard (nut YARD / TO THE YARD) = het luot. Thua luot chi mat ve: khong tru tien,
   // giu do sau (vision 9.3). cap = tran ve hoi theo gio · start = ve luc moi choi (D0 cho DU, vuot tran: bai hoc TR 2.1.1)
@@ -692,7 +773,11 @@ var CFG = {
   // LUN TROM o tang trong `floors` (dem tu 0) · max = so lun cung luc (theo thu tu floors) · first/every = giay
   // toi lun dau / giua hai lun · cap = bao day sau bay nhieu cuc · stay = giay o lai toi da · back = dap trung tra
   // bay nhieu lan gia bao · bounty = tien thuong co dinh (x gia tri quang x pay tang) ke ca bao rong.
-  thief: { floors: [1, 3], max: [1, 2], first: 6, every: [9, 15], speed: 3.2, cap: 3, stay: 9, back: 1.5, bounty: 3 },
+  // 27/11 Mai: lun "dung ban luoi de cuop da o moi vi tri" (truoc: chay duoi hung da dang roi). Lun dung sat tuong,
+  // NGAM aim s (vong tam do tren cuc bi nham), ban luoi bay netSpd toi cuc o BAT KY dau, keo ve reel u/s.
+  // Dap lun = lay lai ca bao (x back) + thuong; dap trung cuc dang bi keo = dut luoi, cuc roi lai. rest = nghi giua 2 phat.
+  thief: { floors: [1, 3], max: [1, 2], first: 6, every: [9, 15], speed: 3.2, cap: 3, stay: 13, back: 1.5, bounty: 3,
+           aim: 1.0, netSpd: 18, reel: 5.5, rest: 0.9 },
   // B1 hinh (12/11, Mai: "ko co cam giac sap xuong"): luc sap camera TRE MOT NHIP - dong + san tut
   // xuong fallDip don vi trong fallDipK dau nhip (vach hang dung yen => thay dong roi khoi vach),
   // roi ca canh bat kip len trong khi vach hang truot len tiep. Chi la hinh: vat ly, khung camera,
@@ -718,11 +803,13 @@ var CFG = {
     // 26/11 Mai "buff lua khi vao tran dang manh qua": tu khi tran theo DO DAY ca dai 27 -> 66 s, tien ca / ca x3,4
     // (bot normal 296 -> 1003) ma gia giu => ghe lan la mua het 3 the. Suc manh moi cap giu (do: mua / khong mua chi
     // chenh +15 % diem quang / phut, dung gia dinh mo hinh) - chi nhan GIA x3 de lai phai chon 1-2 the moi lan ghe lan.
-    headroom: { base: 90,  grow: 1.6,  per: 0.45,  max: 4 },
-    fastBelt: { base: 120, grow: 1.7,  per: 0.075, max: 5 },
-    chain:    { base: 150, grow: 1.75, per: 0.05,  max: 6 },
-    value:    { base: 105, grow: 1.6,  per: 0.25,  max: 8 },
-    powder:   { base: 360, grow: 1.8,  per: 0.025, max: 5 },
+    // 27/11 Mai sua sheet Buff: per value 0,25 -> 0,10 · chain 0,05 -> 0,07 · powder 0,025 -> 0,05; max = cot "lan chon
+    // de max" Mai go (headroom 5 · value 4 · chain 4 · fastBelt 3 · powder 4 · lucky 4), moi lan chon +1 cap.
+    headroom: { base: 90,  grow: 1.6,  per: 0.45,  max: 5 },
+    fastBelt: { base: 120, grow: 1.7,  per: 0.075, max: 3 },
+    chain:    { base: 150, grow: 1.75, per: 0.07,  max: 4 },
+    value:    { base: 105, grow: 1.6,  per: 0.10,  max: 4 },
+    powder:   { base: 360, grow: 1.8,  per: 0.05,  max: 4 },
     lucky:    { base: 600, grow: 1.9,  per: 0.02,  max: 4 }
   }
 };
@@ -732,7 +819,7 @@ Object.defineProperty(CFG, 'floors', { get: function(){
 // kieu mang / bo quang (0-3) cua tang k: 10 tang dung lai 4 kieu cu (tang 1-2, 3-5, 6-8, 9-10)
 function layOf(k){ var F = CFG.floors, f = F[Math.min(F.length - 1, k)]; return f && f.lay !== undefined ? f.lay : Math.min(3, k); }
 var UP_TEXT = {
-  headroom: ['Tall Props',   function(l){ return 'Chutes sit higher — the mine holds more ore'; }],
+  headroom: ['Tall Props',   function(l){ return 'Red line sits higher — the pile has more room'; }],
   value:    ['Ore Value',    function(l){ return 'Every ore pays +' + Math.round(CFG.upgrades.value.per*100) + '%'; }],
   chain:    ['Combo Bonus',  function(l){ return 'Each ore in a combo pays more'; }],
   fastBelt: ['Fast Feed',    function(l){ return 'Ore drops in ' + Math.round(CFG.upgrades.fastBelt.per*100) + '% faster — more to smash'; }],
@@ -743,7 +830,7 @@ var UP_TEXT = {
 // lv.stamina/lv.wind thi chi nam yen: khong co trong UP_ORDER => khong hien, khong tinh.
 var UP_ORDER = ['headroom','value','chain','fastBelt','powder','lucky'];
 // 13/11 Mai "qua nhieu chu": the nang cap o lan chi con mot dong ngan
-var UP_SHORT = { headroom: 'More room', value: '+' + Math.round(CFG.upgrades.value.per*100) + '% cash', chain: 'Combo pays more',
+var UP_SHORT = { headroom: 'Red line ↑', value: '+' + Math.round(CFG.upgrades.value.per*100) + '% cash', chain: 'Combo pays more',
   fastBelt: '+' + (CFG.upgrades.fastBelt.per*100).toFixed(1).replace(/\.0$/, '') + '% ore', powder: 'More kegs', lucky: 'More gold ×5' };
 // 12/11 Mai: "1 dot chi hien 3 cai random". Mot dot = mot lan ve lan sau ca. Bo 3 luu trong save
 // theo so ca (offerAt) => tai lai trang khong doi duoc bo khac. Cai da MAX thi khong vao bo.
@@ -977,7 +1064,7 @@ var SAVE_KEY = 'smashshift.v4';   // 26/11 progression 10 tang/mo: khoa moi, ban
 // tried[k] = da thu bua k · starter = da lay goi khoi dau · trial = bua chon thu o catalog cho ca toi (13/11) ·
 // bdone['mo-tang-nac'] = tang da o nac do da vo/chim (13/11). Truong moi co mac dinh => khong doi khoa luu.
 function freshSave(){ return {bank:0, gems:0, spent:0, lv:{}, kho:0, depth:0, dprog:0, shiftN:0, ham:'sledge', owned:{sledge:1},
-  ws:{}, mine:0, mines:[], cleared:{}, tried:{}, starter:0, trial:null, bdone:{},
+  ws:{}, mine:0, mines:[], cleared:{}, tried:{}, starter:0, starterAt:0, offerPop:0, card:null, vault:0, stuck:null, bfails:{}, packs:{}, trial:null, bdone:{},
   tk:CFG.run.start, tkT:0, run:null,
   saveT:0, away:0,   // B5
   ads:null, tchest:0, daily:{last:'', n:0},   // B7: luot QC theo ngay {day, n:{cho:so}} · ruong hen gio mo luc (ms) · diem danh: luc luu cuoi (ms) · qua luc vang dang cho nhan (tien ca)   // B3: ve dang co · moc tinh hoi ve (ms) · luot dang choi {n: so ca da dung o tang nay} hoac null
@@ -1002,6 +1089,7 @@ function load(){ if(QS.get('reset')||BOT) return;
       if(!(G.tk >= 0)) G.tk = CFG.run.start;   // B3
       if(!(G.away >= 0)) G.away = 0;   // B5
       if(!G.daily || typeof G.daily !== 'object') G.daily = {last:'', n:0};   // B7
+      if(!G.wsv){ G.ws = G.ws || {}; var ob = G.ws.bunk || 0; if(ob > 1){ G.ws.bunk = 1; G.ws.train = Math.min(3, ob - 1); } G.wsv = 2; }   // 27/11 cay v2
       if(!(G.tchest >= 0)) G.tchest = 0;
       if(G.saveT > 0 && wsLv('bunk') > 0) awayGift(Date.now() - G.saveT);
       if(!(G.tkT >= 0)) G.tkT = 0;
@@ -1023,13 +1111,19 @@ function cost(k){ var u = CFG.upgrades[k]; return Math.round(u.base*Math.pow(u.g
 function stats(){
   var U = CFG.upgrades, g = function(k){ return U[k].per*lvl(k); };
   // + xuong trong The Yard (giu mai, moi mo) + nhip mang rieng cua mo dang dao
-  var w = function(k){ return CFG.ws[k].per*wsLv(k); };
+  var w = function(k){ return wsEff(k); };   // 27/11 cay v2: tong hieu ung qua moi bac
+  var il = function(t){ return wsTierLv('iron', t); };
   return { head: DANGER0 + g('headroom') + w('props'), rate: CFG.beltRate*(1+g('fastBelt'))*(1+w('chute'))*mineNow().rate, step: CFG.chainStep + g('chain') + w('fuse'),
     value: CFG.crateValue*(1+g('value'))*(1+w('assay')), boom: CFG.boomChance + g('powder') + w('powder'), gold: CFG.goldChance + g('lucky') + w('gold'),
     // 13/11 xuong moi (cay 19 xuong)
     goldMult: CFG.goldMult + w('smith'), hard: 1 + w('cutter'), payBonus: w('pay'), bounty: 1 + w('bounty'), watch: 1 + w('watch'),
-    thiefSpd: Math.max(.4, 1 - CFG.wsSpeedPer*wsLv('watch')), oreNeed: Math.max(.5, 1 - w('drill')), holes: CFG.fallHoles + w('trap'),
-    bdSecs: CFG.boulder.secs + w('breaker'), grace: 0.45 + w('whistle'), comboT: COMBO_T + w('clock'), blast: 1 + w('blast') };
+    thiefSpd: Math.max(.4, 1 - wsEff2('watch')), oreNeed: Math.max(.5, 1 - w('drill')), holes: CFG.fallHoles + w('trap'),
+    bdSecs: CFG.boulder.secs + w('breaker'), grace: CFG.lineSecs + w('whistle'), comboT: COMBO_T + w('clock'), blast: 1 + w('blast'),
+    // 27/11 cay v2: node moi
+    ledger: w('ledger'), kegPay: 1 + w('keg'), interest: w('save'), bossSecs: w('bclock'),
+    grip: 1 + w('grip'), arm: 1 + w('arm'), headK: 1 + w('head'),
+    ironNeed: 1 - CFG.ws.iron.tiers[0].per*il(0), ironTwo: CFG.ws.iron.tiers[1].per*il(1), ironBoss: [0, 10, 8, 6][il(2)],
+    helpers: Math.min(3, wsLv('bunk')), helperCharge: Math.max(.4, 1 - w('train')), toolsOre: wsTierLv('tools', 0), toolsBoss: wsTierLv('tools', 1) };
 }
 
 // ================= three.js =================
@@ -1305,7 +1399,7 @@ var hand = new THREE.Mesh(new THREE.SphereGeometry(0.42, 14, 10), leatherMat); h
 var lineMat = new THREE.MeshBasicMaterial({color:0xff3b22, transparent:true, opacity:.5});
 var dangerLine = new THREE.Mesh(new THREE.BoxGeometry(ARENA*2+1.2, 0.16, 0.16), lineMat);
 dangerLine.position.set(0, DANGER0, 1.4); scene.add(dangerLine);
-dangerLine.visible = false;   // 26/11: bo vach do (tran theo do day). DL van la moc dat mang + nang cap "headroom".
+dangerLine.visible = true;    // 27/11: vach do tro lai (tinh theo be ngang - xem lineCols)
 var headCol = new THREE.Color(), HOT = new THREE.Color(0xffe066);
 
 // crates + fx pools
@@ -1474,6 +1568,52 @@ function ring(x, y, to, color){
 var AC = null;
 function ac(){ if(AC === null){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC = false; } }
   if(AC && AC.state === 'suspended') AC.resume(); return AC; }
+// 27/11 Mai "them nhac.": nhac tu tong hop (WebAudio, khong file): Yard = folk cham (A thu, Am-F-C-G), ca = nhanh
+// (bass + trong + giai dieu ngu cung). Bus rieng (MUS_VOL), bat/tat luu G.music. Bot / test khong phat.
+var MUS = {track:null, next:0, step:0, bus:null, timer:null, vol:.11};
+function mHz(n){ return 440*Math.pow(2, (n - 69)/12); }
+function musBus(){ var a = AC; if(!a) return null; if(!MUS.bus){ MUS.bus = a.createGain(); MUS.bus.gain.value = 0; MUS.bus.connect(a.destination); } return MUS.bus; }
+function musOn(){ return !BOT && G && G.music !== false; }
+function mNote(t, n, d, type, vol, cut){ var a = AC, o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(mHz(n), t);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .012); g.gain.exponentialRampToValueAtTime(.0006, t + d);
+  if(cut){ var f = a.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = cut; o.connect(f); f.connect(g); } else o.connect(g);
+  g.connect(MUS.bus); o.start(t); o.stop(t + d + .05); }
+function mKick(t, vol){ var a = AC, o = a.createOscillator(), g = a.createGain(); o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(45, t + .12);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + .16); o.connect(g); g.connect(MUS.bus); o.start(t); o.stop(t + .2); }
+var MUS_NOISE = null;
+function mHat(t, vol){ var a = AC; if(!MUS_NOISE){ var len = Math.floor(a.sampleRate*.06); MUS_NOISE = a.createBuffer(1, len, a.sampleRate); var ch = MUS_NOISE.getChannelData(0); for(var i=0;i<len;i++) ch[i] = (Math.random()*2 - 1)*(1 - i/len); }
+  var src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); src.buffer = MUS_NOISE; f.type = 'highpass'; f.frequency.value = 6500; g.gain.value = vol;
+  src.connect(f); f.connect(g); g.connect(MUS.bus); src.start(t); }
+var CHORDS = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]];   // Am F C G
+var TRACKS = {
+  yard: {bpm:92, len:32, play:function(t, s, sp){ var bar = Math.floor(s/8), k = s % 8, C = CHORDS[bar];
+    if(k === 0 || k === 4) mNote(t, C[0] - 12, sp*3.5, 'triangle', .2, 900);
+    mNote(t, C[[0, 1, 2, 1, 0, 2, 1, 2][k]] + 12, sp*1.8, 'triangle', .055);
+    var mel = [76, 0, 0, 74, 72, 0, 69, 0,  72, 0, 0, 74, 76, 0, 0, 0,  79, 0, 76, 0, 74, 0, 72, 0,  74, 0, 0, 72, 71, 0, 0, 0][s];
+    if(mel) mNote(t, mel, sp*2.6, 'sine', .06); }},
+  shift: {bpm:132, len:32, play:function(t, s, sp){ var bar = Math.floor(s/8), k = s % 8, C = CHORDS[bar];
+    mNote(t, C[0] - (k % 2 ? 12 : 24), sp*.9, 'square', .07, 520);
+    if(k === 0 || k === 4) mKick(t, .32); if(k % 2) mHat(t, .05); if(k === 2 || k === 6) mHat(t, .03);
+    var rif = [69, 0, 72, 74, 76, 0, 74, 72,  69, 0, 72, 0, 76, 79, 76, 0,  72, 0, 74, 76, 79, 0, 81, 79,  76, 0, 74, 0, 72, 74, 69, 0][s];
+    if(rif) mNote(t, rif, sp*.85, 'square', .028, 2200); }}
+};
+function musTick(){
+  if(!AC || AC.state !== 'running' || !MUS.track || !musOn()) return; var T = TRACKS[MUS.track], sp = 60/T.bpm/2;
+  if(MUS.next < AC.currentTime) MUS.next = AC.currentTime + .05;
+  while(MUS.next < AC.currentTime + .3){ T.play(MUS.next, MUS.step, sp); MUS.next += sp; MUS.step = (MUS.step + 1) % T.len; }
+}
+function music(track){   // 'yard' / 'shift' / null; doi bai thi tat dan roi bat dau lai tu dau
+  if(!musOn()){ MUS.track = track; if(MUS.bus) MUS.bus.gain.value = 0; return; }
+  var a = ac(); if(!a || !musBus()) return;
+  if(!MUS.timer) MUS.timer = setInterval(musTick, 70);
+  var t = a.currentTime, same = MUS.track === track;
+  MUS.bus.gain.cancelScheduledValues(t); MUS.bus.gain.setValueAtTime(MUS.bus.gain.value, t);
+  if(!same){ MUS.track = track; MUS.step = 0; MUS.next = t + .35; MUS.bus.gain.linearRampToValueAtTime(0, t + .2); }
+  MUS.bus.gain.linearRampToValueAtTime(track ? (S.paused ? MUS.vol*.35 : MUS.vol) : 0, t + .9);
+}
+function musicToggle(){ G.music = G.music === false; save(); if(!musOn()){ if(MUS.bus) MUS.bus.gain.value = 0; } else { var tr = MUS.track; MUS.track = null; music(tr || (S.mode === 'yard' ? 'yard' : 'shift')); } musicUi(); }
+function musicUi(){ var on = musOn(); ['yMus', 'pMus'].forEach(function(id){ var b = $(id); if(b){ b.classList.toggle('off', !on); b.title = on ? 'Music on' : 'Music off'; } });
+  if($('pMus')) $('pMus').textContent = on ? '♪ MUSIC: ON' : '♪ MUSIC: OFF'; }
 function thunk(freq, dur, vol, noisy){
   if(BOT) return; var a = ac(); if(!a) return;
   var t = a.currentTime, g = a.createGain();
@@ -1526,7 +1666,8 @@ function clearWorld(){
   clearPops(); if(typeof removeBoulder === 'function'){ removeBoulder(); removeThieves(); removeHelper(); bdHud(); }
 }
 function placeHand(x, y){ px = pvx = x; py = pvy = y; pvvx = pvvy = 0; th = thv = 0; mx = x; my = y-ROD; mvx = mvy = 0; }
-function setHammer(k){ ham = HAMMERS[k]; G.ham = k; headMat.color.setHex(ham.col); headG.scale.setScalar(ham.r);
+function hamR(){ return ham.r*((S.st && S.st.headK) || 1); }   // 27/11 Head Forge
+function setHammer(k){ ham = HAMMERS[k]; G.ham = k; headMat.color.setHex(ham.col); headG.scale.setScalar(hamR());
   for(var x in hamX) hamX[x].visible = (x === k); }
 
 // Thap 12 thung ngay duoi bua luc mo ca (Mallet Mash): cu vung dau tien da vo ca me,
@@ -1537,13 +1678,14 @@ function starterPile(cx){
       makeCrate('wood', cx + (ci-2.5)*CRATE*1.04 + (Math.random()-.5)*.04, CRATE*.5 + r*CRATE);
 }
 function startShift(){
+  music('shift'); S.paused = false;   // 27/11 nhac + nut dung
   hideScreens(); elPtr.style.display = 'none';
   if(!G.run) G.run = {n:0};   // B3: ca dau sau Van Tap = luot mien phi
   G.run.n++; save();   // luu ngay: thoat app giua ca van tinh ca nay
   // 13/11 Mai "hammer try free de trong catalog ngoai ko de trong game": bua thu chon o catalog (G.trial), dung 1 ca.
   // Ca thu khong doi bua dang trang bi (G.ham giu bua cu).
   S.trial = G.trial || null; G.trial = null; var keep = G.owned[G.ham] ? G.ham : 'sledge';
-  S.st = stats(); setHammer(S.trial || keep); G.ham = keep;
+  S.st = stats(); setHammer(S.trial || keep); G.ham = keep;   // (setHammer doc S.st.headK)
   DL = S.st.head;
   buildShelves(layOf(G.kho)); clearWorld();
   S.mode = 'shift'; S.earned = 0; S.best = 0; S.t = 0;
@@ -1551,7 +1693,7 @@ function startShift(){
   S.spawnT = SHELVES.map(function(s, i){ return 0.9 + i*1.1; });   // mot nhip tho truoc me dau tien S.swinging = false; S.sw = null; S.endT = 0;
   S.burst = SHELVES.map(function(){ return 0; }); S.bn = SHELVES.map(function(){ return 0; });
   S.bk = SHELVES.map(function(){ return 0; }); S.bv = SHELVES.map(function(){ return 0; }); S.bx = [];
-  S.combo = 0; S.comboT = 0; S.overflow = 0; S.over = 0; S.timeUp = 0; S.blk0 = []; S.fill = 0;
+  S.combo = 0; S.comboT = 0; S.overflow = 0; S.over = 0; S.timeUp = 0; S.blk0 = []; S.fill = 0; S.intPaid = 0; S.ironN = 0;
   S.fallT = 0; S.bottom = 0; S.drops = 0; S.dip = 0; S.seamRise = 1; S.hs = 0; buildSeam(); removeBoulder();
   // moi ca mot tinh cach: nhip nha, ty le loai do va do dai ca deu khac nhau
   S.pers = pickPers(); S.secs = Math.round(CFG.shiftSecs*pers().secs);
@@ -1563,7 +1705,7 @@ function startShift(){
   placeHand(SHELVES[0].x1 + 1.6, CRATE*2.4 + ROD);
   G.shiftN++;
   // ca dau cua mot kho moi thi day cach danh san moi; cac ca sau bao TINH CACH ca nay
-  tip(G.shifts === 0 ? 'Smash the pile — never let it fill the mine!'
+  tip(G.shifts === 0 ? 'Smash the pile — keep it under the red line!'
       : G.shifts === 1 ? 'Every ore you break cracks the floor. Dig deeper!'
       : (G.shiftN === 1 ? KHO_TEACH[layOf(G.kho)] : pers().label + ' — ' + pers().tag), true);
   setTimeout(function(){ if(S.mode === 'shift' && S.t > 3) tip(''); }, 4200);
@@ -1617,6 +1759,37 @@ function fillFrac(){   // phan dien tich vung quang roi toi duoc dang co thung N
   for(var i=0;i<crates.length;i++){ var c = crates[i];
     if(c.dead || (Math.abs(c.vy) > 4 && !(c.frz > 0)) || c.y > lid || c.x < r[0] - CRATE*.5) continue; a += CRATE*CRATE; }
   return Math.min(1, a/area);
+}
+// 27/11: cot nao co da NAM YEN vuot vach do. Moi thung chi thuoc 1 cot (cot gan nhat) => 1 cot da le = 1 o.
+function lineCols(){
+  var n = Math.max(1, Math.round(2*ARENA/CRATE)), w = 2*ARENA/n, hit = [], lid = lidY(), i, j, c, o, held, dy;
+  for(i=0;i<crates.length;i++){ c = crates[i];
+    if(c.dead || c.net || c.frz > 0 || Math.abs(c.vy) > 4 || c.y > lid || c.y + CRATE*.5 <= DL) continue;
+    held = c.y < CRATE*0.9;   // giong pileTop: chi tinh thung dung tren san / tua tren thung nam yen (khong tinh thung dang bay)
+    for(j=0;j<crates.length && !held;j++){ o = crates[j]; if(o === c || o.dead || (Math.abs(o.vy) > 3 && o.frz <= 0)) continue;
+      dy = c.y - o.y; if(dy > CRATE*.55 && dy < CRATE*1.7 && Math.abs(c.x - o.x) < CRATE*.95) held = true; }
+    if(held) hit[Math.max(0, Math.min(n - 1, Math.floor((c.x + ARENA)/w)))] = 1; }
+  var over = []; for(i=0;i<n;i++) if(hit[i]) over.push(-ARENA + (i + .5)*w);
+  return {over:over, n:over.length, need:Math.max(CFG.lineMin, Math.round(n*CFG.lineSpan)), cols:n, w:w};
+}
+var segPool = [], segHot = new THREE.MeshBasicMaterial({color:0xff2a14, transparent:true, opacity:.95}),
+    segLone = new THREE.MeshBasicMaterial({color:0xffb02a, transparent:true, opacity:.8});
+function lineUi(L, warn, lim){   // 27/11: dang dem => vach + o DO nhap nhay (nhanh dan) + so dem nguoc; CAM = cot chua du so cot (lineMin > 1)
+  var wall = L.n >= L.need, i, m, on = wall && S.overflow > 0, blink = on ? .5 + .5*Math.sin(S.t*(9 + warn*14)) : 0;
+  lineMat.opacity = on ? .35 + .6*blink : .45;
+  dangerLine.scale.y = dangerLine.scale.z = on ? 1.6 + warn*1.8 : 1;
+  segHot.opacity = on ? .45 + .55*blink : .95;
+  var el = $('lineT');
+  if(on && L.n){ var mx = 0; for(i=0;i<L.n;i++) mx += L.over[i]; var sc = worldToScreen(mx/L.n, DL);   // so nam ngay tren vach (tren cao bi o chu huong dan che)
+    el.hidden = false; el.textContent = Math.max(1, Math.ceil((lim || CFG.lineSecs) - S.overflow));
+    el.style.left = Math.max(40, Math.min(vpW() - 40, sc.x)) + 'px'; el.style.top = sc.y + 'px';
+    el.style.transform = 'translate(-50%,-50%) scale(' + (1 + .18*blink).toFixed(3) + ')'; }
+  else if(!el.hidden) el.hidden = true;
+  for(i=0;i<Math.max(segPool.length, L.n);i++){ m = segPool[i];
+    if(i >= L.n){ if(m) m.visible = false; continue; }
+    if(!m){ m = new THREE.Mesh(new THREE.BoxGeometry(1, .34, .22), segHot); scene.add(m); segPool.push(m); }
+    m.visible = true; m.material = wall ? segHot : segLone; m.scale.x = L.w*.9; m.scale.y = wall ? 1 + warn*1.5 : 1;
+    m.position.set(L.over[i], DL, 1.46); }
 }
 function fillUi(f, warn){
   var el = $('fillBar'), on = S.mode === 'shift' || (S.mode === 'tut' && S.tut >= 1); if(el.hidden === on) el.hidden = !on; if(!on) return;
@@ -1673,7 +1846,7 @@ var DROP_WALL = 0.9;
 function dropRange(s){ return [s.x0 + 1.0, Math.max(s.x0 + 1.0, ARENA - CRATE*.5 - 0.1 - DROP_WALL)]; }
 function colTop(x){ var t = 0, lim = SHELVES.length ? SHELVES[0].y - CRATE*0.6 : 99;
   for(var i=0;i<crates.length;i++){ var c = crates[i];
-    if(c.dead || c.y > lim || Math.abs(c.vy) > 3 || Math.abs(c.x - x) > CRATE*0.8) continue; t = Math.max(t, c.y + CRATE*.5); }
+    if(c.dead || c.net || c.y > lim || Math.abs(c.vy) > 3 || Math.abs(c.x - x) > CRATE*0.8) continue; t = Math.max(t, c.y + CRATE*.5); }
   return t; }
 function dropAt(s, B, k){   // diem roi cua thung thu k trong me bat dau tai B
   var r = dropRange(s), per = Math.max(1, Math.floor((r[1] - B)/DROP_GAP) + 1), row = Math.floor(k/per);
@@ -1734,7 +1907,7 @@ function pileTop(){
     // 12/11 Mai "lan nao dump da cung lose vuot vach": mot ME thung roi noi duoi cach 0,17 s => thung
     // sau lo lung ngay tren thung truoc (dy 0,7-2 o, dx 0,62) va ca hai DANG ROI tren vach do bi tinh
     // la "dong" (cu chi loai |vy| > 9). Gio chi tinh thung NAM YEN (|vy| < 4) tua len thung NAM YEN.
-    if(c.dead || c.frz > 0 || c.y + CRATE*.5 <= high || Math.abs(c.vy) > 4 || c.y > lid) continue;
+    if(c.dead || c.net || c.frz > 0 || c.y + CRATE*.5 <= high || Math.abs(c.vy) > 4 || c.y > lid) continue;
     var held = c.y < CRATE*0.9;
     for(j=0;j<crates.length && !held;j++){
       o = crates[j]; if(o === c || o.dead || (Math.abs(o.vy) > 3 && o.frz <= 0)) continue;
@@ -1773,7 +1946,8 @@ function payFor(c){
   // Loai 2-3 mang tra nhieu hon vi an nhieu cu vung hon, nhung khong du de lam bot thang som:
   // do lai bang bot sau khi them (xem playtest.md muc 08/11 16:30).
   var tmul = c.T.gold ? S.st.goldMult : (c.T.pay || 1)*(c.T.hp > 1 ? S.st.hard : 1);   // Goldsmith / Gem Cutter
-  var pay = S.mode === 'tut' && S.tut < 2 ? 0 : S.st.value*ham.val*tmul*mult*(S.mode === 'shift' ? floorCfg().pay : 1);
+  var led = 1 + (S.st.ledger || 0)*(k - 1), kp = S.kegHit ? (S.st.kegPay || 1) : 1;   // 27/11 Combo Ledger / Keg Broker
+  var pay = S.mode === 'tut' && S.tut < 2 ? 0 : S.st.value*ham.val*tmul*mult*led*kp*(S.mode === 'shift' ? floorCfg().pay : 1);
   w.pay += pay; S.earned += pay; G.crates++;
   if(S.mode === 'shift' || S.mode === 'tut') G.bank += pay;
   addDepth(c.T.hp);
@@ -1802,7 +1976,7 @@ function killCrate(c, power, chain, shockHop){
     ring(c.x, c.y, 8*S.st.blast, 0xe0452c); burst(c.x, c.y, 0xffc247, 14, 15, 'plank');
     for(i=0;i<crates.length;i++){ o = crates[i]; if(o.dead) continue;
       dx = o.x-c.x; dy = o.y-c.y; d = Math.sqrt(dx*dx+dy*dy)||1;
-      if(d < c.T.boom*S.st.blast){ o.vx += dx/d*14; o.vy += dy/d*10+4; killCrate(o, 14, true); } }   // Blasting Shed
+      if(d < c.T.boom*S.st.blast){ o.vx += dx/d*14; o.vy += dy/d*10+4; var kh0 = S.kegHit; S.kegHit = true; killCrate(o, 14, true); S.kegHit = kh0; } }   // Blasting Shed · 27/11 Keg Broker
     if(S.bd && S.bd.live && Math.abs(S.bd.x - c.x) < c.T.boom*S.st.blast + BD_W && Math.abs(S.bd.y - c.y) < c.T.boom*S.st.blast + BD_H) boulderHit(S.bd.keg || 2, c.x, c.y);
   }
   // HOP BANG: khong pha thung nao, ma DONG CUNG ca vung mot nhip - dong thung dung tai cho
@@ -1975,7 +2149,7 @@ function spawnBoss(){
   BD_W = Math.min(2.3, ARENA*.32); BD_H = 1.8;
   var bx = boulderSide()*(ARENA - BD_W - .05), bm = bossMesh(mi, BD_W, BD_H), g = bm.g, body = bm.body;
   scene.add(g); clearFootprint(bx);
-  var hp = floorCfg().hp, secs = B.secs + (S.st.bdSecs - CFG.boulder.secs);   // 26/11: mau theo bang tang · Breaker Yard cong gio ca boss
+  var hp = floorCfg().hp, secs = B.secs + (S.st.bdSecs - CFG.boulder.secs) + (S.st.bossSecs || 0);   // 27/11 + Boss Clock   // 26/11: mau theo bang tang · Breaker Yard cong gio ca boss
   S.bd = {g:g, body:body, x:bx, y:-BD_H, hp:hp, max:hp, t:secs, secs:secs, cd:0, flash:0, live:true, rise:0, sink:0, cr:0,
     boss:true, name:B.name[mi], hitSp:B.hitSp[mi], keg:B.keg[mi], mat:bossMats[mi].body};
   S.bossFight = B.name[mi];
@@ -1996,11 +2170,14 @@ function bossBreak(){
   pop(b.x, b.y + BD_H + 0.5, '+' + rub + ' RUBIES', 'big', 32);
   scene.remove(b.g); S.bd = null; S.bottom = 1; S.bossEnd = 1.3; save(); hud();   // nhin no vo xong moi sang man qua tang
   ev('bossWin', {kho:G.kho, mine:G.mine, rubies:rub, left:Math.round(b.t*10)/10});
+  if(!G.starterAt){ G.starterAt = Date.now(); G.offerPop = 1; save(); ev('offersOpen', {}); }   // 27/11 KDR: uu dai mo sau boss dau
+  else offersBossWin();
 }
 function bossTimeUp(){
   var b = S.bd; b.live = false; b.sink = 1.1; S.timeUp = 1; S.bossEnd = 1.2;
   pop(b.x, b.y + BD_H + 1.4, 'TIME UP — ' + b.name + ' HEALS', 'miss', 32); thunk(60, .8, .5, true);
   ev('bossLose', {kho:G.kho, mine:G.mine, hp:b.hp, why:'time'});
+  offersBossLose(G.mine + '-' + G.kho);
 }
 // thung cham tang: day ra theo truc lun it nhat; nam tren dinh thi truot xuong suon (tang tron, khong lam be do)
 function boulderPush(c){
@@ -2017,7 +2194,7 @@ function boulderPush(c){
 // nguoc nhu cham cot (giu TH_BOUNCE toc do phap tuyen). Day bang goc can (th) neu huong vung cat mat tang, con khong (tay dang
 // ep ca can vao tang) thi day diem cam. Toc do dam vao (thanh phan phap tuyen truoc khi nay) ghi vao b.imp => stepBoulder tinh nhat.
 function boulderBlock(){
-  var b = S.bd, R = ham.r, i, dx, dy, d, nx, ny;
+  var b = S.bd, R = hamR(), i, dx, dy, d, nx, ny;
   var qx = Math.max(b.x - BD_W, Math.min(mx, b.x + BD_W)), qy = Math.max(b.y - BD_H, Math.min(my, b.y + BD_H));
   dx = mx - qx; dy = my - qy; d = Math.hypot(dx, dy);
   if(d >= R) return;
@@ -2101,7 +2278,9 @@ function stepBoulder(dt, sp, canSmash, R){
   var inside = Math.abs(mx - b.x) < BD_W && Math.abs(my - b.y) < BD_H, pen = inside ? R + Math.min(BD_W - Math.abs(mx - b.x), BD_H - Math.abs(my - b.y)) : R - Math.hypot(mx - qx, my - qy);
   b.penMax = Math.max(b.penMax || 0, pen);   // do xuyen (test): bua dang lun vao tang bao nhieu
   if(imp > 0 && b.cd <= 0 && b.rise >= 1){
-    if(imp >= SMASH_SPEED*ham.need*(b.hitSp || CFG.boulder.hitSpeed)){ b.cd = HIT_CD; boulderHit(ham.iron ? 2 : 1, b.qx, b.qy, imp); }
+    if(imp >= SMASH_SPEED*ham.need*(S.st.ironNeed || 1)*(b.hitSp || CFG.boulder.hitSpeed)){ b.cd = HIT_CD; var nh = ham.iron ? 2 : 1;
+      if(b.boss && S.st.ironBoss){ S.ironN = (S.ironN || 0) + 1; if(S.ironN % S.st.ironBoss === 0){ nh++; pop(b.qx, b.qy + 1.4, 'IRON CORE ×2', 'big', 24); } }   // 27/11 Iron Core III
+      boulderHit(nh, b.qx, b.qy, imp); }
     else { thunk(110, .1, .18, true); burst(b.qx, b.qy, 0x9a8c7e, 2, 4, 'rock'); }   // cham nhe: cop, khong tru mau
   }
   // mien dap chi bat SAU mot nhat trung, va giu nguyen khi bua con tua vao tang (mot cu vung = mot nhat). Truoc day bat ca khi
@@ -2112,61 +2291,76 @@ function stepBoulder(dt, sp, canSmash, R){
 // ---- B5 THO PHU (CFG.helper, xuong Bunkhouse) -------------------------------------------------
 // Dung sat tuong (ben khong co tang), vong sac tren dau (#helperUi). Day => nem cuoc bay vong cung vao cuc cao nhat cua dong.
 var helper = null, helperHit = false;
+// 27/11: lun cu doi thanh orc - giu lai khoi hinh cu cho THO PHU dung chung
+var thBodyG = new THREE.BoxGeometry(.62, .62, .46), thHeadG = new THREE.SphereGeometry(.27, 12, 9), thLegG = new THREE.BoxGeometry(.18, .3, .2), thBoot = M(0x2a1c12);
 var hpSkin = M(0xe8b48a), hpHelm = M(0xffc53a), hpLamp = new THREE.MeshBasicMaterial({color:0xfff6c8}), hpTunic = M(0x2f6fd0), hpPick = M(0x8d9298), hpHaft = M(0x8a5a2c);
 var hpHelmG = new THREE.SphereGeometry(.3, 12, 8, 0, Math.PI*2, 0, Math.PI/2), hpLampG = new THREE.CylinderGeometry(.08, .08, .08, 10),
     hpHeadG = new THREE.BoxGeometry(.7, .12, .12), hpHaftG = new THREE.BoxGeometry(.08, .8, .08);
 function helperOn(){ return wsLv('bunk') > 0 && S.mode === 'shift'; }
 function makePick(){ var g = new THREE.Group(), h = new THREE.Mesh(hpHaftG, hpHaft); g.add(h); var p = new THREE.Mesh(hpHeadG, hpPick); p.position.y = .38; g.add(p); return g; }
+// 27/11 cay v2: Bunkhouse I/II/III = 1/2/3 tho (helpers); helper = tho dau (vong sac #helperUi + test cu)
+var helpers = [], HP_TUNIC = [0x2f6fd0, 0x2f9a5a, 0xc0562a];
 function spawnHelper(){
-  removeHelper(); if(wsLv('bunk') <= 0) return;
-  var g = new THREE.Group(), body = new THREE.Mesh(thBodyG, hpTunic); body.position.y = .5; g.add(body);
-  var head = new THREE.Mesh(thHeadG, hpSkin); head.position.y = 1.02; g.add(head);
-  var helm = new THREE.Mesh(hpHelmG, hpHelm); helm.position.y = 1.08; g.add(helm);
-  var lamp = new THREE.Mesh(hpLampG, hpLamp); lamp.rotation.x = Math.PI/2; lamp.position.set(0, 1.28, .26); g.add(lamp);
-  var l1 = new THREE.Mesh(thLegG, thBoot), l2 = new THREE.Mesh(thLegG, thBoot); l1.position.set(-.15, .15, 0); l2.position.set(.15, .15, 0); g.add(l1); g.add(l2);
-  var pick = makePick(); pick.position.set(.4, .75, .1); pick.rotation.z = -.5; g.add(pick);
-  g.traverse(function(o){ if(o.isMesh) o.castShadow = true; });
-  scene.add(g);
-  helper = {g:g, pick:pick, side:-1, x:0, y:0, t:0, ch:0, fly:null, sw:0};
-  helperPlace(); ev('helper', {lv:wsLv('bunk')});
+  removeHelper(); var n = Math.min(3, wsLv('bunk')); if(n <= 0) return;
+  for(var i=0;i<n;i++){
+    var g = new THREE.Group(), body = new THREE.Mesh(thBodyG, i ? M(HP_TUNIC[i]) : hpTunic); body.position.y = .5; g.add(body);
+    var head = new THREE.Mesh(thHeadG, hpSkin); head.position.y = 1.02; g.add(head);
+    var helm = new THREE.Mesh(hpHelmG, hpHelm); helm.position.y = 1.08; g.add(helm);
+    var lamp = new THREE.Mesh(hpLampG, hpLamp); lamp.rotation.x = Math.PI/2; lamp.position.set(0, 1.28, .26); g.add(lamp);
+    var l1 = new THREE.Mesh(thLegG, thBoot), l2 = new THREE.Mesh(thLegG, thBoot); l1.position.set(-.15, .15, 0); l2.position.set(.15, .15, 0); g.add(l1); g.add(l2);
+    var pick = makePick(); pick.position.set(.4, .75, .1); pick.rotation.z = -.5; g.add(pick);
+    g.traverse(function(o){ if(o.isMesh) o.castShadow = true; });
+    scene.add(g);
+    var h = {g:g, pick:pick, idx:i, side:-1, x:0, y:0, t:0, ch:i*1.3, fly:null, sw:0}; helpers.push(h); helperPlace(h);
+  }
+  helper = helpers[0]; ev('helper', {lv:wsLv('bunk'), n:n});
 }
-function removeHelper(){ if(helper){ scene.remove(helper.g); if(helper.fly) scene.remove(helper.fly.m); helper = null; } $('helperUi').hidden = true; }
-function helperCharge(){ return CFG.helper.charge*Math.max(.4, 1 - CFG.ws.bunk.per*(wsLv('bunk') - 1)); }
-function helperPlace(){   // ben khong co tang da / boss; mac dinh tuong trai
-  var h = helper; h.side = S.bd && S.bd.x < 0 ? 1 : -1; h.x = h.side*(ARENA - .55); h.y = surfAt(h.x);
+function removeHelper(){ helpers.forEach(function(h){ scene.remove(h.g); if(h.fly) scene.remove(h.fly.m); }); helpers = []; helper = null; $('helperUi').hidden = true; }
+function helperCharge(){ return CFG.helper.charge*((S.st && S.st.helperCharge) || 1); }   // 27/11 Training Yard
+function helperPlace(h){   // ben khong co tang da / boss; tho 2 ben kia, tho 3 cung ben tho 1 nhung lui vao
+  h = h || helper; if(!h) return; var s0 = S.bd && S.bd.x < 0 ? 1 : -1;
+  h.side = h.idx === 1 ? -s0 : s0; h.x = h.side*(ARENA - .55 - (h.idx === 2 ? 1.5 : 0)); h.y = surfAt(h.x);
 }
-function helperTarget(){   // cuc CAO NHAT dang nam yen tren dong (khong o tren bang, khong dang bay)
+function helperTarget(skip){   // cuc CAO NHAT dang nam yen tren dong (khong o tren bang, khong dang bay, khong bi tho khac nham)
   var best = null;
-  for(var i=0;i<crates.length;i++){ var c = crates[i]; if(c.dead || c.wasOn || c.belt !== undefined && c.y > DL || Math.abs(c.vy) > 2 || c.y < .3) continue;
+  for(var i=0;i<crates.length;i++){ var c = crates[i]; if(c.dead || c.net || c.wasOn || c.belt !== undefined && c.y > DL || Math.abs(c.vy) > 2 || c.y < .3) continue;
+    if(skip && skip.indexOf(c) >= 0) continue;
     if(!best || c.y > best.y) best = c; }
   return best;
 }
-function stepHelper(dt){
-  var h = helper; if(!h) return;
-  helperPlace(); h.g.position.set(h.x, h.y, .2); h.g.rotation.y = h.side < 0 ? .5 : -.5;
+function stepHelper(dt){ for(var i=0;i<helpers.length;i++) stepOneHelper(helpers[i], dt); }
+function stepOneHelper(h, dt){
+  helperPlace(h); h.g.position.set(h.x, h.y, .2); h.g.rotation.y = h.side < 0 ? .5 : -.5;
   if(h.sw > 0){ h.sw -= dt; h.pick.rotation.z = -.5 - Math.sin((1 - h.sw/.3)*Math.PI)*1.6*h.side*-1; } else h.pick.rotation.z = -.5;
   if(h.fly){ var f = h.fly; f.t += dt; var u = Math.min(1, f.t/CFG.helper.flight);
-    f.m.position.set(f.x0 + (f.c.x - f.x0)*u, f.y0 + (f.c.y - f.y0)*u + Math.sin(u*Math.PI)*1.6, .4); f.m.rotation.z -= dt*22;
+    var tx = f.c.bd && S.bd ? S.bd.x : f.c.x, ty = f.c.bd && S.bd ? S.bd.y : f.c.y;
+    f.m.position.set(f.x0 + (tx - f.x0)*u, f.y0 + (ty - f.y0)*u + Math.sin(u*Math.PI)*1.6, .4); f.m.rotation.z -= dt*22;
     if(u >= 1){ scene.remove(f.m); h.fly = null; h.pick.visible = true; helperStrike(f.c); }
     return; }
   if(!(S.fallT > 0) && !S.bottom) h.ch += dt;
   if(h.ch >= helperCharge()){
-    // S3 26/11 (Mai "yes"): co tang da / boss dang song thi tho nem cuoc vao do, 1 mau / nhat
-    var c = (S.bd && S.bd.live && !(S.bd.sink > 0) && S.bd.y > -BD_H*.5) ? {bd:true, x:S.bd.x, y:S.bd.y} : helperTarget(); if(!c) return;
+    // S3 26/11 (Mai "yes"): co tang da / boss dang song thi tho nem cuoc vao do
+    var busy = helpers.map(function(o){ return o.fly && !o.fly.c.bd ? o.fly.c : null; }).filter(Boolean);
+    var c = (S.bd && S.bd.live && !(S.bd.sink > 0) && S.bd.y > -BD_H*.5) ? {bd:true, x:S.bd.x, y:S.bd.y} : helperTarget(busy); if(!c) return;
     h.ch = 0; h.sw = .3; h.pick.visible = false;
     var m = makePick(); scene.add(m); h.fly = {m:m, c:c, t:0, x0:h.x + h.side*-.4, y0:h.y + 1.2};
     thunk(260, .06, .12, false); }
 }
 function helperStrike(c){
-  if(c.bd){   // S3 26/11: trung tang da / boss
-    if(S.bd && S.bd.live && S.mode === 'shift'){ var bx = S.bd.x, by = S.bd.y; pop(bx, by + BD_H + .6, 'HELPER!', '', 20); ev('helperHit', {ore:'bd'}); boulderHit(1, bx, by); }   // nhat cuoi lam vo => S.bd co the bi xoa: doc toa do truoc
+  if(c.bd){   // S3 26/11: trung tang da / boss · 27/11 Tool Shed II: +1 mau moi cap
+    if(S.bd && S.bd.live && S.mode === 'shift'){ var bx = S.bd.x, by = S.bd.y; pop(bx, by + BD_H + .6, 'HELPER!', '', 20); ev('helperHit', {ore:'bd'}); boulderHit(1 + (S.st.toolsBoss || 0), bx, by); }
     return; }
   if(c.dead || S.mode !== 'shift') return;
-  helperHit = true;
+  var done = [c];
+  hitByHelper(c);
+  for(var k=0;k<(S.st.toolsOre || 0);k++){ var o = helperTarget(done); if(!o) break; done.push(o); hitByHelper(o); }   // 27/11 Tool Shed I: hat them cuc
+  pop(c.x, c.y + 1, 'HELPER!', '', 20); ev('helperHit', {ore:c.type});   // khoa 'type' se de ten su kien (ev gop truong)
+}
+function hitByHelper(c){
+  if(c.dead) return; helperHit = true;
   if(c.frz > 0 || c.hp <= 1){ c.hp = 0; killCrate(c, 8); }
   else { c.hp--; c.flash = 1; c.hitCD = HIT_CD; addCrack(c); burst(c.x, c.y, c.T.top, 5, 6, 'rock'); thunk(320, .1, .2, false); }
   helperHit = false;
-  pop(c.x, c.y + 1, 'HELPER!', '', 20); ev('helperHit', {ore:c.type});   // khoa 'type' se de ten su kien (ev gop truong)
 }
 function helperUi(){
   var el = $('helperUi'), on = !!helper && S.mode === 'shift'; el.hidden = !on; if(!on) return;
@@ -2176,52 +2370,106 @@ function helperUi(){
 // qua luc vang: tho "dao" trong luc tat app (vision 4.4), tien ca, co tran gio theo cap Bunkhouse
 function awayGift(ms){
   var min = ms/60000, H = CFG.helper; if(min < H.minMin) return;
-  var capMin = 60*H.capH[Math.min(H.capH.length-1, wsLv('bunk') - 1)], used = Math.min(min, capMin);
-  var gift = Math.round(H.perMin*used*CFG.floors[Math.min(CFG.floors.length-1, G.kho)].pay);
+  var capMin = 60*(H.capH[0] + wsEff('night')), used = Math.min(min, capMin);   // 27/11 Night Shift
+  var gift = Math.round(H.perMin*(1 + wsEff('mess'))*used*CFG.floors[Math.min(CFG.floors.length-1, G.kho)].pay);   // 27/11 Mess Hall
   if(gift <= 0) return;
   G.away = (G.away || 0) + gift; G.awayMin = Math.round(used); G.awayCap = used >= capMin;
 }
 function awayCollect(mult){ var g = Math.round((G.away || 0)*(mult || 1)); G.bank += g; G.away = 0; ev('awayCollect', {gift:g, mult:mult || 1}); save(); return g; }
 
 // ---- 13/11 LUN TROM (Mai: "them enemy (dwarf) o vai tang co de hung resource roi va steal") ---------------
-// Tang trong CFG.thief.floors: lun chay vao tu tuong, dung tren dong ngay duoi quang dang ROI (uu tien cuc dat),
-// hung vao bao (khong ra tien, khong cong nac). Du cap cuc hoac het stay giay thi chay ra tuong gan nhat = mat.
-// Vung bua trung lun => lun bay ra, bao roi: tra gia bao x back (bao rong thi van co tien thuong nho).
+// 27/11 Mai: "thay vi hung da phia duoi thi dung ban luoi de cuop da o moi vi tri". Lun chay vao tu tuong, dung sat
+// tuong tren dong, NGAM cuc dat nhat o bat ky dau (vong tam do + vach ngam), BAN LUOI bay toi, KEO cuc ve bao.
+// Du cap cuc hoac het stay giay thi chay ra tuong = mat. Dap lun => lun bay ra, bao roi: tra gia bao x back + thuong.
+// Dap trung cuc dang bi keo => dut luoi, cuc roi lai (cuc van an don nhu thuong).
 var thieves = [];
-var thSkin = M(0xe8b48a), thCap = M(0xd23a2a), thTunic = M(0x3f6b3a), thBeard = M(0xeee3cf), thSack = M(0xa07c4c), thBoot = M(0x2a1c12);
-var thBodyG = new THREE.BoxGeometry(.62, .62, .46), thHeadG = new THREE.SphereGeometry(.27, 12, 9), thCapG = new THREE.ConeGeometry(.27, .5, 10),
-    thBeardG = new THREE.ConeGeometry(.22, .42, 8), thSackG = new THREE.SphereGeometry(.34, 10, 8), thLegG = new THREE.BoxGeometry(.18, .3, .2);
+var netMat = new THREE.MeshBasicMaterial({color:0xe8d6a8, wireframe:true, transparent:true, opacity:.95}), netGeo = new THREE.IcosahedronGeometry(.85, 1);
+// 27/11 Mai "thief cho tao hinh khac luon, gio qua so khai" => ORC: da xanh, nanh, tai nhon, mu sat gai, ao da,
+// bao da sau lung (phinh theo so cuc cuop), sung ban luoi tren tay xoay theo huong ngam. Dung quay +x, lat bang scale.x.
+var orcSkin = M(0x6f9a3a), orcSkinD = M(0x557a2a), orcTusk = M(0xf3ead2), orcEye = new THREE.MeshBasicMaterial({color:0xffd23a}), orcPupil = M(0x1a0800),
+    orcIron = new THREE.MeshLambertMaterial({color:0x8a9098}), orcIronD = M(0x5a6068), orcLeather = M(0x6b4226), orcLeatherD = M(0x3a2414),
+    orcPants = M(0x4a3a2a), orcBoot = M(0x2a1c12), orcGold = M(0xd9a43a), orcWood = M(0x7a5230), thSack = M(0xa07c4c), orcRope = M(0xc8a060);
+var orcG = { sph: new THREE.SphereGeometry(1, 14, 10), box: new THREE.BoxGeometry(1, 1, 1), cyl: new THREE.CylinderGeometry(1, 1, 1, 10),
+  cone: new THREE.ConeGeometry(1, 1, 8), half: new THREE.SphereGeometry(1, 14, 8, 0, Math.PI*2, 0, Math.PI/2), net: new THREE.IcosahedronGeometry(1, 1) };
+function orcPart(geo, mat, sx, sy, sz, x, y, z, par){ var m = new THREE.Mesh(geo, mat); m.scale.set(sx, sy, sz); m.position.set(x, y, z); (par || null) && par.add(m); return m; }
+function buildOrc(){
+  var g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  // chan (2 truc o hong de buoc)
+  var legs = [];
+  [.17, -.17].forEach(function(z){ var L = new THREE.Group(); L.position.set(0, .52, z); body.add(L);
+    orcPart(orcG.box, orcPants, .26, .42, .24, 0, -.22, 0, L); orcPart(orcG.box, orcBoot, .38, .16, .28, .06, -.44, 0, L); legs.push(L); });
+  // hong + that lung + khoa
+  orcPart(orcG.cyl, orcLeatherD, .38, .2, .36, 0, .6, 0, body); orcPart(orcG.box, orcGold, .06, .14, .16, .37, .6, 0, body);
+  orcPart(orcG.box, orcLeather, .1, .3, .3, .3, .42, 0, body);   // khoan da truoc
+  // than: ao da + nguc tran xanh + vai sat
+  orcPart(orcG.sph, orcLeather, .5, .5, .46, -.02, .98, 0, body);
+  orcPart(orcG.sph, orcSkin, .3, .34, .3, .2, 1.02, 0, body);
+  orcPart(orcG.half, orcIron, .26, .2, .26, 0, 1.26, .38, body); orcPart(orcG.half, orcIron, .26, .2, .26, 0, 1.26, -.38, body);
+  orcPart(orcG.cone, orcIronD, .06, .16, .06, 0, 1.44, .38, body);
+  // dau (gu ve truoc): so, ham, nanh, mui, may, mat, tai, mu sat co gai
+  var head = new THREE.Group(); head.position.set(.24, 1.46, 0); body.add(head);
+  orcPart(orcG.sph, orcSkin, .3, .28, .29, 0, 0, 0, head);
+  orcPart(orcG.box, orcSkinD, .3, .17, .38, .1, -.16, 0, head);
+  [.12, -.12].forEach(function(z){ var t = orcPart(orcG.cone, orcTusk, .045, .16, .045, .24, -.06, z, head); });
+  orcPart(orcG.sph, orcSkinD, .09, .08, .09, .29, .0, 0, head);
+  orcPart(orcG.box, orcSkinD, .12, .07, .44, .22, .1, 0, head);
+  [.11, -.11].forEach(function(z){ orcPart(orcG.sph, orcEye, .055, .045, .055, .26, .05, z, head); orcPart(orcG.sph, orcPupil, .025, .03, .025, .305, .05, z, head); });
+  [.28, -.28].forEach(function(z){ var e = orcPart(orcG.cone, orcSkin, .09, .32, .05, -.04, .06, z, head); e.rotation.x = z > 0 ? 1.2 : -1.2; e.rotation.z = .45; });
+  orcPart(orcG.half, orcIron, .32, .26, .32, -.02, .06, 0, head); orcPart(orcG.cone, orcIronD, .07, .22, .07, -.02, .38, 0, head);
+  orcPart(orcG.box, orcIronD, .5, .05, .62, -.02, .07, 0, head);
+  // bao da sau lung + day deo
+  var sack = new THREE.Group(); sack.position.set(-.48, 1.02, -.12); body.add(sack);
+  orcPart(orcG.sph, thSack, .36, .4, .34, 0, 0, 0, sack); orcPart(orcG.cyl, orcRope, .12, .06, .12, 0, .38, 0, sack);
+  orcPart(orcG.box, orcRope, .06, .7, .06, .26, .02, .3, body).rotation.z = -.5;
+  // tay sau (cam day bao)
+  var arm2 = new THREE.Group(); arm2.position.set(-.05, 1.22, -.4); body.add(arm2); arm2.rotation.z = -1.9;
+  orcPart(orcG.cyl, orcSkin, .1, .5, .1, 0, .25, 0, arm2); orcPart(orcG.sph, orcSkinD, .12, .12, .12, 0, .52, 0, arm2);
+  // tay truoc + sung ban luoi (truc o vai, xoay theo goc ngam)
+  var arm = new THREE.Group(); arm.position.set(.02, 1.22, .42); body.add(arm);
+  var up = orcPart(orcG.cyl, orcSkin, .1, .42, .1, .2, 0, 0, arm); up.rotation.z = -Math.PI/2;
+  orcPart(orcG.sph, orcSkinD, .13, .13, .13, .44, 0, 0, arm);
+  orcPart(orcG.box, orcWood, .42, .13, .11, .5, -.05, 0, arm);
+  var bar = orcPart(orcG.cyl, orcIronD, .075, .5, .075, .78, .03, 0, arm); bar.rotation.z = -Math.PI/2;
+  orcPart(orcG.cyl, orcIron, .1, .07, .1, 1.03, .03, 0, arm).rotation.z = -Math.PI/2;
+  var bundle = new THREE.Mesh(orcG.net, netMat); bundle.scale.setScalar(.15); bundle.position.set(1.12, .03, 0); arm.add(bundle);
+  var muzzle = new THREE.Object3D(); muzzle.position.set(1.12, .03, 0); arm.add(muzzle);
+  g.traverse(function(o){ if(o.isMesh && o.material !== netMat) o.castShadow = true; });
+  return {g:g, body:body, legs:legs, sack:sack, arm:arm, bundle:bundle, muzzle:muzzle};
+}
+var retMat = new THREE.MeshBasicMaterial({color:0xff3b22, transparent:true, opacity:.9, side:THREE.DoubleSide}), retGeo = new THREE.RingGeometry(.72, .9, 28);
+var ropeMat = new THREE.LineBasicMaterial({color:0xc8a060}), aimMat = new THREE.LineBasicMaterial({color:0xff5a3c, transparent:true, opacity:.55});
 function thiefFloor(){ return !noBottom() && (floorCfg().th || 0) > 0; }   // 26/11: th trong bang tang
 function cratePay(c){ return S.st.value*ham.val*(c.T.gold ? S.st.goldMult : (c.T.pay || 1)*(c.T.hp > 1 ? S.st.hard : 1))*floorCfg().pay; }
 function surfAt(x){ var y = colTop(x); if(S.bd && S.bd.sink <= 0 && Math.abs(x - S.bd.x) < BD_W) y = Math.max(y, S.bd.y + BD_H); return y; }
+function mkLine(mat){ var g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), l = new THREE.Line(g, mat); l.visible = false; l.frustumCulled = false; scene.add(l); return l; }
+function setLine(l, x0, y0, x1, y1){ var a = l.geometry.attributes.position; a.setXYZ(0, x0, y0, .9); a.setXYZ(1, x1, y1, .9); a.needsUpdate = true; l.visible = true; }
 function spawnThief(side){
-  var g = new THREE.Group(), body = new THREE.Mesh(thBodyG, thTunic); body.position.y = .5; g.add(body);
-  var head = new THREE.Mesh(thHeadG, thSkin); head.position.y = 1.02; g.add(head);
-  var cap = new THREE.Mesh(thCapG, thCap); cap.position.y = 1.36; cap.rotation.z = -.25; g.add(cap);
-  var beard = new THREE.Mesh(thBeardG, thBeard); beard.position.set(0, .78, .2); beard.rotation.x = Math.PI; g.add(beard);
-  var sack = new THREE.Mesh(thSackG, thSack); sack.position.set(-.38, .62, -.18); sack.scale.setScalar(.55); g.add(sack);
-  var l1 = new THREE.Mesh(thLegG, thBoot), l2 = new THREE.Mesh(thLegG, thBoot); l1.position.set(-.15, .15, 0); l2.position.set(.15, .15, 0); g.add(l1); g.add(l2);
-  g.traverse(function(o){ if(o.isMesh) o.castShadow = true; });
+  var o = buildOrc(), g = o.g;
   side = side || (Math.random() < .5 ? -1 : 1);
-  var x = side*(ARENA - .5), t = {g:g, sack:sack, l1:l1, l2:l2, x:x, y:surfAt(x), vx:0, vy:0, st:'in', n:0, bag:0, t:0, dir:-side, ph:0, spin:0, life:0};
+  var x = side*(ARENA - .5), t = {g:g, body:o.body, sack:o.sack, l1:o.legs[0], l2:o.legs[1], arm:o.arm, bundle:o.bundle, muzzle:o.muzzle, kick:0,
+    x:x, y:surfAt(x), vx:0, vy:0, st:'in', n:0, bag:0, t:0, dir:-side, ph:0, spin:0, life:0,
+    side:side, spot:side*(ARENA - 1.1 - Math.random()*.7), mode:'walk', mt:0, tgt:null, nx:0, ny:0};
+  t.ret = new THREE.Mesh(retGeo, retMat); t.ret.visible = false; scene.add(t.ret);
+  t.net = new THREE.Mesh(netGeo, netMat); t.net.visible = false; scene.add(t.net);
+  t.rope = mkLine(ropeMat); t.aimL = mkLine(aimMat);
   g.position.set(t.x, t.y, .2); scene.add(g); thieves.push(t);
-  if(!G.seen.thief){ G.seen.thief = 1; save(); tip('A thief! He grabs falling ore — smash him to get it back.', true);
-    setTimeout(function(){ if(S.mode === 'shift') tip(''); }, 3600); }
+  if(!G.seen.thief){ G.seen.thief = 1; save(); tip('An orc thief! He nets your ore from anywhere — smash him or the netted ore!', true);
+    setTimeout(function(){ if(S.mode === 'shift') tip(''); }, 4200); }
   ev('thief', {kho:G.kho, side:side});
   return t;
 }
-function removeThieves(){ while(thieves.length) scene.remove(thieves.pop().g); }
-// cuc lun nham hung: dang roi (diem cham dong du doan) HOAC dang chay tren mang (diem roi khoi mang da biet
-// truoc: throwTo/dropX) => lun chay toi DON truoc cho quang dat sap roi. Diem = gia tri / khoang cach.
+function thiefLetGo(t){ if(t.tgt && t.tgt.net === t){ t.tgt.net = null; t.tgt.vy = 2; } t.tgt = null; t.ret.visible = t.net.visible = t.rope.visible = t.aimL.visible = false; }
+function thiefDispose(t){ thiefLetGo(t); scene.remove(t.g); scene.remove(t.ret); scene.remove(t.net); scene.remove(t.rope); scene.remove(t.aimL); }
+function removeThieves(){ while(thieves.length) thiefDispose(thieves.pop()); }
+var _thV = new THREE.Vector3();
+function thiefHand(t){ t.g.updateMatrixWorld(true); t.muzzle.getWorldPosition(_thV); return {x:_thV.x, y:_thV.y}; }   // dau nong sung
+// cuc lun nham: o BAT KY dau tren san (khong tinh cuc tren mang / dang bi luoi khac / dong bang), uu tien cuc dat
 function thiefTarget(t){
-  var best = null, bs = 0;
-  for(var i=0;i<crates.length;i++){ var c = crates[i], lx;
-    if(c.dead || c.frz > 0) continue;
-    if(c.wasOn){ lx = c.throwTo !== undefined ? c.throwTo : c.dropX; if(lx === undefined) continue; }
-    else { if(c.vy > 1 || c.y < t.y + 2) continue;
-      var fall = Math.max(0, c.y - surfAt(c.x)), tf = Math.sqrt(2*fall/26); lx = c.x + c.vx*tf; }
-    var s = cratePay(c)/(1 + Math.abs(lx - t.x)*.4);
-    if(s > bs){ bs = s; best = lx; } }
+  var best = null, bs = 0, lid = lidY();
+  for(var i=0;i<crates.length;i++){ var c = crates[i];
+    if(c.dead || c.frz > 0 || c.net || c.y > lid) continue;   // c.y > lid = con tren mang
+    var sc = cratePay(c)*(0.75 + Math.random()*.5);
+    if(sc > bs){ bs = sc; best = c; } }
   return best;
 }
 function stepThieves(dt, sp, canSmash, R){
@@ -2235,31 +2483,51 @@ function stepThieves(dt, sp, canSmash, R){
     t.t += dt;
     if(t.st === 'ko'){   // bi dap: bay ra, quay, roi khoi man
       t.vy -= 26*dt; t.x += t.vx*dt; t.y += t.vy*dt; t.spin += dt*14; t.g.rotation.z = t.spin;
-      t.g.position.set(t.x, t.y, .2); if(t.y < -3 || t.t > 2.5){ scene.remove(t.g); thieves.splice(i, 1); } continue; }
-    var goal;
-    if(t.st === 'run') goal = t.dir > 0 ? ARENA + .6 : -ARENA - .6;
-    else { var tx = thiefTarget(t); goal = tx !== null ? tx : (S.bx && S.bx.length ? S.bx[0] + 1.2 : 0); }
+      t.g.position.set(t.x, t.y, .2); if(t.y < -3 || t.t > 2.5){ thiefDispose(t); thieves.splice(i, 1); } continue; }
+    var goal = t.st === 'run' ? (t.dir > 0 ? ARENA + .6 : -ARENA - .6) : t.spot;
     var dx = goal - t.x, spd = T.speed*S.st.thiefSpd*(t.st === 'run' ? 1.35 : 1);   // Watchtower
     t.vx += (Math.max(-spd, Math.min(spd, dx*4)) - t.vx)*Math.min(1, dt*8);
     t.x += t.vx*dt; if(Math.abs(t.vx) > .3) t.dir = t.vx > 0 ? 1 : -1;
     var fy = surfAt(t.x);   // dung tren dong: leo len nhanh, tut xuong theo trong luc
     if(t.y < fy) t.y += Math.min(fy - t.y, dt*12); else { t.vy -= 26*dt; t.y = Math.max(fy, t.y + t.vy*dt); if(t.y === fy) t.vy = 0; }
     t.ph += dt*Math.min(14, Math.abs(t.vx)*4);
-    t.l1.position.y = .15 + Math.max(0, Math.sin(t.ph))*.12; t.l2.position.y = .15 + Math.max(0, -Math.sin(t.ph))*.12;
-    t.g.position.set(t.x, t.y + Math.abs(Math.sin(t.ph))*.06, .2); t.g.rotation.y = t.dir > 0 ? .5 : -.5;
-    t.sack.position.x = -t.dir*.38; t.sack.scale.setScalar(.55 + Math.min(4, t.n)*.16);
+    t.l1.rotation.z = Math.sin(t.ph)*.55; t.l2.rotation.z = -Math.sin(t.ph)*.55;
+    t.sack.scale.setScalar(1 + Math.min(4, t.n)*.2);
+    var aimC = t.st === 'in' && t.mode !== 'walk' && t.mode !== 'rest' ? t.tgt : null, want = -.35;   // khong ngam: ha sung
+    if(aimC){ var sx0 = t.x + t.dir*.05, sy0 = t.y + 1.22; want = Math.max(-1.1, Math.min(1.3, Math.atan2(aimC.y - sy0, Math.abs(aimC.x - sx0)))); }
+    t.kick = Math.max(0, t.kick - dt*4);
+    t.arm.rotation.z += (want + t.kick*.5 - t.arm.rotation.z)*Math.min(1, dt*10);
+    t.bundle.visible = !(t.mode === 'shoot' || t.mode === 'reel');
     if(t.st === 'in'){
-      // hung: cuc dang roi lot vao vung tay lun (tren dau)
-      for(var j=0;j<crates.length && t.n < T.cap;j++){ var c = crates[j];
-        if(c.dead || c.frz > 0 || c.wasOn || c.vy > 0) continue;
-        if(Math.abs(c.x - t.x) < .85 && c.y - CRATE*.5 < t.y + 1.9 && c.y > t.y + .6){
-          c.dead = true; t.n++; t.bag += cratePay(c); burst(c.x, c.y, c.T.color, 4, 4, DEB_OF[c.type]);
-          pop(t.x, t.y + 2.2, 'GRAB!', 'miss', 22); thunk(240, .1, .15, false); ev('thiefGrab', {ore:c.type}); } }
-      if(t.n >= T.cap || t.t > T.stay){ t.st = 'run'; t.dir = t.x > 0 ? 1 : -1; }
+      var c = t.tgt, h = thiefHand(t);
+      if((t.mode === 'aim' || t.mode === 'shoot' || t.mode === 'reel') && (!c || c.dead)){ thiefLetGo(t); t.mode = 'rest'; t.mt = T.rest; }   // cuc bi dap vo / bien mat
+      if(t.mode === 'walk'){ if(Math.abs(dx) < .25){ t.mode = 'rest'; t.mt = .3; } }
+      else if(t.mode === 'rest'){ t.mt -= dt;
+        if(t.mt <= 0){ if(t.n >= T.cap || t.t > T.stay){ t.st = 'run'; t.dir = t.x > 0 ? 1 : -1; }
+          else { t.tgt = thiefTarget(t); if(t.tgt){ t.mode = 'aim'; t.mt = T.aim/S.st.thiefSpd; } else t.mt = .4; } } }
+      else if(t.mode === 'aim'){ t.mt -= dt; t.dir = c.x > t.x ? 1 : -1;
+        t.ret.visible = true; t.ret.position.set(c.x, c.y, .95); t.ret.rotation.z += dt*3; t.ret.scale.setScalar(1 + .25*Math.max(0, t.mt));
+        setLine(t.aimL, h.x, h.y, c.x, c.y);
+        if(t.mt <= 0){ t.mode = 'shoot'; t.nx = h.x; t.ny = h.y; t.aimL.visible = false; t.net.visible = true; t.kick = 1; thunk(320, .08, .12, false); } }
+      else if(t.mode === 'shoot'){   // luoi bay thang toi cuc (bam theo neu cuc dang roi)
+        var ddx = c.x - t.nx, ddy = c.y - t.ny, d = Math.hypot(ddx, ddy), st = T.netSpd*dt;
+        t.ret.position.set(c.x, c.y, .95);
+        if(d <= st + .3){ t.mode = 'reel'; c.net = t; c.vx = c.vy = 0; t.ret.visible = false; pop(c.x, c.y + 1.2, 'NETTED!', 'miss', 20); }
+        else { t.nx += ddx/d*st; t.ny += ddy/d*st; }
+        t.net.position.set(t.nx, t.ny, .5); t.net.rotation.z += dt*6; setLine(t.rope, h.x, h.y, t.nx, t.ny); }
+      else if(t.mode === 'reel'){   // keo cuc ve tay lun, xuyen qua dong
+        var rx = h.x - c.x, ry = h.y - c.y, rd = Math.hypot(rx, ry), rs = T.reel*S.st.thiefSpd*dt;
+        if(rd <= rs + .4){ c.dead = true; c.net = null; t.n++; t.bag += cratePay(c); burst(h.x, h.y, c.T.color, 4, 4, DEB_OF[c.type]);
+          pop(t.x, t.y + 2.2, 'STOLEN!', 'miss', 22); thunk(240, .1, .15, false); ev('thiefGrab', {ore:c.type}); thiefLetGo(t); t.mode = 'rest'; t.mt = T.rest; }
+        else { c.x += rx/rd*rs; c.y += ry/rd*rs; c.rot += dt*2; t.net.position.set(c.x, c.y, .5); setLine(t.rope, h.x, h.y, c.x, c.y);
+          // dap trung cuc dang bi keo => dut luoi
+          if(canSmash && Math.hypot(mx - c.x, my - c.y) < R + CRATE*.45){ thiefLetGo(t); t.mode = 'rest'; t.mt = T.rest*1.5;
+            pop(c.x, c.y + 1.2, 'SAVED!', 'big', 24); chime(4); ev('thiefNetCut', {ore:c.type}); } } }
     } else if(Math.abs(t.x) > ARENA + .4){   // ra toi tuong = thoat
       if(t.bag > 0) pop(t.dir*(ARENA - 1.5), t.y + 1.6, '-' + fmt(t.bag).slice(1) + ' STOLEN', 'miss', 28);
-      ev('thiefEscape', {n:t.n, bag:Math.round(t.bag)}); scene.remove(t.g); thieves.splice(i, 1); continue;
+      ev('thiefEscape', {n:t.n, bag:Math.round(t.bag)}); thiefDispose(t); thieves.splice(i, 1); continue;
     }
+    t.g.position.set(t.x, t.y + Math.abs(Math.sin(t.ph))*.06, .2); t.g.scale.x = t.dir; t.g.rotation.y = -.55*t.dir;   // quay mat 3/4 ve camera
     // dap trung (bua dang vung, cham than lun)
     var hx = Math.max(t.x - .35, Math.min(mx, t.x + .35)), hy = Math.max(t.y, Math.min(my, t.y + 1.5));
     if(canSmash && Math.hypot(mx - hx, my - hy) < R) thiefKo(t, mx);
@@ -2267,6 +2535,7 @@ function stepThieves(dt, sp, canSmash, R){
 }
 function thiefKo(t, fromX){
   var T = CFG.thief, got = (t.bag*T.back + T.bounty*S.st.value*floorCfg().pay)*S.st.watch;
+  thiefLetGo(t);
   G.bank += got; S.earned += got; t.st = 'ko'; t.t = 0; t.vx = (t.x > fromX ? 1 : -1)*7; t.vy = 11;
   burst(t.x, t.y + .8, 0xffe066, 6 + t.n*3, 10, 'coin'); ring(t.x, t.y + .8, 3.2, 0xffcf4a);
   S.shake = Math.min(.9, S.shake + .35); thunk(180, .25, .4, true); chime(6);
@@ -2413,9 +2682,9 @@ function endShift(){
     // thay ro "nang cap -> ruong" la DOI chu khong MAT (vision 3.6 bien + 9.1).
     var nUp = 0; for(var uk in G.lv) nUp += G.lv[uk] || 0;
     var chest = floorCfg().chest;   // S7 26/11: so co dinh theo tang (bo quy doi tien ca - phinh o tang sau)
-    chest = Math.round(chest*(1 + CFG.ws.chest.per*wsLv('chest')));   // xuong Chest Hall
+    chest = Math.round(chest*(1 + wsEff('chest')));   // xuong Chest Hall (cay v2: tong qua bac)
     G.gems += chest; G.lv = {}; G.spent = 0;   // 26/11: vang (G.bank) GIU MAI - la tien meta
-    var vault = CFG.ws.bank.per*wsLv('bank')*CFG.floors[Math.min(CFG.floors.length-1, G.kho + 1)].pay;   // Bank Vault: von dau tang moi
+    var vault = wsEff('bank')*CFG.floors[Math.min(CFG.floors.length-1, G.kho + 1)].pay;   // Bank Vault: von dau tang moi
     G.kho++; G.depth = 0; G.dprog = 0; G.shiftN = 0; S.bottom = 0; G.bank += vault;   // Bank Vault: cong them vang dau tang
     ev('chest', {kho:G.kho, rubies:chest, ups:nUp});
     mineDone = G.kho >= CFG.floors.length;
@@ -2440,6 +2709,8 @@ function endShift(){
   }
   if(S.st.payBonus > 0 && S.earned > 0 && !/CLEARED/.test(kick)){ var pb = S.earned*S.st.payBonus - (S.pbPaid || 0); S.pbPaid = S.earned*S.st.payBonus; G.bank += pb;   // Paymaster (tru phan da tra truoc khi choi tiep bang QC)
     note += chip2('i-coin', '+' + fmt(pb).slice(1), 'BONUS'); }
+  if(S.st.interest > 0 && !S.intPaid && G.bank > 0){ var it = Math.round(Math.min(G.bank*S.st.interest, 3*shiftGold())); S.intPaid = 1;   // 27/11 Savings Vault
+    if(it > 0){ G.bank += it; note += chip2('i-coin', '+' + fmt(it).slice(1), 'INTEREST'); } }
   if(S.trial){ note += chip2('i-ham', HAMMERS[S.trial].name, 'IN CATALOG'); S.trial = null; }
   // B3: qua tang => luot duoc lai du ca cho tang moi; het ca cua luot ma chua qua tang => het luot (mat ve, giu do sau)
   var floorDone = /CLEARED/.test(kick);
@@ -2519,11 +2790,13 @@ function stepGesture(dt){
 }
 function stepArm(dt){
   stepGesture(dt);
-  var ax = (px-pvx)*SPRING - pvvx*DAMP, ay = (py-pvy)*SPRING - pvvy*DAMP;
-  ax = Math.max(-MAXA_, Math.min(MAXA_, ax)); ay = Math.max(-MAXA_, Math.min(MAXA_, ay));
+  // 27/11 Light Grip: tay bam ngon chat hon (lo xo x gk^2, damping x gk => giu ti so tat dan); Swing Arm: tran toc tay
+  var gk = (S.st && S.st.grip) || 1, SPg = SPRING*gk*gk, DPg = DAMP*gk, MAg = MAXA_*gk*gk, MHa = MAXH_*((S.st && S.st.arm) || 1);
+  var ax = (px-pvx)*SPg - pvvx*DPg, ay = (py-pvy)*SPg - pvvy*DPg;
+  ax = Math.max(-MAg, Math.min(MAg, ax)); ay = Math.max(-MAg, Math.min(MAg, ay));
   pvvx += ax*dt; pvvy += ay*dt;
   var hsp = Math.hypot(pvvx, pvvy);
-  if(hsp > MAXH_){ var kk = MAXH_/hsp; pvvx *= kk; pvvy *= kk; ax *= kk; ay *= kk; }
+  if(hsp > MHa){ var kk = MHa/hsp; pvvx *= kk; pvvy *= kk; ax *= kk; ay *= kk; }
   pvx += pvvx*dt; pvy += pvvy*dt;
   // the pivot accel that drives the rod is clamped softer than the hand's own clamp,
   // else a one-step snap whips the head into a blur
@@ -2576,7 +2849,7 @@ function stepArm(dt){
   if(pvx > wallH){ pvx = wallH; if(pvvx > 0) pvvx = 0; }
   else if(pvx < -wallH){ pvx = -wallH; if(pvvx < 0) pvvx = 0; }
   sn = Math.sin(th); cs = Math.cos(th);
-  var hk = ham.r, hw = (HEAD_HX*Math.abs(cs) + HEAD_HY*Math.abs(sn))*hk, lim = WALL_IN - hw;
+  var hk = hamR(), hw = (HEAD_HX*Math.abs(cs) + HEAD_HY*Math.abs(sn))*hk, lim = WALL_IN - hw;
   var hxw = pvx + ROD*sn;
   if(WALL_ON && Math.abs(hxw) > lim){
     var sw = hxw > 0 ? 1 : -1;
@@ -2598,12 +2871,14 @@ function stepArm(dt){
 
 function step(dt){
   if(S.mode === 'yard'){ if(BOT) botYard(); return; }
+  document.documentElement.classList.toggle('tutmode', S.mode !== 'shift');
+  if(S.paused) return;   // 27/11: nut dung trong ca
   if(S.pick){ if(BOT) pickBuff(0); return; }   // 26/11: dang chon buff tu tang da => dung hinh
   if(S.hs > 0){ S.hs -= dt; return; }   // 13/11 khung dung khi dap trung tang da
   if(FEEL_REC){ FEEL_REC.t += dt;
     if(FEEL_REC.s.length < 8000) FEEL_REC.s.push([FEEL_REC.t*1000, pvx, pvy, mx, my]); }
-  var sp = stepArm(dt), hsp = handSp, need = SMASH_SPEED*ham.need;
-  var R = ham.r;
+  var sp = stepArm(dt), hsp = handSp, need = SMASH_SPEED*ham.need*((S.st && S.st.ironNeed) || 1);   // 27/11 Iron Core I
+  var R = hamR();
   if(FEEL_FREEZE) return;   // feel probes measure the rod only: no spawns, no stamina, no shift end
 
   // swing tracking: fast head = a swing (costs 1); it ends after the head calms down
@@ -2664,6 +2939,7 @@ function step(dt){
       else scene.remove(c.mesh);
       crates.splice(i, 1); continue;
     }
+    if(c.net){ c.py = c.y; c.vx = 0; c.vy = 0; c.spin = 0; continue; }   // 27/11: dang bi luoi lun keo (stepThieves dat vi tri)
     // DANG DONG BANG: ghim tai cho, khong roi khong truot, khong theo bang chuyen
     if(c.frz > 0){
       c.frz -= dt; c.py = c.y; c.vx = 0; c.vy = 0; c.spin = 0;
@@ -2723,7 +2999,7 @@ function step(dt){
         var dx = o.x-c.x, dy = o.y-c.y;
         if(dy > CRATE) break;
         var ox = CRATE-Math.abs(dx), oy = CRATE-Math.abs(dy);
-        if(ox <= 0 || oy <= 0) continue;
+        if(ox <= 0 || oy <= 0 || c.net || o.net) continue;   // cuc dang bi keo bay xuyen qua dong
         // thung dang dong bang la mot buc tuong: nang gan nhu vo han nen no khong bi day di
         if(c.frz > 0 && o.frz > 0) continue;
         var mc = c.frz > 0 ? 1e3 : c.T.mass, mo = o.frz > 0 ? 1e3 : o.T.mass, tot = mc+mo;
@@ -2749,12 +3025,12 @@ function step(dt){
   for(i=0;i<NB;i++) hmap[i] = 0;
   var bin = function(x){ return Math.max(0, Math.min(NB-1, Math.floor((x + ARENA)/CRATE))); };
   for(i=0;i<crates.length;i++){ c = crates[i];
-    if(c.dead || Math.abs(c.vy) > 2) continue;
+    if(c.dead || c.net || Math.abs(c.vy) > 2) continue;
     if(c.frz > 0) continue;
     var bi = bin(c.x), tp = c.y + CRATE*.5; if(tp > hmap[bi]) hmap[bi] = tp;
   }
   for(i=0;i<crates.length;i++){ c = crates[i];
-    if(c.dead || c.frz > 0 || c.y - CRATE*.5 < CRATE*0.9 || Math.abs(c.vy) > 2) continue;   // thung sat san thi nam yen
+    if(c.dead || c.net || c.frz > 0 || c.y - CRATE*.5 < CRATE*0.9 || Math.abs(c.vy) > 2) continue;   // thung sat san thi nam yen
     var b0 = bin(c.x);
     if(c.y + CRATE*.5 < hmap[b0] - 0.1) continue;                               // chi thung tren dinh moi truot
     var hl = b0 > 0 ? hmap[b0-1] : 1e9, hr = b0 < NB-1 ? hmap[b0+1] : 1e9;      // ra toi tuong = khong truot
@@ -2784,7 +3060,7 @@ function step(dt){
           // dang dong bang thi vo MOT cu du la da/than/kim cuong (thuong cho ai pha hop bang);
           // bua Iron Head an 2 mang mot cu tren moi loai nhieu mang, khong rieng thung sat cu
           if(c.frz > 0) c.hp = 0;
-          else c.hp -= (c.T.hp > 1 && ham.iron) ? 2 : 1;
+          else c.hp -= (c.T.hp > 1 && (ham.iron || Math.random() < (S.st.ironTwo || 0))) ? 2 : 1;   // 27/11 Iron Core II
           if(c.hp <= 0){ killCrate(c, sp); thv *= .985; }
           else { c.vx = -nx*sp*.5/SPD_; c.vy = -ny*sp*.5/SPD_ + 5; c.spin = (Math.random()-.5)*16; thv *= .7; c.flash = 1;
             c.hitCD = HIT_CD;
@@ -2830,12 +3106,13 @@ function step(dt){
   if(S.mode === 'shift' || (S.mode === 'tut' && S.tut >= 1)){
     // 26/11: tran theo DO DAY (CFG.fillMax) hoac dong cham day mang - khong con vach do
     // jam = mang KHONG NHA DUOC qua 1,2 s (cho tha bi chan). Cot cao o cho khac khong tinh (Mai: cot le khong lam thua).
-    var fl = fillFrac(), jam = false; S.fill = fl;
-    for(var bj=0; bj<(S.blk0 || []).length; bj++) if(S.blk0[bj] !== undefined && S.t - S.blk0[bj] > 1.2) jam = true;
-    if(fl >= CFG.fillMax || jam) S.overflow += dt; else S.overflow = Math.max(0, S.overflow - dt*1.6);
-    var warn = Math.min(1, S.overflow/0.7);
-    fillUi(fl, warn);
-    if(S.overflow > (S.st.grace || 0.45) && S.mode === 'shift'){ S.over = 1; S.overflow = 0; return endShift(); }   // Safety Whistle
+    // 27/11: VACH DO CU + dem nguoc CFG.lineSecs (3 s) + Safety Post. Bo luat lap 80 % + mang bi chan.
+    var LC = lineCols(), up = LC.n >= LC.need, lim = S.st.grace || CFG.lineSecs; S.lineN = LC.n; S.lineNeed = LC.need;
+    if(up){ S.overflow += dt; S.underT = 0; }
+    else { S.underT = (S.underT || 0) + dt; if(S.underT > 0.25) S.overflow = 0; }   // dap xuong duoi vach => dong ho ve 0
+    var warn = Math.min(1, S.overflow/lim);
+    lineUi(LC, warn, lim);
+    if(S.overflow > lim && S.mode === 'shift'){ S.over = 1; S.overflow = 0; return endShift(); }   // Safety Post
   }
 
   // Ca lam viec co GIO. Do la cai chan tren thu nhap moi ca sau khi "suc" chuyen thanh
@@ -2852,6 +3129,7 @@ function step(dt){
     // 12/11: bo luon het suc (Mai bo miss) => o day khong con gi ket thuc ca; ca het o nhanh
     // tran vach do (S.over).
   }
+  if(!(S.mode === 'shift' || (S.mode === 'tut' && S.tut >= 1)) && segPool.length && segPool[0].visible) lineUi({n:0, need:1, over:[]}, 0);   // ngoai ca: tat o sang
   if(S.mode === 'tut') tutStep(dt);
   if(BOT) botStep(dt);
   S.shake *= Math.pow(.035, dt);
@@ -2883,12 +3161,12 @@ function tutStep(dt){
       S.tut = 1; S.spawnT = [0.3]; S.burst=[0]; S.bn=[0]; S.bk=[0]; S.bv=[0]; S.best = 0; S.tutN = 0; S.t = 0;
       S.pers = 'steady'; S.secs = CFG.shiftSecs;
       for(var i=0;i<crates.length;i++) crates[i].dead = true;
-      tip('Chutes feed the pile now. Never let ore FILL the mine!', true);
+      tip('Chutes feed the pile now. Keep it UNDER THE RED LINE.', true);
       hud();
     }
   } else if(S.tut === 1){
     if(!S.swinging){
-      if((S.fill || 0) > CFG.fillWarn) tip('Too full! SMASH IT DOWN');
+      if((S.lineN || 0) > 0) tip('Too high! SMASH IT DOWN');
       else tip('Keep smashing — ' + S.tutN + '/12 ore', true);
     }
     // `!S.swinging` o day tung la DIEU KIEN CUA, giong cho het ca truoc khi sua 07/11. Hau qua
@@ -2909,7 +3187,7 @@ function worldToScreen(x, y){ var v = new THREE.Vector3(x, y, 0).project(camera)
 
 // ================= screens =================
 function show(id){ hideScreens(); $(id).classList.add('on'); tip(''); elSwing.classList.remove('on'); }
-function hideScreens(){ ['scrEnd','scrShop','scrWin','scrYard','scrPick'].forEach(function(s){ $(s).classList.remove('on'); }); S.pick = null; document.documentElement.classList.remove('yard'); }
+function hideScreens(){ ['scrEnd','scrShop','scrWin','scrYard','scrPick','scrPause'].forEach(function(s){ $(s).classList.remove('on'); }); S.pick = null; document.documentElement.classList.remove('yard'); }
 function openShop(){
   S.mode = 'idle'; renderShop(); show('scrShop'); hud();
 }
@@ -3745,63 +4023,116 @@ function botShop(){
 // 2 ben co the theo 2 nhanh khac nhau vi du tien/suc manh nhu o King Dies Rich".
 // Trai = CASH (quang ra nhieu tien / ruby), phai = POWER (dao khoe: vach do, nha quang, combo, keg). Cha doi theo nhanh:
 // Chest Hall gio sau Assay (truoc: sau Gold Pan), Fuse Shop sau Prop Yard (truoc: sau Depot).
-var WS_TREE = [   // [key, loai mo hinh, cha, vi tri tren ban do (x, z), ten, nhanh] - 13/11 mo rong 4 cot moi ben
+var WS_TREE = [   // [key, mo hinh, cha, vi tri (x, z), ten, nhanh] - 27/11 12:30 Mai: "node phan bo rai rac va re nhanh hon, tham khao
+                  // loop fort": chong chong (BUA tren, THO duoi, CASH trai, POWER phai), 29 muc z, re o 8 node; gia khong doi (cot gia = bo cuc cu)
   ['depot', 'depot', null, [0, 0], 'Depot', ''],
-  // CASH: cot 1-4 = x -11 / -22 / -33 / -44
-  ['assay', 'assay', 'depot', [-11, -1], 'Assay Office', 'cash'],
-  ['gold', 'gold', 'assay', [-22, -9], 'Gold Pan', 'cash'],
-  ['cutter', 'cutter', 'assay', [-22, 0], 'Gem Cutter', 'cash'],
-  ['chest', 'chest', 'assay', [-22, 9], 'Chest Hall', 'cash'],
-  ['smith', 'smith', 'gold', [-33, -9], 'Goldsmith', 'cash'],
-  ['pay', 'pay', 'cutter', [-33, 0], 'Paymaster', 'cash'],
-  ['bounty', 'bounty', 'chest', [-33, 9], 'Bounty Office', 'cash'],
-  ['bank', 'bank', 'pay', [-44, -4], 'Bank Vault', 'cash'],
-  ['watch', 'watch', 'bounty', [-44, 8], 'Watchtower', 'cash'],
-  // POWER: cot 1-4 = x 11 / 22 / 33 / 44
-  ['bunk', 'bunk', 'depot', [0, 8], 'Bunkhouse', ''],   // B5: thue tho phu (giua, duoi Depot)
-  ['props', 'props', 'depot', [11, -1], 'Prop Yard', 'power'],
-  ['breaker', 'breaker', 'props', [22, -9], 'Rock Breaker', 'power'],   // S4 26/11 doi cho voi Chute Works
-  ['whistle', 'whistle', 'props', [22, 0], 'Safety Post', 'power'],
-  ['fuse', 'fuse', 'props', [22, 9], 'Fuse Shop', 'power'],
-  ['drill', 'drill', 'breaker', [33, -9], 'Drill Rig', 'power'],
-  ['trap', 'trap', 'whistle', [33, 0], 'Trapdoor Works', 'power'],
-  ['powder', 'powder', 'fuse', [33, 9], 'Powder Mill', 'power'],
-  ['chute', 'chute', 'drill', [44, -8], 'Chute Works', 'power'],
-  ['clock', 'clock', 'trap', [44, 1], 'Clock Tower', 'power'],
-  ['blast', 'blast', 'powder', [44, 9], 'Blasting Shed', 'power']
+  ['assay', 'assay', 'depot', [-11.6, -3.6], 'Assay Office', 'cash'],
+  ['gold', 'gold', 'cutter', [-33, -9.6], 'Gold Pan', 'cash'],
+  ['smith', 'smith', 'gold', [-43.6, -10.4], 'Goldsmith', 'cash'],
+  ['cutter', 'cutter', 'assay', [-24.5, -1.2], 'Gem Cutter', 'cash'],
+  ['ledger', 'pay', 'cutter', [-30.6, 3.4], 'Combo Ledger', 'cash'],
+  ['keg', 'powder', 'smith', [-52.8, -10.4], 'Keg Broker', 'cash'],
+  ['pay', 'pay', 'bounty', [-51.5, 9.6], 'Paymaster', 'cash'],
+  ['save', 'bank', 'pay', [-61.5, 5], 'Savings Vault', 'cash'],
+  ['bank', 'bank', 'save', [-63.6, -4.8], 'Bank Vault', 'cash'],
+  ['bounty', 'bounty', 'ledger', [-40.4, 8], 'Bounty Office', 'cash'],
+  ['chest', 'chest', 'bounty', [-51, 0.4], 'Chest Hall', 'cash'],
+  ['watch', 'watch', 'smith', [-43.2, -1.2], 'Watchtower', 'cash'],
+  ['props', 'props', 'depot', [12.2, -3.7], 'Prop Yard', 'power'],
+  ['whistle', 'whistle', 'drill', [34.8, -4.3], 'Safety Post', 'power'],
+  ['chute', 'chute', 'drill', [31.6, 4.9], 'Chute Works', 'power'],
+  ['drill', 'drill', 'props', [22.6, -0.6], 'Drill Rig', 'power'],
+  ['trap', 'trap', 'chute', [41.6, 8], 'Trapdoor Works', 'power'],
+  ['powder', 'powder', 'chute', [44.4, -1.2], 'Powder Mill', 'power'],
+  ['blast', 'blast', 'powder', [55, -1.2], 'Blasting Shed', 'power'],
+  ['breaker', 'breaker', 'whistle', [42, -10.4], 'Rock Breaker', 'power'],
+  ['bclock', 'clock', 'breaker', [52.6, -10.4], 'Boss Clock', 'power'],
+  ['grip', 'props', 'depot', [-1.5, -10.1], 'Light Grip', 'hammer'],
+  ['arm', 'breaker', 'grip', [6, -10.4], 'Swing Arm', 'hammer'],
+  ['head', 'cutter', 'grip', [-17.2, -10.4], 'Head Forge', 'hammer'],
+  ['iron', 'smith', 'head', [-27.5, -10.4], 'Iron Core', 'hammer'],
+  ['fuse', 'fuse', 'arm', [19.4, -9.8], 'Fuse Shop', 'hammer'],
+  ['clock', 'clock', 'fuse', [29.2, -10.4], 'Clock Tower', 'hammer'],
+  ['bunk', 'bunk', 'depot', [1.2, 9.2], 'Bunkhouse', 'crew'],
+  ['train', 'bunk', 'bunk', [-9.6, 5.6], 'Training Yard', 'crew'],
+  ['tools', 'trap', 'train', [-20.4, 8], 'Tool Shed', 'crew'],
+  ['night', 'bunk', 'bunk', [11.4, 5.5], 'Night Shift', 'crew'],
+  ['mess', 'chest', 'night', [21.6, 8.6], 'Mess Hall', 'crew']
 ];
-var WS_FX = {
-  props: function(l){ return 'Chutes +' + (CFG.ws.props.per*l).toFixed(2) + ' higher (more room) in every mine'; },
-  chute: function(l){ return 'Ore drops ' + Math.round(CFG.ws.chute.per*l*100) + '% faster'; },
-  assay: function(l){ return 'Every ore pays +' + Math.round(CFG.ws.assay.per*l*100) + '%'; },
-  gold:  function(l){ return 'Gold veins +' + Math.round(CFG.ws.gold.per*l*100) + '% more often'; },
-  chest: function(l){ return 'Floor chests give +' + Math.round(CFG.ws.chest.per*l*100) + '% rubies'; },
-  fuse:  function(l){ return 'Combo pays +' + (CFG.ws.fuse.per*l).toFixed(2) + ' more per ore'; },
-  powder:function(l){ return 'Powder kegs +' + (CFG.ws.powder.per*l*100).toFixed(1) + '% more often'; },
-  cutter:function(l){ return 'Stone, coal and diamond pay +' + Math.round(CFG.ws.cutter.per*l*100) + '%'; },
-  smith: function(l){ return 'Gold pays ×' + (CFG.goldMult + CFG.ws.smith.per*l) + ' (was ×' + CFG.goldMult + ')'; },
-  pay:   function(l){ return 'End of shift: +' + Math.round(CFG.ws.pay.per*l*100) + '% of the shift\'s cash'; },
-  bounty:function(l){ return 'Smashed boulders give +' + Math.round(CFG.ws.bounty.per*l*100) + '% cash and rubies'; },
-  bank:  function(l){ return 'Start each new floor with $' + CFG.ws.bank.per*l + ' × floor pay'; },
-  bunk: function(l){ return l <= 0 ? 'Hire a helper: charges up, then knocks the top ore off your pile'
-    : 'Helper strikes every ' + helperCharge().toFixed(1) + 's · digs ' + CFG.helper.capH[Math.min(2, l - 1)] + 'h while you are away'; },
-  watch: function(l){ return 'Smashed thieves pay +' + Math.round(CFG.ws.watch.per*l*100) + '%, thieves ' + Math.round(CFG.wsSpeedPer*l*100) + '% slower'; },
-  whistle:function(l){ return 'A full mine holds on ' + (0.45 + CFG.ws.whistle.per*l).toFixed(2) + ' s before the shift ends (was 0.45 s)'; },
-  drill: function(l){ return 'Each level needs ' + Math.round(CFG.ws.drill.per*l*100) + '% less ore'; },
-  trap:  function(l){ return 'Floor drops open ' + (CFG.fallHoles + CFG.ws.trap.per*l) + ' trapdoors (was ' + CFG.fallHoles + ')'; },
-  breaker:function(l){ return 'Boulder clock +' + CFG.ws.breaker.per*l + ' s'; },
-  clock: function(l){ return 'Combo lasts +' + (CFG.ws.clock.per*l).toFixed(1) + ' s between swings'; },
-  blast: function(l){ return 'Keg blasts +' + Math.round(CFG.ws.blast.per*l*100) + '% wider'; }
+// 27/11 cay v2: chu hieu ung tai TONG cap l (tinh qua moi bac). pc = phan tram, f1/f2 = so le
+function pc(v){ return Math.round(v*1000)/10 + '%'; }
+var WS_FX = {   // 27/11 polish: so dung dau cau (bang xuong lay so dau tien lam chu to)
+  assay:  function(l){ return '+' + pc(wsEff('assay', l)) + ' cash from every ore'; },
+  gold:   function(l){ return '+' + Math.round(wsEff('gold', l)*1000)/10 + ' pts gold vein chance'; },
+  smith:  function(l){ return '×' + (CFG.goldMult + wsEff('smith', l)) + ' pay for gold ore (was ×' + CFG.goldMult + ')'; },
+  cutter: function(l){ return '+' + pc(wsEff('cutter', l)) + ' pay for stone, coal and diamond'; },
+  ledger: function(l){ return '+' + pc(wsEff('ledger', l)) + ' cash for every combo step'; },
+  keg:    function(l){ return '+' + pc(wsEff('keg', l)) + ' pay for ore blown up by kegs'; },
+  pay:    function(l){ return '+' + pc(wsEff('pay', l)) + ' of the shift\'s cash as an end-of-shift bonus'; },
+  save:   function(l){ return pc(wsEff('save', l)) + ' interest on your gold every shift (max 3 shifts of gold)'; },
+  bank:   function(l){ return wsEff('bank', l) + ' × floor pay in gold at the start of each floor'; },
+  bounty: function(l){ return '+' + pc(wsEff('bounty', l)) + ' cash and rubies from boulders and bosses'; },
+  chest:  function(l){ return '+' + pc(wsEff('chest', l)) + ' rubies from floor chests'; },
+  watch:  function(l){ return '+' + pc(wsEff('watch', l)) + ' cash from smashed orcs · orcs ' + pc(wsEff2('watch', l)) + ' slower'; },
+  props:  function(l){ return '+' + wsEff('props', l).toFixed(2) + ' red line height (more room)'; },
+  whistle:function(l){ return (CFG.lineSecs + wsEff('whistle', l)).toFixed(1) + ' s over the red line before the shift ends (was ' + CFG.lineSecs + ' s)'; },
+  chute:  function(l){ return '+' + pc(wsEff('chute', l)) + ' faster ore drops'; },
+  drill:  function(l){ return '−' + pc(wsEff('drill', l)) + ' ore needed for each level'; },
+  trap:   function(l){ return (CFG.fallHoles + wsEff('trap', l)) + ' trapdoors when the floor drops (was ' + CFG.fallHoles + ')'; },
+  powder: function(l){ return '+' + Math.round(wsEff('powder', l)*1000)/10 + ' pts powder keg chance'; },
+  blast:  function(l){ return '+' + pc(wsEff('blast', l)) + ' wider keg blasts'; },
+  breaker:function(l){ return '+' + wsEff('breaker', l) + ' s on the boulder and boss clock'; },
+  bclock: function(l){ return '+' + wsEff('bclock', l) + ' s on the boss clock'; },
+  grip:   function(l){ return '+' + pc(wsEff('grip', l)) + ' grip: the hammer follows your finger tighter'; },
+  arm:    function(l){ return '+' + pc(wsEff('arm', l)) + ' max swing speed'; },
+  head:   function(l){ return '+' + pc(wsEff('head', l)) + ' bigger hammer head'; },
+  iron:   function(l){ var t = wsTier('iron', l).t;
+    if(t === 0 || wsTierLv('iron', 1, l) === 0 && wsTierLv('iron', 0, l) < CFG.ws.iron.tiers[0].n) return '−' + pc(CFG.ws.iron.tiers[0].per*wsTierLv('iron', 0, l)) + ' swing speed needed to break ore';
+    if(t === 1 || wsTierLv('iron', 2, l) === 0) return pc(CFG.ws.iron.tiers[1].per*wsTierLv('iron', 1, l)) + ' chance to take 2 layers off stone, coal, diamond';
+    return '×2 damage on every ' + [0, 10, 8, 6][wsTierLv('iron', 2, l)] + 'th boss hit'; },
+  fuse:   function(l){ return '+' + wsEff('fuse', l).toFixed(2) + ' cash per ore for every combo step'; },
+  clock:  function(l){ return '+' + wsEff('clock', l).toFixed(2) + ' s combo window between swings'; },
+  bunk:   function(l){ var n = Math.min(3, l); return n <= 1 ? 'Hire a helper: charges up, then knocks the top ore off your pile' : n + ' helpers work the mine with you'; },
+  train:  function(l){ return '+' + pc(Math.min(.6, wsEff('train', l))) + ' faster helper charge'; },
+  tools:  function(l){ var a = wsTierLv('tools', 0, l), b = wsTierLv('tools', 1, l);
+    return '+' + a + ' ore knocked by every helper strike' + (b ? ' · +' + b + ' helper damage on bosses' : ''); },
+  night:  function(l){ return (CFG.helper.capH[0] + wsEff('night', l)) + ' h of helper digging while you are away'; },
+  mess:   function(l){ return '+' + pc(wsEff('mess', l)) + ' away gift'; }
 };
 function wsLv(k){ return k === 'depot' ? 1 : ((G.ws && G.ws[k]) || 0); }
+// 27/11 cay v2: tong cap -> bac. wsTier = bac dang mua (bac t max ma con bac sau => bac sau, j = 0)
+var ROMAN = ['I', 'II', 'III', 'IV'];
+function wsMax(k){ var T = CFG.ws[k].tiers, n = 0; for(var i=0;i<T.length;i++) n += T[i].n; return n; }
+function wsTier(k, lv){ var T = CFG.ws[k].tiers, L = lv === undefined ? wsLv(k) : lv;
+  for(var t=0;t<T.length;t++){ if(L < T[t].n || t === T.length - 1) return {t:t, j:Math.min(L, T[t].n), n:T[t].n}; L -= T[t].n; } }
+function wsTierLv(k, t, lv){ var T = CFG.ws[k] && CFG.ws[k].tiers; if(!T || !T[t]) return 0; var L = lv === undefined ? wsLv(k) : lv;
+  for(var i=0;i<t;i++) L -= T[i].n; return Math.max(0, Math.min(T[t].n, L)); }
+function wsEff(k, lv){ var T = CFG.ws[k].tiers, e = 0; for(var t=0;t<T.length;t++) e += T[t].per*wsTierLv(k, t, lv); return e; }
+function wsEff2(k, lv){ var T = CFG.ws[k].tiers, e = 0; for(var t=0;t<T.length;t++) e += (T[t].per2 || 0)*wsTierLv(k, t, lv); return e; }
 function wsRow(k){ for(var i=0;i<WS_TREE.length;i++) if(WS_TREE[i][0] === k) return WS_TREE[i]; return null; }
 function wsOpen(k){ var r = wsRow(k); return !r[2] || wsLv(r[2]) > 0; }
-function wsCur(k){ return CFG.ws[k] && CFG.ws[k].gold ? 'g' : 'r'; }   // 26/11: vang / ruby
-function wsCost(k){ var c = wsCur(k) === 'g' ? CFG.ws[k].gold : CFG.ws[k].cost; return wsLv(k) < c.length ? c[wsLv(k)] : 0; }
-function wsAfford(k){ return wsCur(k) === 'g' ? G.bank >= wsCost(k) : G.gems >= wsCost(k); }
-function wsBuild(k){
-  if(!CFG.ws[k] || !wsOpen(k) || wsLv(k) >= CFG.ws[k].cost.length || !wsAfford(k)) return false;
-  if(wsCur(k) === 'g') G.bank -= wsCost(k); else G.gems -= wsCost(k); G.ws[k] = wsLv(k) + 1; chime(3 + G.ws[k]); save(); ev('ws', {k:k, lv:G.ws[k]}); return true;
+function wsCur(k){ return 'g'; }   // 27/11: moi node tra vang
+function wsCost(k){ if(!CFG.ws[k] || wsLv(k) >= wsMax(k)) return 0; var q = wsTier(k); return CFG.ws[k].tiers[q.t].gold[q.j]; }
+function wsAfford(k){ return G.bank >= wsCost(k); }
+// 27/11 bu vang bang ruby (KDR). Tang xa nhat (1..30) tinh tren ca 3 mo; mo xong = tang cuoi cua mo.
+function bestFloor(){ var f = 1, off = 0, M = CFG.mineFloors;
+  for(var i=0;i<M.length;i++){ var n = M[i].length, kho = i === G.mine ? G.kho : ((G.mines && G.mines[i] && G.mines[i].kho) || 0);
+    if(i === G.mine || mineOpen(i)) f = Math.max(f, G.cleared && G.cleared[i] ? off + n : off + Math.min(kho, n - 1) + 1); off += n; }   // mo chua mo: bo qua
+  return f; }
+function shiftGold(){ var T = CFG.topup; return T.shiftA*Math.pow(T.shiftB, bestFloor() - 1); }
+function wsTopOpen(){ return bestFloor() >= CFG.topup.fromFloor; }
+function wsShort(k){ return Math.max(0, wsCost(k) - G.bank); }
+// so ruby de bu phan vang thieu; null = khong bu duoc (nhanh CASH, chua qua boss tang 1, du vang, het cap)
+function wsQuote(k){ var r = wsRow(k);
+  if(!CFG.ws[k] || wsCur(k) !== 'g' || !r || r[5] === 'cash' || !wsTopOpen() || wsLv(k) >= wsMax(k) || wsShort(k) <= 0) return null;
+  return Math.ceil(wsShort(k)/shiftGold()*CFG.topup.rubyPerShift - 1e-9); }
+function wsBuild(k, withRuby){
+  if(!CFG.ws[k] || !wsOpen(k) || wsLv(k) >= wsMax(k)) return false;
+  var q = 0;
+  if(!wsAfford(k)){ q = withRuby ? wsQuote(k) : null; if(!q || G.gems < q) return false; }
+  if(q){ G.gems -= q; G.bank = 0; }                       // bu: tieu HET vang dang co, ruby tra phan thieu
+  else if(wsCur(k) === 'g') G.bank -= wsCost(k); else G.gems -= wsCost(k);
+  G.ws[k] = wsLv(k) + 1; chime(3 + G.ws[k]); save(); ev('ws', {k:k, lv:G.ws[k], ruby:q}); return true;
 }
 // 3 mo: tien do rieng tung mo (tang, do sau, nang cap tang, tien ca); mo sau mo khi xong mo truoc.
 var MINES = [
@@ -3836,8 +4167,29 @@ function hamTry(k){
   if(!HAMMERS[k] || G.owned[k] || G.tried[k]) return false;
   G.tried[k] = 1; G.trial = k; chime(2); save(); ev('try', {k:k}); return true;
 }
+var DAY_MS = 864e5;
+function starterLeft(){ return G.starter || !G.starterAt ? 0 : Math.max(0, G.starterAt + CFG.starter.days*DAY_MS - Date.now()); }
+function offersOn(){ return !!G.starterAt; }
+function cardOn(){ return !!(G.card && Date.now() < G.card.until); }
+function cardDaysLeft(){ return cardOn() ? Math.ceil((G.card.until - Date.now())/DAY_MS) : 0; }
+function cardReady(){ return cardOn() && G.card.last !== today(); }
+function cardBuy(){   // gia lap IAP: 100 ruby ngay, tu mai moi ngay vao game +20 (hom mua tinh la da nhan)
+  if(cardOn()) return false; var C = CFG.card;
+  G.card = {at:Date.now(), until:Date.now() + C.days*DAY_MS, last:today()}; G.gems += C.now; chime(8); save(); ev('card', {}); return true; }
+function cardClaim(){ if(!cardReady()) return 0; G.card.last = today(); G.gems += CFG.card.daily; ev('cardDaily', {left:cardDaysLeft()}); return CFG.card.daily; }
+function offersBossWin(){ if(!offersOn()) return; var V = CFG.vault, v0 = G.vault || 0; G.vault = Math.min(V.cap, v0 + V.perBoss);
+  if(v0 < V.min && G.vault >= V.min) ev('vaultReady', {}); save(); }
+function offersBossLose(key){ if(!offersOn()) return; G.bfails = G.bfails || {}; G.bfails[key] = (G.bfails[key] || 0) + 1;
+  if(G.bfails[key] >= CFG.stuck.fails && !(G.stuck && G.stuck.day === today())){ G.stuck = {day:today(), until:Date.now() + CFG.stuck.hours*3600000}; G.offerPop = 2; ev('stuckOffer', {key:key}); }
+  save(); }
+function stuckLeft(){ return G.stuck ? Math.max(0, G.stuck.until - Date.now()) : 0; }
+function vaultReady(){ return (G.vault || 0) >= CFG.vault.min; }
+function vaultBuy(){ if(!vaultReady()) return false; var n = G.vault; G.gems += n; G.vault = 0; chime(8); save(); ev('vaultBuy', {ruby:n}); return n; }
+function stuckBuy(){ if(stuckLeft() <= 0) return false; G.gems += CFG.stuck.ruby; G.stuck.until = 0; chime(8); save(); ev('stuckBuy', {}); return true; }
+function packBuy(i){ var P = CFG.packs[i]; if(!P) return false; G.packs = G.packs || {}; var n = P.ruby*(G.packs[i] ? 1 : CFG.packFirst);
+  G.packs[i] = 1; G.gems += n; chime(7); save(); ev('packBuy', {i:i, ruby:n}); return n; }
 function starterBuy(){
-  if(G.starter) return false; var st = CFG.starter;
+  if(G.starter || starterLeft() <= 0) return false; var st = CFG.starter;
   G.starter = 1; G.owned[st.ham] = 1; G.ham = st.ham; G.gems += st.rubies; chime(8); save(); ev('starter', {}); return true;
 }
 
@@ -3855,11 +4207,11 @@ var Yard = (function(){
   function box(w, h, d, m, x, y, z){ return mesh(new THREE.BoxGeometry(w, h, d), m, x, y, z); }
   function tex(c){ var t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; return t; }
   function cnv(w, h){ var c = document.createElement('canvas'); c.width = w; c.height = h; return [c, c.getContext('2d')]; }
-  var PAPER = {x:0, z:-.5, w:108, h:30}, panX = 0, panT = 0, panMax = 0;
+  var PAPER = {x:0, z:-.5, w:150, h:32}, panX = 0, panT = 0, panMax = 0;   // 27/11 cay v2: x -55..44 + bang ten 2 dau
   function toP(p, CW, CH){ return [(p[0] - (PAPER.x - PAPER.w/2))/PAPER.w*CW, (p[1] - (PAPER.z - PAPER.h/2))/PAPER.h*CH]; }
 
   // ---------- quan co xuong (o dat noi khoi + cong trinh dang rieng; chua xay = thiec chua son) ----------
-  function piece(kind, built, lv, price){
+  function piece(kind, built, lv, price, tierIx, tierN){
     var g = new THREE.Group(), _c = new THREE.Color(), hsl = {};
     function P(c, o){ if(built) return YS(c, Object.assign({roughness:.75}, o||{}));
       _c.set(c).getHSL(hsl); var l = .16 + hsl.l*.3; return YS(new THREE.Color(l, l, l*1.06), {roughness:.45, metalness:.35}); }
@@ -3945,11 +4297,17 @@ var Yard = (function(){
       bx(.55, .4, .03, 0xffd257, -1.02, TOP + 1.0, 1.0); }
     if(kind !== 'chute' && kind !== 'props' && kind !== 'depot' && kind !== 'powder' && kind !== 'gold' && kind !== 'whistle' && kind !== 'drill' && kind !== 'trap' && kind !== 'breaker' && kind !== 'watch') smoke(.6, TOP + 2.2, -.6);
     tgt = g;
-    if(built && lv){ for(var q=0;q<3;q++) add(mesh(new THREE.SphereGeometry(.13, 10, 8), q < lv ? YS(0xffd257, {emissive:0x7a4a00, roughness:.3, metalness:.5}) : YS(0x3a2a1a), -.4 + q*.4, .75, TW/2 + .02)); }
+    if(built && lv){ var pn = tierN || 3, sp = Math.min(.4, 2.4/pn); for(var q=0;q<pn;q++) add(mesh(new THREE.SphereGeometry(.13, 10, 8), q < lv ? YS(0xffd257, {emissive:0x7a4a00, roughness:.3, metalness:.5}) : YS(0x3a2a1a), -sp*(pn - 1)/2 + q*sp, .75, TW/2 + .02)); }
+    if(tierIx !== undefined && tierIx >= 0){   // 27/11 co bac (I / II / III) tren cot sau cong trinh
+      var fr = cnv(128, 96), fx = fr[1]; fx.fillStyle = ['#c9a25a', '#5f9ad8', '#c0562a'][tierIx] || '#888'; fx.fillRect(0, 0, 128, 96); fx.strokeStyle = '#3a2412'; fx.lineWidth = 6; fx.strokeRect(3, 3, 122, 90);
+      fx.fillStyle = '#fff'; fx.font = '800 62px ' + FONT; fx.textAlign = 'center'; fx.fillText(ROMAN[tierIx], 64, 70);
+      var fl = new THREE.Mesh(new THREE.PlaneGeometry(.9, .68), new THREE.MeshBasicMaterial({map:tex(fr[0]), side:THREE.DoubleSide})); fl.position.set(-1.25, 2.75, -1.1); g.add(fl);
+      g.add(mesh(new THREE.CylinderGeometry(.04, .04, 2.3, 5), YS(0x5a3a1a), -1.68, 1.9, -1.1)); }
     if(!built && price){
       var r = cnv(256, 128), tc = r[0], tx = r[1]; tx.fillStyle = '#efe0bc'; tx.fillRect(0, 0, 256, 128); tx.strokeStyle = '#8a6a40'; tx.lineWidth = 6; tx.strokeRect(3, 3, 250, 122);
-      tx.fillStyle = '#d23a52'; tx.beginPath(); tx.moveTo(40, 40); tx.lineTo(70, 40); tx.lineTo(82, 58); tx.lineTo(55, 92); tx.lineTo(28, 58); tx.closePath(); tx.fill();
-      tx.fillStyle = '#3a2412'; tx.font = '800 64px ' + FONT; tx.fillText(price, 100, 88);
+      tx.fillStyle = '#e0a82a'; tx.beginPath(); tx.arc(55, 64, 27, 0, 7); tx.fill(); tx.strokeStyle = '#8a5a10'; tx.lineWidth = 5; tx.stroke();
+      tx.fillStyle = '#8a5a10'; tx.font = '800 30px ' + FONT; tx.textAlign = 'center'; tx.fillText('$', 55, 75); tx.textAlign = 'left';
+      tx.fillStyle = '#3a2412'; tx.font = '800 ' + (String(price).length > 4 ? 50 : 64) + 'px ' + FONT; tx.fillText(price, 96, 86);
       var tag = new THREE.Mesh(new THREE.PlaneGeometry(1.7, .85), new THREE.MeshBasicMaterial({map:tex(tc), side:THREE.DoubleSide}));
       tag.position.set(1.4, 2.9, 1.6); tag.rotation.set(-.5, -.25, .12); g.add(tag);
       g.add(mesh(new THREE.CylinderGeometry(.015, .015, .9, 4), YS(0x8a6a40), 1.1, 3.3, 1.4));
@@ -3976,7 +4334,7 @@ var Yard = (function(){
       x.moveTo(CW*q[0], 0); x.bezierCurveTo(CW*(q[0] + q[1]*.03), CH*.3, CW*(q[0] - q[1]*.01), CH*.6, CW*(q[0] + q[1]*.02), CH); x.stroke(); });
     // dau nhanh: bang ten lon o dau moi ben (13/11)
     [['CASH', '#b07a10', -1, 'Ore pays more · more gold · bigger chests'], ['POWER', '#a0301a', 1, 'More room · more ore · bigger combos']].forEach(function(b){
-      var cx0 = CW/2 + b[2]*CW*.075, cy0 = CH - 150; x.textAlign = 'center';
+      var cx0 = CW/2 + b[2]*CW*.075, cy0 = CH - 150; x.textAlign = 'center';   // 27/11 12:30 Mai "tra lai 2 chu power etc ve giua" (ban do da chua cho)
       x.fillStyle = 'rgba(90,50,20,.12)'; x.fillRect(cx0 - 330, cy0 - 70, 660, 150);
       x.font = '800 104px ' + FONT; x.fillStyle = b[1]; x.fillText((b[2] < 0 ? '\u25C0  ' : '') + b[0] + (b[2] > 0 ? '  \u25B6' : ''), cx0, cy0 + 30);
       x.font = 'italic 700 40px ' + INK; x.fillStyle = '#5a3418'; x.fillText(b[3], cx0, cy0 + 72); });
@@ -3986,12 +4344,18 @@ var Yard = (function(){
       if(lit){ x.strokeStyle = '#7a2a14'; x.lineWidth = 26; x.setLineDash([5, 18]); path(); x.stroke();
         x.setLineDash([]); x.lineWidth = 5; [-9, 9].forEach(function(o){ x.save(); x.translate(0, o); path(); x.stroke(); x.restore(); }); }
       else { x.strokeStyle = half ? 'rgba(90,60,30,.8)' : 'rgba(90,70,50,.45)'; x.lineWidth = 5; x.setLineDash([18, 14]); path(); x.stroke(); x.setLineDash([]); } });
+    var BRC = {cash:'#8a5a08', power:'#8a2a14', hammer:'#1f4f8a', crew:'#2a6a34'};
     WS_TREE.forEach(function(r){ var p = toP(r[3], CW, CH), l = wsLv(r[0]);
-      x.font = 'italic 700 44px ' + INK; x.textAlign = 'center'; x.fillStyle = l ? '#4a240e' : 'rgba(80,60,40,.75)'; x.fillText(r[4], p[0], p[1] + 185);
-      if(l && r[0] !== 'depot'){ x.font = '700 32px ' + INK; x.fillStyle = '#8a3a14'; x.fillText('Lv ' + l + ' / ' + CFG.ws[r[0]].cost.length, p[0], p[1] + 225); } });
-    var cx = CW/2, cy = 165; x.save(); x.strokeStyle = '#6b4424'; x.lineWidth = 4; x.beginPath(); x.arc(cx, cy, 110, 0, 7); x.stroke(); x.beginPath(); x.arc(cx, cy, 90, 0, 7); x.stroke();
-    x.fillStyle = '#7a2a14'; x.beginPath(); x.moveTo(cx, cy - 110); x.lineTo(cx + 20, cy); x.lineTo(cx, cy + 110); x.lineTo(cx - 20, cy); x.closePath(); x.fill();
-    x.font = 'italic 700 42px ' + INK; x.fillStyle = '#5a3418'; x.textAlign = 'center'; x.fillText('N', cx, cy - 122); x.textAlign = 'left'; x.restore();
+      x.font = 'italic 700 44px ' + INK; x.textAlign = 'center';
+      var tw = x.measureText(r[4]).width + 28; x.fillStyle = 'rgba(246,234,204,.82)'; x.beginPath();
+      if(x.roundRect) x.roundRect(p[0] - tw/2, p[1] + 158, tw, l && r[0] !== 'depot' ? 86 : 50, 16); else x.rect(p[0] - tw/2, p[1] + 158, tw, l && r[0] !== 'depot' ? 86 : 50); x.fill();   // 27/11 polish: nen chu
+      x.fillStyle = l ? (BRC[r[5]] || '#4a240e') : 'rgba(80,60,40,.75)'; x.fillText(r[4], p[0], p[1] + 196);
+      if(l && r[0] !== 'depot'){ var tq = wsTier(r[0]), mx = l >= wsMax(r[0]); x.font = '700 32px ' + INK; x.fillStyle = '#8a3a14';
+        var one = CFG.ws[r[0]].tiers.every(function(T){ return T.n === 1; });   // Bunkhouse: moi bac 1 cap => ghi tong
+        x.fillText(mx ? 'MAX' : (one ? 'Lv ' + l + ' / ' + wsMax(r[0]) : (CFG.ws[r[0]].tiers.length > 1 ? ROMAN[tq.t] + ' · ' : '') + 'Lv ' + tq.j + ' / ' + tq.n), p[0], p[1] + 234); } });
+    // 27/11 cay v2: bo la ban (cho Light Grip o giua tren); ten 2 nhanh doc tren hang BUA / THO
+    [['HAMMER', '#1f4f8a', [-5.6, -10.5]], ['CREW', '#2a6a34', [-5.6, 9.0]]].forEach(function(b){ var q = toP(b[2], CW, CH);
+      x.save(); x.translate(q[0], q[1]); x.rotate(-Math.PI/2); x.font = '800 58px ' + FONT; x.textAlign = 'center'; x.fillStyle = b[1]; x.globalAlpha = .55; x.fillText(b[0], 0, 0); x.restore(); });
     x.globalCompositeOperation = 'multiply';
     [[0, 0, CW, 40], [0, CH - 40, CW, 40], [0, 0, 40, CH], [CW - 40, 0, 40, CH]].forEach(function(q){ x.fillStyle = 'rgba(120,70,30,.35)'; x.fillRect(q[0], q[1], q[2], q[3]); });
     x.globalCompositeOperation = 'source-over';
@@ -4046,6 +4410,82 @@ var Yard = (function(){
   }
   // ---------- dung canh (mot lan) ----------
   var pieces = {};
+  // 27/11 polish: vong vang nhap nhay + mui ten nhun = mua duoc ngay; o khoa = chua mo (cha chua xay)
+  var glowMat = new THREE.MeshBasicMaterial({color:0xff9a12, transparent:true, opacity:.9, side:THREE.DoubleSide, depthWrite:false}), glowGeo = new THREE.RingGeometry(2.3, 3.05, 44);
+  var arrowMat = new THREE.MeshBasicMaterial({color:0xffc22a}), arrowGeo = new THREE.ConeGeometry(.42, .8, 4), lockTx = null, fx = [], polishT = 0;
+  function nodeGlow(g){
+    var ring = new THREE.Mesh(glowGeo, glowMat); ring.rotation.x = -Math.PI/2; ring.position.y = .06; ring.userData.glow = 1; g.add(ring);
+    var ar = new THREE.Mesh(arrowGeo, arrowMat); ar.rotation.x = Math.PI; ar.position.set(0, 4.6, 0); ar.userData.bob = 1; g.add(ar); }
+  function nodeLock(g){
+    if(!lockTx){ var c = cnv(128, 128), x = c[1]; x.fillStyle = 'rgba(40,26,14,.85)'; x.beginPath(); x.arc(64, 64, 58, 0, 7); x.fill();
+      x.strokeStyle = '#f0d8a8'; x.lineWidth = 11; x.beginPath(); x.arc(64, 54, 20, Math.PI, 0); x.stroke(); x.fillStyle = '#f0d8a8'; x.fillRect(36, 54, 56, 40);
+      x.fillStyle = 'rgba(40,26,14,.9)'; x.fillRect(60, 66, 8, 14); lockTx = tex(c[0]); }
+    var m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), new THREE.MeshBasicMaterial({map:lockTx, transparent:true, depthWrite:false}));
+    m.position.set(0, 3.3, .6); m.rotation.set(-.5, 0, 0); g.add(m); }
+  // 27/11 polish: mua xong => cong trinh nay, kim tuyen vang, chu noi (+1 LV / TIER II!)
+  function celebrate(k, txt){
+    var P = pieces[k]; if(!P) return; P.g.userData.pop = 0;
+    for(var i=0;i<14;i++){ var m = new THREE.Mesh(new THREE.SphereGeometry(.13, 6, 5), new THREE.MeshBasicMaterial({color:i % 3 ? 0xffd257 : 0xfff3c4}));
+      m.position.set(P.x, 2.2, P.z); scene.add(m); fx.push({m:m, vx:(Math.random() - .5)*7, vy:5 + Math.random()*5, vz:(Math.random() - .5)*5, t:0}); }
+    var sc = screenOf('ws', k), el = document.createElement('div'); el.className = 'ypop' + (/TIER/.test(txt) ? ' big' : ''); el.textContent = txt;
+    var lc = toLocal(sc.x, sc.y);   // screenOf tra toa do man that -> doi ve toa do trong khung 19,5:9 (co the xoay)
+    el.style.left = lc.x + 'px'; el.style.top = (lc.y - 30) + 'px'; $('scrYard').appendChild(el); setTimeout(function(){ el.remove(); }, 1300);
+  }
+  function polishStep(dt){
+    polishT += dt; var pul = .5 + .5*Math.sin(polishT*5);
+    glowMat.opacity = .55 + .4*pul;
+    for(var k in pieces){ var g = pieces[k].g;
+      if(pieces[k].aff) g.children.forEach(function(o){ if(o.userData.glow) o.scale.setScalar(1 + .06*pul); if(o.userData.bob) o.position.y = 4.4 + .35*Math.abs(Math.sin(polishT*3.2)); });
+      if(g.userData.pop !== undefined){ g.userData.pop += dt; var u = g.userData.pop/.45; g.scale.setScalar(u < 1 ? 1 + .28*Math.sin(u*Math.PI) : 1); if(u >= 1) delete g.userData.pop; } }
+    for(var i=fx.length-1;i>=0;i--){ var f = fx[i]; f.t += dt; f.vy -= 18*dt; f.m.position.x += f.vx*dt; f.m.position.y += f.vy*dt; f.m.position.z += f.vz*dt;
+      f.m.scale.setScalar(Math.max(.01, 1 - f.t/.9)); if(f.t > .9){ scene.remove(f.m); fx.splice(i, 1); } }
+    edgeChips(); stepCarts(dt);
+  }
+  // 27/11 polish: chip o 2 mep man = so node MUA DUOC ngoai tam nhin; bam => keo ban do toi node gan nhat
+  var edgeN = 0;
+  function edgeChips(){
+    if((edgeN++ % 8) !== 0) return; var L = [], R = [], v = new THREE.Vector3(), w = vpW();
+    for(var k in pieces){ if(!pieces[k].aff) continue; v.set(pieces[k].x, 0, pieces[k].z).project(cam); var sx = (v.x*.5 + .5)*w;
+      if(sx < 60) L.push(pieces[k].x); else if(sx > w - 60) R.push(pieces[k].x); }
+    var l = $('yEdgeL'), r = $('yEdgeR'), pop = !$('yPanel').hidden;   // bang dang mo => an chip (khoi de bang)
+    l.hidden = pop || !L.length; r.hidden = pop || !R.length; l.querySelector('b').textContent = L.length; r.querySelector('b').textContent = R.length;
+    l.dataset.x = L.length ? Math.max.apply(null, L) : 0; r.dataset.x = R.length ? Math.min.apply(null, R) : 0;
+  }
+  function panTo(x){ panT = Math.max(-panMax, Math.min(panMax, x)); }
+  // 27/11 Mai "cho vai cai xe than mini chay tren may duong ray cho sinh dong": xe goong chay theo DUNG duong cong ray da ve
+  // tren giay (bezier cha -> con, chi ray SANG = con da xay). Toi dau ray: re sang ray khac noi o nut do, khong co thi quay dau.
+  var carts = [], cartRails = [], CART_MAX = 6;
+  function railPt(R, t){ var a = R.a, b = R.b, mxp = (a[0] + b[0])/2, u = 1 - t;
+    return [u*u*u*a[0] + 3*u*u*t*mxp + 3*u*t*t*mxp + t*t*t*b[0], u*u*u*a[1] + 3*u*u*t*a[1] + 3*u*t*t*b[1] + t*t*t*b[1]]; }
+  function railsLit(){ cartRails = [];
+    WS_TREE.forEach(function(r){ if(!r[2] || wsLv(r[0]) <= 0) return; var a = wsRow(r[2])[3], b = r[3], R = {a:a, b:b, from:r[2], to:r[0], len:0}, pv = railPt(R, 0);
+      for(var i=1;i<=16;i++){ var q = railPt(R, i/16); R.len += Math.hypot(q[0] - pv[0], q[1] - pv[1]); pv = q; }
+      cartRails.push(R); }); }
+  function makeCart(){
+    var g = new THREE.Group(), iron = YS(0x6a6e74, {metalness:.6, roughness:.4}), wood = YS(0x8a5a2c), coal = YS(0x1e1a18, {roughness:.9});
+    g.add(box(1.0, .42, .62, wood, 0, .42, 0)); g.add(box(1.08, .08, .7, iron, 0, .64, 0)); g.add(box(1.08, .08, .7, iron, 0, .22, 0));
+    for(var i=0;i<5;i++){ var c = mesh(new THREE.DodecahedronGeometry(.17 + Math.random()*.06), coal, -.32 + i*.16, .72 + Math.random()*.08, (Math.random() - .5)*.3); g.add(c); }
+    [[-.32, .33], [.32, .33], [-.32, -.33], [.32, -.33]].forEach(function(w){ var wh = mesh(new THREE.CylinderGeometry(.13, .13, .07, 10), iron, w[0], .14, w[1]); wh.rotation.x = Math.PI/2; g.add(wh); });
+    g.traverse(function(o){ if(o.isMesh) o.castShadow = true; }); g.scale.setScalar(1.6); return g; }   // "mini" nhung van phai thay o khung dien thoai
+  function syncCarts(){
+    railsLit(); var want = Math.min(CART_MAX, Math.ceil(cartRails.length/3));
+    while(carts.length > want){ scene.remove(carts.pop().g); }
+    while(carts.length < want && cartRails.length){ var R = cartRails[Math.floor(Math.random()*cartRails.length)], g = makeCart(); scene.add(g);
+      carts.push({g:g, R:R, t:Math.random(), dir:Math.random() < .5 ? 1 : -1, sp:2.2 + Math.random()*1.2, wait:0}); }
+    carts.forEach(function(c){ if(cartRails.indexOf(c.R) < 0 && cartRails.length) c.R = cartRails[Math.floor(Math.random()*cartRails.length)]; });
+  }
+  function stepCarts(dt){
+    for(var i=0;i<carts.length;i++){ var c = carts[i], R = c.R; if(!R) continue;
+      if(c.wait > 0){ c.wait -= dt; continue; }
+      c.t += c.dir*c.sp*dt/Math.max(1, R.len);
+      if(c.t >= 1 || c.t <= 0){   // toi dau ray: re sang ray khac o nut nay (hoac quay dau), dung 0,4 s "do than"
+        var node = c.t >= 1 ? R.to : R.from, opts = cartRails.filter(function(o){ return o !== R && (o.from === node || o.to === node); });
+        if(opts.length){ var n = opts[Math.floor(Math.random()*opts.length)]; c.R = n; c.dir = n.from === node ? 1 : -1; c.t = c.dir > 0 ? 0 : 1; }
+        else { c.dir = -c.dir; c.t = Math.max(0, Math.min(1, c.t)); }
+        c.wait = .4; continue; }
+      var p0 = railPt(R, c.t), p1 = railPt(R, Math.max(0, Math.min(1, c.t + .02*c.dir)));
+      c.g.position.set(p0[0], .12 + Math.abs(Math.sin(polishT*18 + i))*.03, p0[1]); c.g.rotation.y = Math.atan2(-(p1[1] - p0[1]), p1[0] - p0[0]); }
+  }
   function build(){
     built = true; scene = new THREE.Scene(); scene.background = YC(0x0e0806);
     cam = new THREE.PerspectiveCamera(32, 16/9, 0.1, 400);
@@ -4074,11 +4514,13 @@ var Yard = (function(){
   }
   function refreshPieces(){
     WS_TREE.forEach(function(r){
-      var k = r[0], l = wsLv(k), open = wsOpen(k), sig = l + '/' + open;
+      var k = r[0], l = wsLv(k), open = wsOpen(k), tq = CFG.ws[k] ? wsTier(k) : null, multi = CFG.ws[k] && CFG.ws[k].tiers.length > 1;
+      var aff = !!CFG.ws[k] && open && l < wsMax(k) && wsAfford(k), sig = l + '/' + open + '/' + aff;   // 27/11 polish: trang thai mua duoc
       if(pieces[k] && pieces[k].sig === sig) return;
       if(pieces[k]){ scene.remove(pieces[k].g); pick.splice(pick.indexOf(pieces[k].g), 1); }
-      var g = piece(r[1], l > 0, l, l > 0 || !CFG.ws[k] ? 0 : (open ? CFG.ws[k].cost[0] : 0));
-      g.position.set(r[3][0], .05, r[3][1]); g.userData.pick = {ws:k}; scene.add(g); pick.push(g); pieces[k] = {g:g, sig:sig};
+      var g = piece(r[1], l > 0, tq ? (l >= wsMax(k) ? tq.n : tq.j) : l, l > 0 || !CFG.ws[k] ? 0 : (open ? fmt(wsCost(k)).slice(1) : 0), multi && l > 0 ? tq.t : -1, tq ? tq.n : 3);   // 27/11: gia vang · cap trong bac + co bac
+      if(aff) nodeGlow(g); else if(CFG.ws[k] && !open) nodeLock(g);
+      g.position.set(r[3][0], .05, r[3][1]); g.userData.pick = {ws:k}; scene.add(g); pick.push(g); pieces[k] = {g:g, sig:sig, aff:aff, x:r[3][0], z:r[3][1]};
     });
   }
   function fitCam(){
@@ -4086,7 +4528,7 @@ var Yard = (function(){
     var w = vpW(), h = vpH(); cam.aspect = w/h; cam.clearViewOffset(); var dir = new THREE.Vector3(0, 44, 40).normalize(), d = 60, v = new THREE.Vector3(), tgt = new THREE.Vector3(0, 0, 0);
     // khung lap = phan CO NOI DUNG (moc nui/la ban -> dau nhanh), khong phai ca to giay: mep giay duoc nam duoi 2 dai.
     // Man thap (phone ngang ~390 px) 2 dai chiem ~1/3 => truoc day ban do con 52% chieu cao, chu ten xuong qua nho (13/11).
-    var top = 1 - 2*Math.min(.2, 70/h), bot = -1 + 2*Math.min(.2, 76/h), mid = (top + bot)/2, half = (top - bot)/2, Z0 = PAPER.z - 11.5, Z1 = PAPER.z + 13.5;
+    var top = 1 - 2*Math.min(.2, 70/h), bot = -1 + 2*Math.min(.2, 76/h), mid = (top + bot)/2, half = (top - bot)/2, Z0 = PAPER.z - 14.6, Z1 = PAPER.z + 14.6;   // 27/11: 4 hang node (hang tren con mai nha cao => lui tren them)
     for(var it=0; it<24; it++){ tgt.set(0, 0, PAPER.z + .5); cam.position.copy(tgt).addScaledVector(dir, d); cam.lookAt(tgt); cam.updateProjectionMatrix(); cam.updateMatrixWorld();
       var y1 = v.set(0, 0, Z0).project(cam).y, y2 = v.set(0, 0, Z1).project(cam).y;
       var span = (y1 - y2)/2; if(Math.abs(span - half) < .002) break; d *= span/half; }
@@ -4112,8 +4554,8 @@ var Yard = (function(){
   function pxToWorld(){ var a = new THREE.Vector3(panX, 0, PAPER.z).project(cam), b = new THREE.Vector3(panX + 1, 0, PAPER.z).project(cam); return 2/((b.x - a.x)*vpW()); }
   function refresh(){
     if(!built) return;
-    drawPaper(); refreshPieces(); drawMines();
-    $('yCatNew').hidden = !(!G.starter || HAM_ORDER.some(function(k){ return CFG.hamPrice[k] && !G.owned[k] && !G.tried[k]; }));
+    drawPaper(); refreshPieces(); drawMines(); syncCarts();   // 27/11 xe goong
+    $('yCatNew').hidden = !(starterLeft() > 0 || HAM_ORDER.some(function(k){ return CFG.hamPrice[k] && !G.owned[k] && !G.tried[k]; }));
     $('yRuby').textContent = G.gems; $('yGold').textContent = fmt(G.bank).slice(1); tkHud();
   }
   // B3: o ve (hoi theo gio, cap nhat moi giay khi o Yard) + chu nho duoi DIG
@@ -4122,11 +4564,12 @@ var Yard = (function(){
     $('yTkN').textContent = G.tk; $('yTkT').textContent = G.tk >= CFG.run.cap ? 'FULL' : '+1 in ' + fmtT(tkNext());
     $('yTk').classList.toggle('out', G.tk <= 0 && !G.run);
     var cl = tchestLeft(); $('yChestS').textContent = cl > 0 ? fmtH(cl) : 'OPEN!'; $('yChest').classList.toggle('ready', cl <= 0);   // B7
-    $('yDailyS').textContent = dailyReady() ? 'Day ' + (G.daily.n % CFG.daily.length + 1) : '✓'; $('yDaily').classList.toggle('ready', dailyReady());
+    $('yDailyS').textContent = dailyReady() ? 'Day ' + (G.daily.n % CFG.daily.length + 1) : (cardReady() ? '+' + CFG.card.daily : '✓'); $('yDaily').classList.toggle('ready', dailyReady() || cardReady());
+    var sl = starterLeft(); $('yOff').hidden = !offersOn(); $('yOffT').textContent = sl > 0 ? (sl > DAY_MS ? Math.ceil(sl/DAY_MS) + 'd' : fmtH(sl)) : (stuckLeft() > 0 ? '!' : (vaultReady() ? 'FULL' : (cardOn() ? '' : 'NEW'))); $('yOffT').hidden = !$('yOffT').textContent;
     $('yDigS').textContent = G.run && runLeft() > 0 ? runLeft() + ' left' : '−1 ticket';
   }
   function showAway(){   // B5 qua luc vang (B7 them nut x2 quang cao)
-    var h = '<h2>While you were away</h2><p>Your helper dug for ' + fmtMin(G.awayMin || 0) + (G.awayCap ? ' (max — upgrade the Bunkhouse to dig longer)' : '') + '.</p>' +
+    var h = '<h2>While you were away</h2><p>Your helper dug for ' + fmtMin(G.awayMin || 0) + (G.awayCap ? ' (max — build Night Shift to dig longer)' : '') + '.</p>' +
       '<div class="tkbig">+' + fmt(G.away) + '</div><div class="yb"><button class="buy" id="yAwayGet">COLLECT</button>' + adBtn('yAway2', 'away', '×2') + '</div>';
     panel(h, true);
     var next = function(){ panel(''); refresh(); if(dailyReady()) showDaily(); };
@@ -4134,14 +4577,15 @@ var Yard = (function(){
     if($('yAway2')) $('yAway2').onclick = function(){ adWatch('away', function(){ awayCollect(2); }); next(); };
   }
   function fmtH(ms){ var t = Math.ceil(ms/1000), h = Math.floor(t/3600), m = Math.floor(t%3600/60); return h > 0 ? h + 'h ' + ('0' + m).slice(-2) + 'm' : m + ':' + ('0' + t%60).slice(-2); }
-  function rewTxt(r){ return [r.ruby ? rub(r.ruby) : '', r.tk ? '+' + r.tk + ' TICKET' + (r.tk > 1 ? 'S' : '') : '', r.ham ? HAMMERS[r.ham].name.toUpperCase() : ''].filter(Boolean).join(' · '); }
+  function rewTxt(r){ return [r.ruby ? rub(r.ruby) : '', r.card ? 'SHIFT PAY ' + rub(r.card) : '', r.tk ? '+' + r.tk + ' TICKET' + (r.tk > 1 ? 'S' : '') : '', r.ham ? HAMMERS[r.ham].name.toUpperCase() : ''].filter(Boolean).join(' · '); }
   function showDaily(){
     var n = G.daily.n % CFG.daily.length, ready = dailyReady(), h = '<h2>Daily Reward</h2><div class="dgrid">';
     CFG.daily.forEach(function(r, i){ var got = i < n || (!ready && i === n - 1);
       h += '<div class="' + (ready && i === n ? 'on' : (got ? 'got' : '')) + '">DAY ' + (i + 1) + '<b>' + (r.ham ? HAMMERS[r.ham].name : (r.ruby ? '♦' + r.ruby : '+' + r.tk)) + '</b>' + (r.tk && !r.ham ? 'TICKETS' : (r.ham ? 'HAMMER' : 'RUBIES')) + '</div>'; });
-    h += '</div>' + (ready ? '<div class="yb"><button class="buy" id="yDailyGet">CLAIM DAY ' + (n + 1) + '</button></div>' : '<p>Come back tomorrow for Day ' + (n % CFG.daily.length + 1) + '.</p>');
+    if(cardOn()) h += '<p class="cardln">SHIFT PAY: ' + (cardReady() ? '+' + rub(CFG.card.daily) + ' today' : '+' + rub(CFG.card.daily) + ' again tomorrow') + ' · ' + cardDaysLeft() + ' days left</p>';
+    h += '</div>' + (ready || cardReady() ? '<div class="yb"><button class="buy" id="yDailyGet">' + (ready ? 'CLAIM DAY ' + (n + 1) : 'CLAIM SHIFT PAY') + '</button></div>' : '<p>Come back tomorrow for Day ' + (n % CFG.daily.length + 1) + (cardOn() ? ' + ' + rub(CFG.card.daily) : '') + '.</p>');
     panel(h, true);
-    if($('yDailyGet')) $('yDailyGet').onclick = function(){ var g = dailyClaim(); refresh(); panel('<h2>Day ' + G.daily.n + '</h2><div class="tkbig">' + rewTxt(g) + '</div>', true); };
+    if($('yDailyGet')) $('yDailyGet').onclick = function(){ var g = dailyClaim() || {}; refresh(); panel('<h2>' + (g.card && Object.keys(g).length === 1 ? 'Shift Pay' : 'Day ' + G.daily.n) + '</h2><div class="tkbig">' + rewTxt(g) + '</div>', true); };
   }
   function showChest(){
     var left = tchestLeft(), T = CFG.tchest, h = '<h2>Timed Chest</h2>';
@@ -4168,19 +4612,36 @@ var Yard = (function(){
   function rub(n){ return '<svg class="ic sm"><use href="#i-ruby"/></svg>' + n; }
   function gold(n){ return '<svg class="ic sm"><use href="#i-coin"/></svg>' + fmt(n).slice(1); }
   function price(k, n){ return wsCur(k) === 'g' ? gold(n) : rub(n); }
+  var armed = null;   // 27/11: nut bu ruby dang cho cham lan 2
   function showWs(k){
     var r = wsRow(k), l = wsLv(k);
     if(k === 'depot'){ panel('<h2>Depot</h2><p>Your mine office. Rails start here. Build along the rails: each workshop helps in every mine, for good.</p>'); return; }
-    var max = l >= CFG.ws[k].cost.length, open = wsOpen(k), c = wsCost(k);
-    var pips = ''; for(var i=0;i<CFG.ws[k].cost.length;i++) pips += '<i' + (i < l ? ' class="f"' : '') + '></i>';
+    var max = l >= wsMax(k), open = wsOpen(k), c = wsCost(k), q = !max && open ? wsQuote(k) : null, cash = r[5] === 'cash', tq = wsTier(k), TT = CFG.ws[k].tiers;
+    if(armed && (armed.k !== k || Date.now() - armed.at > 4000)) armed = null;
+    var pips = ''; for(var i=0;i<tq.n;i++) pips += '<i' + (i < tq.j ? ' class="f"' : '') + '></i>';   // 27/11: cap trong BAC hien tai
+    var chain = TT.length > 1 ? '<div class="tiers">' + TT.map(function(T, t){ var lt = wsTierLv(k, t);
+      return '<span class="' + (lt >= T.n ? 'done' : (t === tq.t ? 'cur' : 'lock')) + '">' + ROMAN[t] + (lt >= T.n ? ' ✓' : (t === tq.t ? ' ' + lt + '/' + T.n : ' 🔒')) + '</span>'; }).join('') + '</div>' : '';
     // 16/11 P2c: anh chup toa xuong + to giay ghim; hieu ung = 1 so to (cap ke tiep, hoac cap hien tai khi da max)
     var fx = WS_FX[k](max ? l : l + 1), m = fx.indexOf('·') < 0 && /^(.*?)([+×$]?\d[\d.]*%?)(.*)$/.exec(fx);
     var eff = m ? '<div class="eff">' + m[2] + '<small>' + (m[1] + m[3]).replace(/\s+/g, ' ').trim() + '</small></div>' : '<p class="efft">' + fx + '</p>';
-    panel('<div class="wsx"><div class="pol">' + polHtml('ws:' + k, 'i-props') + '</div><div class="pa pin"><h2>' + r[4] + '</h2>' + eff +
-      '<div class="now">' + (max ? 'Fully built' : (l ? 'Level ' + l + ' → ' + (l + 1) : 'Not built yet')) + '</div><div class="lv">' + pips + '</div>' +
+    panel('<div class="wsx"><div class="pol">' + polHtml('ws:' + k, 'i-props') + '</div><div class="pa pin"><h2>' + r[4] + (TT.length > 1 ? ' ' + ROMAN[tq.t] : '') + '</h2>' + eff +
+      '<div class="now">' + (max ? 'Fully built' : (tq.j ? 'Level ' + tq.j + ' → ' + (tq.j + 1) : (tq.t ? 'Tier ' + ROMAN[tq.t] + ' unlocked — stronger, pricier' : 'Not built yet'))) +
+      (!max && tq.t < TT.length - 1 ? ' · max it to unlock ' + ROMAN[tq.t + 1] : '') + '</div><div class="lv">' + pips + '</div>' + chain +
+      (q ? '<button class="buy top' + (armed ? ' armed' : '') + '" id="yBuy"' + (G.gems < q ? ' disabled' : '') + '>' +
+        (armed ? 'SPEND ' + rub(q) + '?' : (l ? 'UPGRADE · ' : 'BUILD · ') + rub(q)) + '</button>' :
       '<button class="buy" id="yBuy"' + (max || !open || !wsAfford(k) ? ' disabled' : '') + '>' +
-      (max ? 'MAXED' : (!open ? 'NEEDS ' + wsRow(r[2])[4].toUpperCase() : (l ? 'UPGRADE ' : 'BUILD ') + price(k, c))) + '</button></div></div>');
-    var b = $('yBuy'); if(b) b.onclick = function(){ if(wsBuild(k)){ refresh(); showWs(k); } };
+      (max ? 'MAXED' : (!open ? 'NEEDS ' + wsRow(r[2])[4].toUpperCase() : (l ? 'UPGRADE ' : 'BUILD ') + price(k, c))) + '</button>') +
+      (max || !open || wsAfford(k) ? '' : '<p class="short">' + gold(wsShort(k)) + ' short' +
+        (q ? (G.gems < q ? ' · not enough rubies' + (offersOn() ? ' <button class="buy alt getr" id="yGetR">GET RUBIES</button>' : '') : ' · rubies pay the rest') :
+          (cash ? ' · cash buildings take gold only' : (!wsTopOpen() ? ' · beat the first boss to top up with rubies' : ''))) + '</p>') +
+      '</div></div>');
+    if($('yGetR')) $('yGetR').onclick = function(){ showOffers(); };
+    var b = $('yBuy'); if(b) b.onclick = function(){
+      if(q){   // cham 1: hoi lai; cham 2 (sau 0,35 s): tra ruby
+        if(!armed){ armed = {k:k, at:Date.now()}; showWs(k); return; }
+        if(Date.now() - armed.at < 350) return;
+        armed = null; var t0 = wsTier(k).t; if(wsBuild(k, true)){ refresh(); celebrate(k, wsTier(k).t > t0 && wsLv(k) < wsMax(k) ? 'TIER ' + ROMAN[wsTier(k).t] + '!' : '+1 LV'); } showWs(k); return; }
+      var t1 = wsTier(k).t; if(wsBuild(k)){ refresh(); celebrate(k, wsTier(k).t > t1 && wsLv(k) < wsMax(k) ? 'TIER ' + ROMAN[wsTier(k).t] + '!' : (wsLv(k) >= wsMax(k) ? 'MAX!' : '+1 LV')); showWs(k); } };
   }
   function showMine(i){
     if(!mineOpen(i)){ panel('<h2>' + MINES[i].name + '</h2><p>' + MINES[i].blurb + '</p><p class="lk">Locked — clear ' + MINES[i-1].name + ' first.</p>'); return; }
@@ -4188,9 +4649,36 @@ var Yard = (function(){
     panel('');
   }
   // 16/11 P2c: moi bua = 1 to giay ghim + anh chup that cua bua; cau mo ta dai nam o title (giu/di chuot)
+  // 27/11 hoc KDR: bang uu dai (mo sau boss dau). Starter dem nguoc; Shift Pay = the thang.
+  function showOffers(){
+    var h = '<h2>Offers<small>DEMO · FREE</small></h2>', sl = starterLeft(), C = CFG.card;
+    if(sl > 0) h += '<div class="pa crow hot"><div class="ph">' + polHtml('ham:' + CFG.starter.ham, 'i-ham') + '</div><div class="ctx"><b>' + HAMMERS[CFG.starter.ham].name + ' + ' + rub(CFG.starter.rubies) +
+      '<span class="tag">ONCE ONLY</span></b><em>Ends in ' + (sl > DAY_MS ? Math.floor(sl/DAY_MS) + 'd ' : '') + fmtH(sl % DAY_MS || sl) + '</em></div><button class="buy" id="yStarter2">' + CFG.starter.usd + '</button></div>';
+    h += '<div class="pa crow' + (cardOn() ? '' : ' hot') + '"><div class="ph"><svg class="ic" style="width:56px;height:56px;color:#2d6fd6"><use href="#i-cal"/></svg></div><div class="ctx"><b>Shift Pay' +
+      '<span class="tag">' + (cardOn() ? 'ACTIVE' : 'BEST VALUE') + '</span></b><em>' + rub(C.now) + ' now · ' + rub(C.daily) + ' a day × ' + C.days + ' days' +
+      (cardOn() ? ' · ' + cardDaysLeft() + ' days left' : '') + '</em></div>' +
+      (cardOn() ? '<button class="buy sel" disabled>ACTIVE</button>' : '<button class="buy" id="yCard">' + C.usd + '</button>') + '</div>';
+    var V = CFG.vault, vr = vaultReady(), stl = stuckLeft();
+    if(stl > 0) h += '<div class="pa crow hot"><div class="ph"><svg class="ic" style="width:56px;height:56px;color:#d23a52"><use href="#i-ruby"/></svg></div><div class="ctx"><b>Stuck on a wall?' +
+      '<span class="tag">TODAY</span></b><em>' + rub(CFG.stuck.ruby) + ' · ends in ' + fmtH(stl) + '</em></div><button class="buy" id="yStuck">' + CFG.stuck.usd + '</button></div>';
+    h += '<div class="pa crow' + (vr ? ' hot' : '') + '"><div class="ph"><svg class="ic" style="width:56px;height:56px;color:#ffd257"><use href="#i-chest"/></svg></div><div class="ctx"><b>Ruby Vault' +
+      (G.vault >= V.cap ? '<span class="tag">FULL</span>' : '') + '</b><em>Bosses fill it · ' + rub(G.vault || 0) + '/' + V.cap + '</em></div>' +
+      (vr ? '<button class="buy" id="yVault">' + V.usd + '</button>' : '<button class="buy sel" disabled>OPENS AT ' + V.min + '</button>') + '</div>';
+    h += '<h3 class="packh">Rubies</h3><div class="packs">';
+    CFG.packs.forEach(function(P, i){ var first = !(G.packs && G.packs[i]);
+      h += '<button class="pack" data-p="' + i + '">' + (first ? '<i>×' + CFG.packFirst + ' FIRST</i>' : '') + '<b>' + rub(P.ruby*(first ? CFG.packFirst : 1)) + '</b>' +
+        (first ? '<s>' + P.ruby + '</s>' : '') + '<em>' + P.usd + '</em></button>'; });
+    h += '</div>';
+    panel(h, true);
+    if($('yStuck')) $('yStuck').onclick = function(){ stuckBuy(); refresh(); showOffers(); };
+    if($('yVault')) $('yVault').onclick = function(){ var n = vaultBuy(); refresh(); if(n) panel('<h2>Ruby Vault</h2><div class="tkbig">' + rub(n) + '</div>', true); };
+    [].forEach.call($('yPanel').querySelectorAll('button[data-p]'), function(b){ b.onclick = function(){ packBuy(+b.dataset.p); refresh(); showOffers(); }; });
+    if($('yStarter2')) $('yStarter2').onclick = function(){ starterBuy(); refresh(); showOffers(); };
+    if($('yCard')) $('yCard').onclick = function(){ cardBuy(); refresh(); showOffers(); };
+  }
   function showCat(){
     var h = '<h2>Hammers<small>DEMO · FREE</small></h2>', pic = function(k){ return '<div class="ph">' + polHtml('ham:' + k, 'i-ham') + '</div>'; };
-    if(!G.starter) h += '<div class="pa crow hot">' + pic(CFG.starter.ham) + '<div class="ctx"><b>' + HAMMERS[CFG.starter.ham].name + ' + ' + rub(CFG.starter.rubies) +
+    if(starterLeft() > 0) h += '<div class="pa crow hot">' + pic(CFG.starter.ham) + '<div class="ctx"><b>' + HAMMERS[CFG.starter.ham].name + ' + ' + rub(CFG.starter.rubies) +
       '<span class="tag">STARTER</span></b><em>Best deal</em></div><button class="buy" id="yStarter">' + CFG.starter.usd + '</button></div>';
     HAM_ORDER.forEach(function(k){ if(!CFG.hamPrice[k]) return; var pr = CFG.hamPrice[k], own = !!G.owned[k];
       h += '<div class="pa crow" title="' + HAMMERS[k].ds + '">' + pic(k) + '<div class="ctx"><b>' + HAMMERS[k].name + '</b><em>' + HAMMERS[k].tag + (G.tried[k] && !own ? ' · tried' : '') + '</em></div>' +
@@ -4225,10 +4713,11 @@ var Yard = (function(){
     refresh: refresh, fit: function(){ if(built) fitCam(); }, tap: tap,
     ready: function(){ return built; }, snapHost: function(){ return scene; },
     // P2c: mo hinh toa xuong (da xay, it nhat cap 1) cho anh polaroid
-    wsModel: function(k){ var r = wsRow(k); return built && r ? piece(r[1], true, Math.max(1, wsLv(k)), 0) : null; }, screenOf: screenOf, showCat: showCat, showMines: showMines,
+    wsModel: function(k){ var r = wsRow(k); return built && r ? piece(r[1], true, Math.max(1, CFG.ws[k] ? wsTier(k).j : 1), 0, -1, CFG.ws[k] ? wsTier(k).n : 3) : null; }, screenOf: screenOf, showCat: showCat, showOffers: showOffers, showMines: showMines,
     showTickets: showTickets, showAway: showAway, showDaily: showDaily, showChest: showChest, tkHud: function(){ if(built) tkHud(); },
     panBy: panBy, pxToWorld: pxToWorld, pan: function(){ return {x:panX, max:panMax}; },
-    draw: function(){ if(!built) return; if(Math.abs(panT - panX) > .005){ panX += (panT - panX)*.25; placeCam(); } renderer.render(scene, cam); }
+    draw: function(){ if(!built) return; if(Math.abs(panT - panX) > .005){ panX += (panT - panX)*.25; placeCam(); } polishStep(drawDt || 1/60); renderer.render(scene, cam); },
+    celebrate: celebrate, panTo: function(x){ panTo(x); }, carts: function(){ return carts.map(function(c){ return {to:c.R && c.R.to, t:+c.t.toFixed(2)}; }); }
   };
 })();
 // ---- B7 QUANG CAO GIA LAP + RUONG HEN GIO + DIEM DANH ----
@@ -4249,8 +4738,9 @@ function tchestOpen(){
 }
 function dailyReady(){ return G.daily.last !== today(); }
 function dailyClaim(){
-  if(!dailyReady()) return null;
+  if(!dailyReady()){ var c0 = cardClaim(); if(c0){ save(); return {card:c0}; } return null; }   // 27/11: the thang (neu da diem danh truoc khi mua)
   var r = CFG.daily[G.daily.n % CFG.daily.length], got = {};
+  var cd = cardClaim(); if(cd) got.card = cd;
   if(r.ham && !G.owned[r.ham]){ G.owned[r.ham] = 1; got.ham = r.ham; } else if(r.ruby) got.ruby = r.ruby;
   if(r.ham && got.ham && r.ruby) got.ruby = 0;   // ngay 7: co bua thi khong cong ruby
   if(got.ruby) G.gems += got.ruby; if(r.tk){ G.tk += r.tk; got.tk = r.tk; }
@@ -4284,9 +4774,10 @@ function openYard(keepRun){
   if(G.cleared[G.mine] && G.mine < MINES.length - 1 && !G.mines[G.mine + 1]) mineSelect(G.mine + 1);
   S.mode = 'yard'; hideScreens(); clearPops(); tip(''); elPtr.style.display = 'none';
   document.documentElement.classList.add('yard'); $('scrYard').classList.add('on');
-  Yard.open(); save(); ev('yard', {gems:G.gems, mine:G.mine});
+  Yard.open(); save(); ev('yard', {gems:G.gems, mine:G.mine}); music('yard'); musicUi();   // 27/11 nhac
   if(G.away > 0) Yard.showAway();   // B5 (nhan xong => diem danh)
-  else if(dailyReady()) Yard.showDaily();   // B7
+  else if(dailyReady() || cardReady()) Yard.showDaily();   // B7 (+ the thang)
+  else if((G.offerPop === 1 && starterLeft() > 0) || (G.offerPop === 2 && stuckLeft() > 0)){ G.offerPop = 0; save(); Yard.showOffers(); }   // 27/11: boss dau vua vo => chao starter 1 lan
 }
 // 13/11: keo trai/phai de cuon ban do; nhan nhe (khong keo) = cham xuong. Toa do qua toLocal (man xoay doc).
 var yDrag = null;
@@ -4302,19 +4793,39 @@ $('yTk').onclick = function(){ ac(); Yard.showTickets(); };
 $('adBoss').onclick = function(e){ e.stopPropagation(); var b = S.bd; if(!b || !b.boss || !b.live || b.adUsed) return;
   adWatch('boss', function(){ b.t += CFG.ads.bossSecs; b.secs = Math.max(b.secs, b.t); b.adUsed = 1; }); $('adBoss').hidden = true; };
 $('yDaily').onclick = function(){ ac(); Yard.showDaily(); };
+$('yOff').onclick = function(){ ac(); Yard.showOffers(); };
+$('yMus').onclick = function(){ ac(); musicToggle(); };
+// 27/11 Mai "trong battle co nut dung game ve mainscene chua": nut ❚❚ trong ca => dung hinh; ve Yard giu vang + do sau, het luot
+function pauseShift(){ if(S.mode !== 'shift' || S.paused || S.pick) return; S.paused = true; if(S.swinging) swingEnd(); show('scrPause'); musicUi(); music(MUS.track); ev('pause', {kho:G.kho, t:Math.round(S.t)}); }
+function resumeShift(){ if(!S.paused) return; S.paused = false; $('scrPause').classList.remove('on'); music(MUS.track); }
+function quitShift(){ S.paused = false; $('scrPause').classList.remove('on'); ev('quitShift', {kho:G.kho, depth:G.depth, t:Math.round(S.t), earned:Math.round(S.earned)});
+  clearWorld(); $('lineT').hidden = true; S.mode = 'idle'; save(); openYard(); }
+$('hPause').onclick = function(e){ e.stopPropagation(); ac(); pauseShift(); };
+$('hPause').addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+$('pGo').onclick = function(){ resumeShift(); };
+$('pYard').onclick = function(){ quitShift(); };
+$('pMus').onclick = function(){ musicToggle(); };
+document.addEventListener('visibilitychange', function(){ if(document.hidden && S.mode === 'shift' && !BOT) pauseShift(); });   // ra khoi app => tu dung
+// nhac can 1 cham dau tien (trinh duyet chan am thanh tu bat): cham bat ky dau => bat bai cua man hien tai
+window.addEventListener('pointerdown', function first(){ ac(); var tr = MUS.track || (S.mode === 'yard' ? 'yard' : 'shift'); MUS.track = null; music(tr); window.removeEventListener('pointerdown', first); });
+$('yEdgeL').onclick = function(){ Yard.panTo(+this.dataset.x + 8); };   // 27/11 polish: keo toi node mua duoc ngoai man
+$('yEdgeR').onclick = function(){ Yard.panTo(+this.dataset.x - 8); };
 $('yChest').onclick = function(){ ac(); Yard.showChest(); };
 setInterval(function(){ if(S.mode === 'yard') Yard.tkHud(); }, 1000);
 $('yDig').onclick = function(){ ac(); digGo(); };   // B3: tru 1 ve (hoac vao tiep luot do dang)
 $('sYard').onclick = function(){ openYard(); };
 window.addEventListener('resize', function(){ Yard.fit(); });
-// bot: trong Yard xay xuong re nhat dang mo, mua bua bang ruby neu du, roi DIG
+// bot: trong Yard xay xuong re nhat dang mo bang vang, het thi bu ruby (giu >= 60 ruby), mua bua bang ruby neu du, roi DIG
 function botYard(){
   B.yardT = (B.yardT || 0) + 1; if(B.yardT < 30) return; B.yardT = 0;
   var guard = 0;
   while(guard++ < 20){ var best = null;
-    WS_TREE.forEach(function(r){ var k = r[0]; if(!CFG.ws[k] || !wsOpen(k) || wsLv(k) >= CFG.ws[k].cost.length) return;
-      if(wsAfford(k) && (!best || (wsCur(k) === wsCur(best) ? wsCost(k) < wsCost(best) : wsCur(k) === 'r'))) best = k; });
-    if(!best) break; wsBuild(best); }
+    WS_TREE.forEach(function(r){ var k = r[0]; if(!CFG.ws[k] || !wsOpen(k) || wsLv(k) >= wsMax(k)) return;
+      if(wsAfford(k) && (!best || wsCost(k) < wsCost(best))) best = k; });
+    if(best){ wsBuild(best); continue; }
+    WS_TREE.forEach(function(r){ var k = r[0], q = CFG.ws[k] && wsOpen(k) ? wsQuote(k) : null;
+      if(q && G.gems - q >= 60 && (!best || q < wsQuote(best))) best = k; });
+    if(!best || !wsBuild(best, true)) break; }
   ['broad','shock','maul'].forEach(function(k){ if(!G.owned[k] && G.gems >= CFG.hamPrice[k].ruby + 30) hamBuy(k, 'ruby'); });
   if(!G.run && G.tk <= 0 && !tkBuy()){ G.tk = 1; ev('tkBot', {}); }   // B3: bot khong cho 15 phut that
   $('yDig').click();
@@ -4331,7 +4842,7 @@ window.__game = {
     bd:S.bd ? {hp:S.bd.hp, max:S.bd.max, t:Math.round(S.bd.t*10)/10, live:S.bd.live, boss:!!S.bd.boss} : null, thieves:thieves.length, bdone:G.bdone,
     screen:['scrEnd','scrShop','scrWin','scrYard'].filter(function(s){ return $(s).classList.contains('on'); })[0]||''}; },
   // The Yard (test/yardprobe.mjs)
-  openYard:openYard, wsBuild:function(k){ var r = wsBuild(k); Yard.refresh(); return r; }, hamBuy:hamBuy, hamTry:hamTry, starterBuy:starterBuy, mineSelect:mineSelect, yardAt:function(kind, key){ return Yard.screenOf(kind, key); }, yardPan:function(d){ Yard.panBy(d); return Yard.pan(); },
+  openYard:openYard, wsBuild:function(k, ru){ var r = wsBuild(k, ru); Yard.refresh(); return r; }, wsQuote:wsQuote, shiftGold:shiftGold, bestFloor:bestFloor, hamBuy:hamBuy, hamTry:hamTry, starterBuy:starterBuy, mineSelect:mineSelect, yardAt:function(kind, key){ return Yard.screenOf(kind, key); }, yardPan:function(d){ Yard.panBy(d); return Yard.pan(); },
   wsTree:function(){ return WS_TREE.map(function(r){ return r[0]; }); }, wsStats:function(){ var o = stats(); return o; },
   legacyColor:function(){ return THREE.ColorManagement ? THREE.ColorManagement.legacyMode : 'none'; },
   wallColor:function(){ return wall.material.color.getHexString(); },
@@ -4339,6 +4850,8 @@ window.__game = {
   // test/fallprobe.mjs: ep du diem nac de goi san sap ngay (chi trong ca)
   dig:function(n){ addDepth(n === undefined ? needOre() : n); },
   // dong co dinh cho fallprobe: tat mang nha, xep `rows` lop kin be ngang san
+  testCol:function(x, n, type){ for(var r=0;r<n;r++) makeCrate(type || 'wood', x, CRATE*.5 + r*CRATE); return crates.length; },
+  lineCols:function(){ return lineCols(); },
   testPile:function(rows){ clearWorld(); S.spawnT = SHELVES.map(function(){ return 1e9; });
     var n = Math.floor(2*ARENA/(CRATE*1.04));
     for(var r=0;r<(rows||2);r++) for(var k=0;k<n;k++) makeCrate('wood', -ARENA + CRATE*0.55 + k*CRATE*1.04, CRATE*.5 + r*CRATE);
@@ -4364,12 +4877,20 @@ window.__game = {
   head:function(){ return {mx:mx, my:my, px:pvx, py:pvy, ax:px, ay:py, sp:Math.hypot(mvx, mvy)}; },
   endShift:function(){ if(S.mode === 'shift') endShift(); },
   bossHere:function(){ return bossHere(); },
+  offers:function(){ return {starterLeft:starterLeft(), starterAt:G.starterAt, card:G.card, cardOn:cardOn(), cardReady:cardReady(), gems:G.gems}; },
+  cardBuy:function(){ var r = cardBuy(); Yard.refresh(); return r; },
+  bossWinOffers:function(){ offersBossWin(); return G.vault; }, bossLoseOffers:function(k){ offersBossLose(k); return stuckLeft(); },
   b7:function(){ return {ads:G.ads, daily:G.daily, chestLeft:tchestLeft(), tk:G.tk, gems:G.gems, bank:G.bank}; },
   helper:function(){ return helper ? {x:helper.x, ch:helper.ch, charge:helperCharge(), fly:!!helper.fly} : null; },
   awayGift:function(min){ awayGift(min*60000); return G.away; },
   tk:function(){ tkTick(); return {tk:G.tk, next:tkNext(), run:G.run ? {n:G.run.n, left:runLeft()} : null}; },
   bdPos:function(){ return S.bd ? {boss:!!S.bd.boss, name:S.bd.name, x:S.bd.x, y:S.bd.y, w:BD_W, h:BD_H, rise:S.bd.rise, hp:S.bd.hp, max:S.bd.max, t:S.bd.t, pen:S.bd.penMax || 0, rod:ROD, r:ham.r} : null; },
   spawnThief:function(side){ var t = spawnThief(side); return {x:t.x, y:t.y}; },
+  pause:function(){ pauseShift(); return !!S.paused; }, resume:function(){ resumeShift(); return !S.paused; }, quit:function(){ quitShift(); return S.mode; },
+  cartList:function(){ return Yard.carts ? Yard.carts() : []; }, mus:function(){ return {track:MUS.track, on:musOn(), timer:!!MUS.timer}; },
+  helpersN:function(){ return helpers.length; }, wsTier:function(k){ return wsTier(k); }, wsEff:function(k){ return wsEff(k); }, wsMax:function(k){ return wsMax(k); },
+  thiefs:function(){ return thieves.map(function(t){ return {st:t.st, mode:t.mode, x:t.x, n:t.n, tgt:t.tgt ? {x:t.tgt.x, y:t.tgt.y, net:!!t.tgt.net} : null}; }); },
+  spawnThief:function(side){ var t = spawnThief(side); t.t = 0; return thieves.length; },
   thiefHit:function(){ var t = thieves.filter(function(o){ return o.st !== 'ko'; })[0]; if(t) thiefKo(t, t.x - 1); return !!t; },
   thieves:function(){ return thieves.map(function(t){ return {x:Math.round(t.x*100)/100, y:Math.round(t.y*100)/100, st:t.st, n:t.n, bag:Math.round(t.bag)}; }); },
   dropOn:function(x, type){ var c = makeCrate(type || 'gold', x, DL + 2); c.vy = -2; return true; },
