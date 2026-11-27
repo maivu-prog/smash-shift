@@ -147,7 +147,10 @@
   .ytk div{display:flex;align-items:baseline;gap:8px}
   .ytk i{font-style:normal;font-size:13px;font-weight:800;color:#ffd257;white-space:nowrap}
   .ytk.out{box-shadow:0 0 0 3px #e0452c}
-  .yleft{position:absolute;left:calc(14px + env(safe-area-inset-left, 0px));top:calc(60px + env(safe-area-inset-top, 0px));display:flex;flex-direction:column;gap:10px}
+  .yleft{position:absolute;left:calc(14px + env(safe-area-inset-left, 0px));top:calc(60px + env(safe-area-inset-top, 0px));display:flex;flex-direction:column;gap:10px;flex-wrap:wrap;align-content:flex-start;column-gap:10px}
+  /* 27/11 Mai "man dth cot feature ben trai bi khuat nhung feature duoi cung": fitLeft() thu nho nut khi thieu chieu cao, con thieu thi tran sang cot 2 */
+  .yleft.tight{gap:6px;column-gap:8px} .yleft.tight .ysq{width:50px;height:50px;border-radius:14px} #scrYard .yleft.tight .ysq .ic{width:24px;height:24px}
+  .yleft.tight .ysq b{font-size:11px} .yleft.tight .ymus{height:36px!important} .yleft.tight .ymus b{font-size:18px}
   .ysq{width:62px;height:62px;border-radius:18px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
     border:0;font:inherit;color:var(--ink);cursor:pointer}
   #scrYard .ysq .ic{width:30px;height:30px}
@@ -648,7 +651,7 @@ var CFG = {
   // 3 / 0,2 = ban "buc tuong" thu 27/11, Mai khong chon).
   lineSecs: 3, lineMin: 1, lineSpan: 0,
   // 27/11 kich ban tutorial (tasks/SMASH/tutorial-script.md, Mai duyet): Van Tap = buoc 1-2, ca dau = buoc 3-4, Yard lan dau = 5
-  tut: { feedMul: 0.6, burstAt: 6, oreGoal: 12, maxSecs: 90, holdSecs: 4, bossFree: 15 },
+  tut: { feedMul: 0.6, burstAt: 6, oreGoal: 12, maxSecs: 90, holdSecs: 4, bossFree: 15, postSecs: 5 },   // postSecs: lam thu sau giai thich, dong duoi vach => qua bai
   fillMax: 0.8, fillWarn: 0.65,   // (khong dung tu 27/11 - giu cho test cu)
   fallSecs: 0.7,     // nhip san sap: ngan, khong khoa tay, khong cat combo (vision 9.1)
   fallDist: 4.0,     // vach hang truot len bay nhieu don vi moi nac (chi la hinh)
@@ -3251,7 +3254,7 @@ function startTutorial(){
   S.pers = 'steady'; S.secs = CFG.shiftSecs;   // Van Tap luon nhip chuan, khong co tinh cach ca
   for(var i=0;i<6;i++) for(var r=0;r<2;r++) makeCrate(i === 3 && r === 1 ? 'gold' : 'wood', -3.2 + i*CRATE*1.04, CRATE*.5 + r*CRATE);   // 27/11: 1 cuc vang (x5)
   placeHand(-5.4, CRATE*2.4 + ROD);
-  S.tutT = 0; S.tutBurst = 0; S.tutExplained = 0; S.tutSaved = 0; S.tutWas = 0; S.tutHold = 0;
+  S.tutT = 0; S.tutBurst = 0; S.tutExplained = 0; S.tutSaved = 0; S.tutWas = 0; S.tutHold = 0; S.tutPost = 0;
   G.seen.tut2 = 1; FIRST_SESSION = 1;   // nguoi moi: phien nay khong tu bat uu dai (kich ban: phien dau khong popup ban hang)
   tip('DRAG FAST through the pile'); ev('tut', {step:'start'});
   hud();
@@ -3278,9 +3281,12 @@ function tutStep(dt){
       for(var bc=0; bc<5; bc++) for(var br=0; br<5; br++) makeCrate('wood', (bc - 2)*CRATE*1.04, DL + 1 + br*CRATE*1.05);   // khoi rong 5x5: dung vung, hang tren do roi van con hang 4 qua vach (3 cot x5 tu do sau ~3 s => SAVED! ma khong can dap)
       thunk(140, .3, .3, true); }
     // 2c: lan dau co quang nam yen vuot vach => DUNG HINH + lam noi vach do + 2 dong giai thich
-    if(!S.tutExplained && (S.lineN || 0) > 0 && S.overflow >= .6) return tutLineExplain();   // dong da nam yen tren vach 0,6 s (khong bat luc khoi con dang roi)
+    // 27/11 (Mai: "tutorial ngung o 12/12"): nguoi dap nhanh vo khoi xa truoc khi no nam yen 0,6 s => khong bao gio giai thich => ket.
+    // Gio: co quang nam tren vach 0,15 s la giai thich; du 12 cuc ma van chua giai thich thi giai thich luon (khong can quang tren vach).
+    if(!S.tutExplained && (((S.lineN || 0) > 0 && S.overflow >= .15) || S.tutN >= CFG.tut.oreGoal)) return tutLineExplain();
     // 2d: lam thu - dong ho 3-2-1 chay; het gio KHONG thua (dung o "1" + ngon tay chi); dap xuong kip => SAVED!
     if(S.tutExplained){
+      if(!(S.tutHold > 0)) S.tutPost = (S.tutPost || 0) + dt;   // thoi gian lam thu sau loi giai thich
       if(S.overflow > 0) S.tutWas = 1;
       else if(S.tutWas){ S.tutWas = 0; if(!S.tutSaved && S.tutN > S.tutN0){ S.tutSaved = 1; pop(0, DL + 1.6, 'SAVED!', 'big', 40); chime(9); ev('tut', {step:'line_saved'}); } }   // SAVED chi tinh khi NGUOI CHOI dap vo quang (dong tu lun khong tinh)
       var stuck = S.overflow >= (S.st.grace || CFG.lineSecs), LC = stuck ? lineCols() : null;
@@ -3289,13 +3295,14 @@ function tutStep(dt){
     }
     if(!S.swinging){
       if((S.lineN || 0) > 0) tip('Too high! SMASH IT DOWN');
-      else tip('Keep smashing — ' + Math.min(S.tutN, CFG.tut.oreGoal) + '/' + CFG.tut.oreGoal + ' ore', true);
+      else tip(S.tutN >= CFG.tut.oreGoal ? 'Keep it under the red line!' : 'Keep smashing — ' + S.tutN + '/' + CFG.tut.oreGoal + ' ore', true);
     }
     // `!S.swinging` o day tung la DIEU KIEN CUA, giong cho het ca truoc khi sua 07/11. Hau qua
     // y het: quet qua lai lien tuc thi bua LUC NAO CUNG dang vung => Van Tap KHONG BAO GIO xong.
     // Do duoc 08/11 bang bot kieu 'mash': 24 phut game van dung o bai 2, 0 ca, khong ra noi xuong.
     // Cho het ca da duoc gia han 2 giay hom 07/11, cho nay la cho duy nhat con sot.
-    if(S.tutN >= CFG.tut.oreGoal && (S.tutSaved || S.t > CFG.tut.maxSecs)){
+    // xong: du 12 cuc + da giai thich + (SAVED! hoac da lam thu postSecs ma dong dang duoi vach); S.t > maxSecs la luoi an toan cuoi
+    if(S.tutN >= CFG.tut.oreGoal && ((S.tutExplained && (S.tutSaved || (S.tutPost > CFG.tut.postSecs && !(S.overflow > 0)))) || S.t > CFG.tut.maxSecs)){
       S.endT += dt;
       if(S.endT > 1.2 && (!S.swinging || S.endT > 2.2)){
         if(S.swinging) swingEnd();       // cu vung dang do van duoc tinh tien, khong cat trang
@@ -4762,7 +4769,7 @@ var Yard = (function(){
     var cl = tchestLeft(); $('yChestS').textContent = cl > 0 ? fmtH(cl) : 'OPEN!'; $('yChest').classList.toggle('ready', cl <= 0);   // B7
     tomorrowStrip();
     $('yDailyS').textContent = dailyReady() ? 'Day ' + (G.daily.n % CFG.daily.length + 1) : (cardReady() ? '+' + CFG.card.daily : '✓'); $('yDaily').classList.toggle('ready', dailyReady() || cardReady());
-    var sl = starterLeft(); $('yOff').hidden = !offersOn(); $('yOffT').textContent = sl > 0 ? (sl > DAY_MS ? Math.ceil(sl/DAY_MS) + 'd' : fmtH(sl)) : (stuckLeft() > 0 ? '!' : (vaultReady() ? 'FULL' : (cardOn() ? '' : 'NEW'))); $('yOffT').hidden = !$('yOffT').textContent;
+    var sl = starterLeft(), offW = $('yOff').hidden; $('yOff').hidden = !offersOn(); if(offW !== $('yOff').hidden) fitLeft(); $('yOffT').textContent = sl > 0 ? (sl > DAY_MS ? Math.ceil(sl/DAY_MS) + 'd' : fmtH(sl)) : (stuckLeft() > 0 ? '!' : (vaultReady() ? 'FULL' : (cardOn() ? '' : 'NEW'))); $('yOffT').hidden = !$('yOffT').textContent;
     $('yDigS').textContent = G.run && runLeft() > 0 ? runLeft() + ' left' : '−1 ticket';
   }
   // 27/11 kich ban buoc 9 (de xuat D3-4): dai "Tomorrow" - qua diem danh ke, ve day lai luc nao, tho dao luc vang
@@ -4976,6 +4983,12 @@ function digGo(){
   }
   buildShelves(layOf(G.kho)); openShop();
 }
+// 27/11: cot nut trai cua Yard phai vua chieu cao man (dien thoai ngang 300-390 px): vua => giu; thieu => nut nho (tight); van thieu => tran sang cot 2
+function fitLeft(){ var el = document.querySelector('.yleft'); if(!el || !$('scrYard').classList.contains('on')) return;
+  el.classList.remove('tight'); el.style.maxHeight = '';
+  var avail = Math.max(120, vpH() - el.offsetTop - 12);
+  if(el.scrollHeight > avail) el.classList.add('tight');
+  el.style.maxHeight = avail + 'px'; }
 var OFFER_POPPED = 0;   // 27/11: da tu bat bang uu dai trong phien nay chua (khong luu: mo app lai = phien moi)
 function openYard(keepRun){
   if(!keepRun) runEnd('yard');   // B3: ve Yard = het luot (mo app thi giu luot do dang: keepRun)
@@ -4984,7 +4997,7 @@ function openYard(keepRun){
   if(G.cleared[G.mine] && G.mine < MINES.length - 1 && !G.mines[G.mine + 1]) mineSelect(G.mine + 1);
   S.mode = 'yard'; hideScreens(); clearPops(); tip(''); elPtr.style.display = 'none';
   document.documentElement.classList.add('yard'); $('scrYard').classList.add('on');
-  Yard.open(); save(); ev('yard', {gems:G.gems, mine:G.mine}); music('yard'); musicUi();   // 27/11 nhac
+  Yard.open(); fitLeft(); save(); ev('yard', {gems:G.gems, mine:G.mine}); music('yard'); musicUi();   // 27/11 nhac
   if(G.tut === 1 && !G.seen.yardIntro && wsLv('bunk') === 0 && !BOT){   // 27/11 kich ban buoc 5: Yard lan dau
     var need = wsCost('bunk') + Math.min(wsCost('grip'), wsCost('assay'));
     if(G.shifts <= 4 && G.bank < need) G.bank = need;   // nguoi moi: vang tu ruong boss luon du Bunkhouse + 1 mon re
@@ -5031,7 +5044,7 @@ $('yChest').onclick = function(){ ac(); Yard.showChest(); };
 setInterval(function(){ if(S.mode === 'yard') Yard.tkHud(); }, 1000);
 $('yDig').onclick = function(){ ac(); digGo(); };   // B3: tru 1 ve (hoac vao tiep luot do dang)
 $('sYard').onclick = function(){ openYard(); };
-window.addEventListener('resize', function(){ Yard.fit(); });
+window.addEventListener('resize', function(){ Yard.fit(); fitLeft(); });
 // bot: trong Yard xay xuong re nhat dang mo bang vang, het thi bu ruby (giu >= 60 ruby), mua bua bang ruby neu du, roi DIG
 function botYard(){
   B.yardT = (B.yardT || 0) + 1; if(B.yardT < 30) return; B.yardT = 0;
